@@ -1,11 +1,13 @@
 {
   "extends": "@repo/typescript-config/extension.json",
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/page-scripts/index.js", "src/page-scripts/utils.js", "src/page-scripts/fetch.js"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "jsx": "preserve",
+    "types": ["chrome", "webextension-polyfill", "vite/client"]
   }
 }

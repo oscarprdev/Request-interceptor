@@ -10,23 +10,40 @@ import { initFetchInterceptor } from './fetch';
     // Ignore localStorage errors
   }
 
-  // Initialize the global config object
-  window.requestaiConfig = window.requestaiConfig || {
+  // Store configuration
+  let config = {
     requestRules: [],
     responseRules: [],
   };
 
-  // Listen for configuration updates from the extension
-  window.addEventListener('message', event => {
-    if (event.data && event.data.source === 'requestai:extension') {
-      if (event.data.action === 'updateConfig') {
-        window.requestaiConfig = event.data.config;
-      }
-    }
-  });
+  // Initialize the interceptor
+  const interceptor = initFetchInterceptor(isDebugMode);
 
-  // Initialize the fetch interceptor
-  initFetchInterceptor(isDebugMode);
+  // Listen for configuration updates from the extension
+  window.addEventListener(
+    'message',
+    event => {
+      // Only accept messages from the same frame
+      if (event.source !== window) return;
+
+      const message = event.data;
+
+      // Check if the message is a config update
+      if (
+        message &&
+        message.source === 'requestai:extension' &&
+        message.action === 'updateConfig'
+      ) {
+        config = message.config;
+
+        // Update the interceptor with the new rules
+        interceptor.updateRules(config.requestRules, config.responseRules);
+
+        console.log('RequestAI: Updated rules', config);
+      }
+    },
+    false
+  );
 
   // Notify the extension that we're ready
   window.top.postMessage(

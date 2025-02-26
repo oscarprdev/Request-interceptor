@@ -14,10 +14,10 @@ export default defineConfig({
     emptyOutDir: false,
     rollupOptions: {
       input: {
-        popup: resolve(__dirname, 'src/popup/index.html'),
+        popup: resolve(__dirname, 'src/popup/popup.html'),
       },
       output: {
-        entryFileNames: '[name].js',
+        entryFileNames: 'popup.js',
         chunkFileNames: '[name].js',
         assetFileNames: '[name].[ext]',
       },
@@ -25,6 +25,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: '/src/popup/index.html',
+    open: '/src/popup/popup.html',
   },
 });
