@@ -1,4 +1,4 @@
-import { Group, Rule, RuleType, ObjectType, Status } from './types';
+import { Group, Rule, RuleType, ObjectType, Status } from '../../common/types';
 import { ChangeType, getAllRecords, getRecord, onRecordChange } from './storage';
 
 const isRule = (record: unknown): boolean => {

@@ -1,5 +1,5 @@
-import { matchRuleWithRequest } from './common/rule-matcher';
-import { RuleType } from './common/types';
+import { matchRuleWithRequest } from '../common/rule-matcher';
+import { RuleType } from '../common/types';
 import { isExtensionEnabled, isUrlInBlockList } from './common/utils';
 import { onVariableChange, Variable } from './common/variable';
 import ruleExecutionHandler from './rule-execution-handler';

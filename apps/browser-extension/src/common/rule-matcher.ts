@@ -10,7 +10,7 @@ import {
   RequestPayloadFilter,
   AJAXRequestDetails,
 } from './types';
-import { getUrlObject, isBlacklistedURL } from './utils';
+import { getUrlObject, isBlacklistedURL } from '../service-worker/common/utils';
 
 const toRegex = (regexStr: string): RegExp | null => {
   const matchRegExp = regexStr.match(new RegExp('^/(.+)/(|i|g|ig|gi)$'));

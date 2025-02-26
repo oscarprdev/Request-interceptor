@@ -1,8 +1,8 @@
 import { config } from './config';
 import { STORAGE_KEYS } from '../../common/constants';
-import { matchSourceUrl } from './rule-matcher';
+import { matchSourceUrl } from '../../common/rule-matcher';
 import { ChangeType, getRecord, onRecordChange } from './storage';
-import { SourceKey, SourceOperator, UrlSource } from './types';
+import { SourceKey, SourceOperator, UrlSource } from '../../common/types';
 import { getVariable, Variable } from './variable';
 
 export const isExtensionEnabled = async (): Promise<boolean> => {

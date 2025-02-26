@@ -1,5 +1,5 @@
 import { CLIENT_MESSAGES } from '../common/constants';
-import { Rule } from './common/types';
+import { Rule } from '../common/types';
 import rulesStorageService from './services/rules-storage-service';
 import { DataScope, TAB_SERVICE_DATA, tabService } from './services/tabs-service';
 
