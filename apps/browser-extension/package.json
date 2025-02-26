@@ -1,0 +1,36 @@
+{
+  "name": "browser-extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"rollup -c -w\" \"vite\"",
+    "build": "rollup -c && vite build",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src/**/*.{ts,vue}"
+  },
+  "keywords": [
+    "browser-extension",
+    "http",
+    "mock",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^3.4.21",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@repo/rollup-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/chrome": "^0.0.260",
+    "@types/webextension-polyfill": "^0.10.7",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "rollup": "^4.13.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.7.3",
+    "vite": "^5.1.6"
+  }
+}

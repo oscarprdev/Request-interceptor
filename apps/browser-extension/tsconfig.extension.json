@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/extension.json",
+  "include": ["src/background.ts", "src/content-script.ts"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
