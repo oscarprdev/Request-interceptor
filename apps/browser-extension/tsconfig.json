@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/vue.json",
+  "extends": "@repo/typescript-config/extension.json",
   "include": ["src/**/*.ts", "src/**/*.vue"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {

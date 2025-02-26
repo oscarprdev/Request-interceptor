@@ -4,7 +4,7 @@ module.exports = [
   createConfig({
     input: 'src/background.ts',
     output: 'dist/background.js',
-    tsconfig: './tsconfig.extension.json',
+    tsconfig: './tsconfig.json',
     copy: [
       { src: 'src/manifest.json', dest: 'dist' },
       { src: 'src/assets', dest: 'dist' },
@@ -13,6 +13,6 @@ module.exports = [
   createConfig({
     input: 'src/content-script.ts',
     output: 'dist/content-script.js',
-    tsconfig: './tsconfig.extension.json',
+    tsconfig: './tsconfig.json',
   }),
 ];
