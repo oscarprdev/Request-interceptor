@@ -1,24 +1,30 @@
-<template>
-  <div class="container">
-    <h1>Request AI</h1>
-    <p>Browser extension popup</p>
-  </div>
-</template>
-
 <script setup lang="ts">
-// Empty setup for now
+import { ref } from 'vue';
+import RuleList from './components/RuleList.vue';
+import RuleForm from './components/RuleForm.vue';
+
+const activeTab = ref<'list' | 'add'>('list');
+
+const switchTab = (tab: 'list' | 'add') => {
+  activeTab.value = tab;
+};
 </script>
 
-<style scoped>
-.container {
-  width: 400px;
-  padding: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
+<template>
+  <div class="container">
+    <header>
+      <h1>RequestAI Interceptor</h1>
+      <div class="tabs">
+        <button :class="{ active: activeTab === 'list' }" @click="switchTab('list')">
+          My Rules
+        </button>
+        <button :class="{ active: activeTab === 'add' }" @click="switchTab('add')">Add Rule</button>
+      </div>
+    </header>
 
-h1 {
-  color: #2c3e50;
-  font-size: 24px;
-  margin-top: 0;
-}
-</style>
+    <main>
+      <RuleList v-if="activeTab === 'list'" />
+      <RuleForm v-else @rule-added="switchTab('list')" />
+    </main>
+  </div>
+</template>
