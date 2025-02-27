@@ -5,19 +5,20 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   entry: {
-    background: './background.js'
+    background: './background.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
-    clean: true
+    clean: true,
   },
   plugins: [
     new CopyPlugin({
       patterns: [
         { from: 'manifest.json', to: 'manifest.json' },
-        { from: 'icons', to: 'icons' }
+        { from: 'icons', to: 'icons', noErrorOnMissing: true },
+        { from: 'rules.json', to: 'rules.json' },
       ],
     }),
   ],
-}; 
+};
