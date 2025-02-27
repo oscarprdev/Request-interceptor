@@ -1,13 +1,17 @@
 {
-  "extends": "@repo/typescript-config/extension.json",
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "jsx": "preserve",
-    "types": ["chrome", "webextension-polyfill", "vite/client"]
-  }
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@types/chrome"],
+    "lib": ["DOM", "ES2020"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
