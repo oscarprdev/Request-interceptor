@@ -13,12 +13,10 @@ export default defineConfig({
     outDir: 'dist/popup',
     emptyOutDir: false,
     rollupOptions: {
-      input: {
-        popup: resolve(__dirname, 'src/popup/popup.html'),
-      },
+      input: resolve(__dirname, 'src/popup/popup.html'),
       output: {
         entryFileNames: 'popup.js',
-        chunkFileNames: '[name].js',
+        chunkFileNames: '[name].[hash].js',
         assetFileNames: '[name].[ext]',
       },
     },

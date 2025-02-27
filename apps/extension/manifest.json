@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Simple Request Logger",
+  "version": "1.0.0",
+  "description": "Logs HTTP requests to the console",
+  "permissions": ["webRequest"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  }
+}

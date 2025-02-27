@@ -1,18 +1,18 @@
 {
-  "name": "browser-extension",
-  "version": "0.1.0",
+  "name": "simple-request-logger",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"rollup -c -w\" \"vite\"",
-    "build": "rollup -c && vite build",
+    "dev:popup": "vite",
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
     "check-types": "tsc --noEmit",
     "lint": "eslint src/**/*.{ts,vue}"
   },
   "keywords": [
     "browser-extension",
     "http",
-    "mock",
-    "api"
+    "logger"
   ],
   "author": "",
   "license": "MIT",
@@ -22,17 +22,19 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "@repo/rollup-config": "*",
     "@repo/typescript-config": "*",
     "@types/chrome": "^0.0.260",
-    "@types/webextension-polyfill": "^0.10.7",
     "@types/uuid": "^9.0.8",
+    "@types/webextension-polyfill": "^0.10.7",
     "@vitejs/plugin-vue": "^5.0.4",
     "concurrently": "^8.2.2",
+    "copy-webpack-plugin": "^12.0.2",
     "eslint": "^8.57.0",
-    "rollup": "^4.13.0",
+    "ts-loader": "^9.5.1",
     "tslib": "^2.6.2",
     "typescript": "^5.7.3",
-    "vite": "^5.1.6"
+    "vite": "^5.1.6",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
   }
 }
