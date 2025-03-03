@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { userController } from '@/controllers/userController';
+import { userController } from '@/controllers';
 import { body } from 'express-validator';
 import { validate } from '@/middleware/validator';
 
@@ -14,12 +14,12 @@ const userValidation = [
 ];
 
 // Routes
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.post('/', userValidation, userController.createUser);
-router.put('/:id', userValidation, userController.updateUser);
-router.delete('/:id', userController.deleteUser);
-router.post('/:userId/rules/:ruleId', userController.assignRuleToUser);
-router.delete('/:userId/rules/:ruleId', userController.removeRuleFromUser);
+router.get('/', userController.getAllUsers.bind(userController));
+router.get('/:id', userController.getUserById.bind(userController));
+router.post('/', userValidation, userController.createUser.bind(userController));
+router.put('/:id', userValidation, userController.updateUser.bind(userController));
+router.delete('/:id', userController.deleteUser.bind(userController));
+router.post('/:userId/rules/:ruleId', userController.assignRuleToUser.bind(userController));
+router.delete('/:userId/rules/:ruleId', userController.removeRuleFromUser.bind(userController));
 
 export default router; 

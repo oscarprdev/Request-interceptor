@@ -1,22 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 
-interface AppError extends Error {
-  statusCode?: number;
-}
-
 export const errorHandler = (
-  err: AppError,
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = err.statusCode || 500;
-  
-  res.status(statusCode).json({
+  console.error('Error:', err.message);
+  console.error('Stack:', err.stack);
+
+  res.status(500).json({
     success: false,
-    error: {
-      message: err.message || 'Server Error',
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    }
+    error: 'Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   });
 }; 

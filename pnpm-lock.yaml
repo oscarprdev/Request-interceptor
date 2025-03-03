@@ -145,6 +145,9 @@ importers:
       helmet:
         specifier: ^7.1.0
         version: 7.2.0
+      module-alias:
+        specifier: ^2.2.3
+        version: 2.2.3
       morgan:
         specifier: ^1.10.0
         version: 1.10.0
@@ -4698,6 +4701,10 @@ packages:
   /mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
     dev: true
+
+  /module-alias@2.2.3:
+    resolution: {integrity: sha512-23g5BFj4zdQL/b6tor7Ji+QY4pEfNH784BMslY9Qb0UnJWRAt+lQGLYmRaM0KDBwIG23ffEBELhZDP2rhi9f/Q==}
+    dev: false
 
   /moment-timezone@0.5.47:
     resolution: {integrity: sha512-UbNt/JAWS0m/NJOebR0QMRHBk0hu03r5dx9GK8Cs0AS3I81yDcOc9k+DytPItgVvBP7J6Mf6U2n3BPAacAV9oA==}

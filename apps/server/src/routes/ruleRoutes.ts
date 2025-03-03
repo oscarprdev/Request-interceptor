@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ruleController } from '@/controllers/ruleController';
+import { ruleController } from '@/controllers';
 import { body } from 'express-validator';
 import { validate } from '@/middleware/validator';
 
@@ -8,21 +8,21 @@ const router = Router();
 // Validation rules
 const ruleValidation = [
   body('priority').isInt({ min: 1 }).withMessage('Priority must be a positive integer'),
-  body('condition').isObject().withMessage('Condition must be an object'),
-  body('condition.urlFilter').isString().withMessage('URL filter must be a string'),
-  body('condition.resourceTypes').isArray().withMessage('Resource types must be an array'),
-  body('action').isObject().withMessage('Action must be an object'),
-  body('action.type').isString().withMessage('Action type must be a string'),
+  body('urlFilter').isString().withMessage('URL filter must be a string'),
+  body('resourceTypes').isArray().withMessage('Resource types must be an array'),
+  body('requestMethods').isArray().withMessage('Request methods must be an array'),
+  body('actionType').isString().withMessage('Action type must be a string'),
+  body('redirectUrl').optional().isString().withMessage('Redirect URL must be a string'),
   validate,
 ];
 
 // Routes
-router.get('/', ruleController.getAllRules);
-router.get('/user/:userId', ruleController.getRulesByUserId);
-router.get('/:id', ruleController.getRuleById);
-router.post('/', ruleValidation, ruleController.createRule);
-router.put('/:id', ruleValidation, ruleController.updateRule);
-router.delete('/:id', ruleController.deleteRule);
-router.post('/seed', ruleController.seedDefaultRule);
+router.get('/', ruleController.getAllRules.bind(ruleController));
+router.post('/seed', ruleController.seedDefaultRule.bind(ruleController));
+router.get('/user/:userId', ruleController.getRulesByUserId.bind(ruleController));
+router.get('/:id', ruleController.getRuleById.bind(ruleController));
+router.post('/', ruleValidation, ruleController.createRule.bind(ruleController));
+router.put('/:id', ruleValidation, ruleController.updateRule.bind(ruleController));
+router.delete('/:id', ruleController.deleteRule.bind(ruleController));
 
 export default router;

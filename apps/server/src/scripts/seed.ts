@@ -15,7 +15,7 @@ const seedDatabase = async () => {
     console.log('Database tables created or verified');
 
     // Create a default user
-    const defaultUser = await userService.createUser({
+    const defaultUser = await userService.create({
       email: 'admin@example.com',
       name: 'Admin User',
       password: 'password123', // In a real app, this would be hashed

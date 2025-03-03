@@ -7,19 +7,6 @@ const pool = new Pool({
 
 const createTables = async () => {
   try {
-    // Create rules table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS rules (
-        id SERIAL PRIMARY KEY,
-        priority INTEGER NOT NULL,
-        condition JSONB NOT NULL,
-        action JSONB NOT NULL,
-        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL
-      )
-    `);
-    console.log('Rules table created or already exists');
-
     // Create users table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -27,25 +14,40 @@ const createTables = async () => {
         email VARCHAR(255) UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL
+        "createdAt" TIMESTAMP NOT NULL,
+        "updatedAt" TIMESTAMP NOT NULL
       )
     `);
-    console.log('Users table created or already exists');
+
+    // Create rules table with separate columns instead of JSON
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS rules (
+        id SERIAL PRIMARY KEY,
+        priority INTEGER NOT NULL,
+        "urlFilter" VARCHAR(255) NOT NULL,
+        "resourceTypes" TEXT[] NOT NULL,
+        "requestMethods" TEXT[] NOT NULL,
+        "actionType" VARCHAR(50) NOT NULL,
+        "redirectUrl" TEXT,
+        "createdAt" TIMESTAMP NOT NULL,
+        "updatedAt" TIMESTAMP NOT NULL
+      )
+    `);
 
     // Create user_rules junction table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_rules (
+        id SERIAL PRIMARY KEY,
         "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
         "ruleId" INTEGER REFERENCES rules(id) ON DELETE CASCADE,
-        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        PRIMARY KEY ("userId", "ruleId")
+        "createdAt" TIMESTAMP NOT NULL,
+        "updatedAt" TIMESTAMP NOT NULL,
+        UNIQUE("userId", "ruleId")
       )
     `);
-    console.log('User_rules table created or already exists');
 
-    console.log('All tables created successfully');
+    console.log('Tables created successfully');
+    return true;
   } catch (error) {
     console.error('Error creating tables:', error);
     throw error;

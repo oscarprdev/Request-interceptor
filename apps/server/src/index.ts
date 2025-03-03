@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';

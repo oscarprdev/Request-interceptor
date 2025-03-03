@@ -1,86 +1,47 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { Model, DataTypes, Optional, ModelStatic } from 'sequelize';
 import { sequelize } from '@/config/database';
 
+// Define the attributes interface
 interface RuleAttributes {
   id: number;
   priority: number;
-  condition: {
-    urlFilter: string;
-    resourceTypes: string[];
-    requestMethods?: string[];
-    domains?: string[];
-    excludedDomains?: string[];
-  };
-  action: {
-    type: string;
-    redirect?: {
-      url?: string;
-      transform?: {
-        scheme?: string;
-        host?: string;
-        path?: string;
-        queryTransform?: {
-          removeParams?: string[];
-          addOrReplaceParams?: { key: string; value: string }[];
-        };
-      };
-    };
-    requestHeaders?: Array<{
-      header: string;
-      operation: string;
-      value?: string;
-    }>;
-    responseHeaders?: Array<{
-      header: string;
-      operation: string;
-      value?: string;
-    }>;
-  };
+  urlFilter: string;
+  resourceTypes: string[];
+  requestMethods: string[];
+  actionType: string;
+  redirectUrl?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface RuleCreationAttributes extends Optional<RuleAttributes, 'id'> {}
+// Define which attributes are optional for creation
+interface RuleCreationAttributes
+  extends Optional<RuleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Rule extends Model<RuleAttributes, RuleCreationAttributes> implements RuleAttributes {
+// Extend the Model with proper typing
+class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public id!: number;
   public priority!: number;
-  public condition!: {
-    urlFilter: string;
-    resourceTypes: string[];
-    requestMethods?: string[];
-    domains?: string[];
-    excludedDomains?: string[];
-  };
-  public action!: {
-    type: string;
-    redirect?: {
-      url?: string;
-      transform?: {
-        scheme?: string;
-        host?: string;
-        path?: string;
-        queryTransform?: {
-          removeParams?: string[];
-          addOrReplaceParams?: { key: string; value: string }[];
-        };
-      };
-    };
-    requestHeaders?: Array<{
-      header: string;
-      operation: string;
-      value?: string;
-    }>;
-    responseHeaders?: Array<{
-      header: string;
-      operation: string;
-      value?: string;
-    }>;
-  };
-
-  // Timestamps
+  public urlFilter!: string;
+  public resourceTypes!: string[];
+  public requestMethods!: string[];
+  public actionType!: string;
+  public redirectUrl!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  // Static method to create a Rule instance from raw data
+  static fromRawData(data: {
+    id: number;
+    priority: number;
+    urlFilter: string;
+    resourceTypes: string[];
+    requestMethods: string[];
+    actionType: string;
+    redirectUrl?: string | null;
+  }): Rule {
+    return Rule.build(data);
+  }
 }
 
 Rule.init(
@@ -94,12 +55,32 @@ Rule.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    condition: {
-      type: DataTypes.JSONB,
+    urlFilter: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    action: {
-      type: DataTypes.JSONB,
+    resourceTypes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+    },
+    requestMethods: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+    },
+    actionType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    redirectUrl: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
       allowNull: false,
     },
   },
