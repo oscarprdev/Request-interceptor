@@ -15,11 +15,19 @@ chrome.runtime.onInstalled.addListener(async () => {
       condition: {
         urlFilter: 'localhost:3000/example',
         resourceTypes: ['xmlhttprequest'],
+        requestMethods: ['get', 'post', 'delete'],
       },
       action: {
         type: 'redirect',
         redirect: {
-          url: 'data:application/json;base64,eyJtZXNzYWdlIjoiVGhpcyBpcyBhIG1vY2tlZCByZXNwb25zZSBmcm9tIHRoZSBleHRlbnNpb24ifQ==',
+          url:
+            'data:application/json;base64,' +
+            btoa(
+              JSON.stringify({
+                message:
+                  'This is a mocked response for both GET and POST requests from the extension',
+              })
+            ),
         },
       },
     });

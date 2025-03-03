@@ -4,6 +4,7 @@ export interface Rule {
   condition: {
     urlFilter: string;
     resourceTypes: chrome.declarativeNetRequest.ResourceType[];
+    requestMethods?: chrome.declarativeNetRequest.RequestMethod[];
     domains?: string[];
     excludedDomains?: string[];
   };

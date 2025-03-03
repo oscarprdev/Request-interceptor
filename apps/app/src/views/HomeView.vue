@@ -1,9 +1,20 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { onMounted, ref } from 'vue';
+
+const rules = ref([]);
+
+onMounted(async () => {
+  await getRulesFromExtension();
+  // await fetch('http://localhost:3000/example', {
+  //   method: 'POST',
+  // })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     console.log(data);
+  //   });
+});
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <main></main>
 </template>
