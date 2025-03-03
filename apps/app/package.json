@@ -16,7 +16,11 @@
   },
   "dependencies": {
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "@tanstack/vue-query": "^5.28.4",
+    "@trpc/client": "^10.45.0",
+    "@trpc/server": "^10.45.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.1",
