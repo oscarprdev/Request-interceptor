@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { IUserRepository } from '@/repositories/IUserRepository';
-import User from '@/models/User';
+import User, { UserInput } from '@/models/User';
 import { config } from '@/config/environment';
 
 export class UserService implements IUserRepository {
@@ -65,8 +65,11 @@ export class UserService implements IUserRepository {
     }
   }
 
-  async create(userData: any): Promise<User> {
+  async create(userData: UserInput): Promise<User> {
     try {
+      // Create a validated User model instance
+      const validatedUser = User.createValidated(userData);
+
       const query = `
         INSERT INTO users (email, name, password, "createdAt", "updatedAt") 
         VALUES ($1, $2, $3, NOW(), NOW()) 
@@ -74,9 +77,9 @@ export class UserService implements IUserRepository {
       `;
 
       const values = [
-        userData.email,
-        userData.name,
-        userData.password, // In a real app, this would be hashed
+        validatedUser.email,
+        validatedUser.name,
+        validatedUser.password, // In a real app, this would be hashed
       ];
 
       const result = await this.pool.query(query, values);
@@ -87,7 +90,7 @@ export class UserService implements IUserRepository {
     }
   }
 
-  async update(id: number, userData: any): Promise<User | null> {
+  async update(id: number, userData: Partial<UserInput>): Promise<User | null> {
     try {
       // First check if the user exists
       const existingUser = await this.findById(id);
@@ -95,23 +98,37 @@ export class UserService implements IUserRepository {
         return null;
       }
 
+      // Build the SET part of the query dynamically
+      const updates: string[] = [];
+      const values: any[] = [];
+      let paramIndex = 1;
+
+      if (userData.email !== undefined) {
+        updates.push(`email = $${paramIndex++}`);
+        values.push(userData.email);
+      }
+
+      if (userData.name !== undefined) {
+        updates.push(`name = $${paramIndex++}`);
+        values.push(userData.name);
+      }
+
+      if (userData.password !== undefined) {
+        updates.push(`password = $${paramIndex++}`);
+        values.push(userData.password);
+      }
+
+      updates.push(`"updatedAt" = NOW()`);
+
+      // Add the id as the last parameter
+      values.push(id);
+
       const query = `
         UPDATE users 
-        SET 
-          email = $1, 
-          name = $2, 
-          password = $3, 
-          "updatedAt" = NOW() 
-        WHERE id = $4 
+        SET ${updates.join(', ')} 
+        WHERE id = $${paramIndex} 
         RETURNING *
       `;
-
-      const values = [
-        userData.email,
-        userData.name,
-        userData.password, // In a real app, this would be hashed
-        id,
-      ];
 
       const result = await this.pool.query(query, values);
       return this.mapToUser(result.rows[0]);

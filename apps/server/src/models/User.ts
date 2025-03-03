@@ -1,6 +1,18 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '@/config/database';
 import Rule from './Rule';
+import { z } from 'zod';
+
+// Define Zod schema for validation
+export const UserSchema = z.object({
+  id: z.number().optional(),
+  email: z.string().email(),
+  name: z.string().min(1),
+  password: z.string().min(6),
+});
+
+// Extract TypeScript type from Zod schema
+export type UserInput = z.infer<typeof UserSchema>;
 
 // Define the attributes interface
 interface UserAttributes {
@@ -28,6 +40,30 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
   // Static method to create a User instance from raw data
   static fromRawData(data: { id: number; email: string; name: string; password: string }): User {
     return User.build(data);
+  }
+
+  // Static method to create a validated User
+  static createValidated(input: unknown): User {
+    // Validate input with Zod
+    const validatedData = UserSchema.parse(input);
+
+    // Build the User instance
+    return User.build({
+      ...validatedData,
+      id: validatedData.id || 0, // Sequelize will replace this with auto-increment if it's a new record
+    });
+  }
+
+  // Convert to a plain object (useful for API responses)
+  toJSON(): UserAttributes {
+    return {
+      id: this.id,
+      email: this.email,
+      name: this.name,
+      password: this.password, // In a real app, you might want to exclude this
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }
 

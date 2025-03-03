@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { IRuleRepository } from '@/repositories/IRuleRepository';
-import Rule from '@/models/Rule';
+import Rule, { RuleInput } from '@/models/Rule';
 import { config } from '@/config/environment';
 
 export class RuleService implements IRuleRepository {
@@ -55,15 +55,11 @@ export class RuleService implements IRuleRepository {
   /**
    * Create a new rule
    */
-  async create(ruleData: {
-    priority: number;
-    urlFilter: string;
-    resourceTypes: string[];
-    requestMethods: string[];
-    actionType: string;
-    redirectUrl?: string;
-  }): Promise<Rule> {
+  async create(ruleData: RuleInput): Promise<Rule> {
     try {
+      // Create a validated Rule model instance
+      const validatedRule = Rule.createValidated(ruleData);
+
       const query = `
         INSERT INTO rules (
           priority, 
@@ -80,12 +76,12 @@ export class RuleService implements IRuleRepository {
       `;
 
       const values = [
-        ruleData.priority,
-        ruleData.urlFilter,
-        ruleData.resourceTypes,
-        ruleData.requestMethods,
-        ruleData.actionType,
-        ruleData.redirectUrl || null,
+        validatedRule.priority,
+        validatedRule.urlFilter,
+        validatedRule.resourceTypes,
+        validatedRule.requestMethods,
+        validatedRule.actionType,
+        validatedRule.redirectUrl,
       ];
 
       const result = await this.pool.query(query, values);
@@ -99,17 +95,7 @@ export class RuleService implements IRuleRepository {
   /**
    * Update a rule
    */
-  async update(
-    id: number,
-    ruleData: {
-      priority?: number;
-      urlFilter?: string;
-      resourceTypes?: string[];
-      requestMethods?: string[];
-      actionType?: string;
-      redirectUrl?: string;
-    }
-  ): Promise<Rule | null> {
+  async update(id: number, ruleData: Partial<RuleInput>): Promise<Rule | null> {
     try {
       // First check if the rule exists
       const existingRule = await this.findById(id);
