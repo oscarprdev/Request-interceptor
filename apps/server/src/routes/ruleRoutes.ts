@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { ruleController } from '../controllers/ruleController';
+import { ruleController } from '@/controllers/ruleController';
 import { body } from 'express-validator';
-import { validate } from '../middleware/validator';
+import { validate } from '@/middleware/validator';
 
 const router = Router();
 
@@ -19,6 +19,7 @@ const ruleValidation = [
 // Routes
 router.get('/', ruleController.getAllRules);
 router.get('/:id', ruleController.getRuleById);
+router.get('/user/:userId', ruleController.getRulesByUserId);
 router.post('/', ruleValidation, ruleController.createRule);
 router.put('/:id', ruleValidation, ruleController.updateRule);
 router.delete('/:id', ruleController.deleteRule);

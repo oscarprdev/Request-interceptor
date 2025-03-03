@@ -5,7 +5,7 @@ import { config } from './config/environment';
 import { corsMiddleware } from './middleware/cors';
 import { errorHandler } from './middleware/errorHandler';
 import routes from './routes';
-import { sequelize } from './config/database';
+import createTables from './scripts/initDb';
 
 // Initialize express app
 const app = express();
@@ -26,16 +26,10 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   try {
-    // Connect to database
-    await sequelize.authenticate();
-    console.log('Database connection established successfully.');
-    
-    // Sync database models (in development)
-    if (config.nodeEnv === 'development') {
-      await sequelize.sync({ alter: true });
-      console.log('Database models synchronized.');
-    }
-    
+    // Initialize database tables
+    await createTables();
+    console.log('Database tables initialized successfully.');
+
     // Start listening
     app.listen(port, () => {
       console.log(`Server running on port ${port} in ${config.nodeEnv} mode`);
@@ -49,8 +43,8 @@ const startServer = async () => {
 startServer();
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
   console.error('Unhandled Promise Rejection:', err);
   // Close server & exit process
   process.exit(1);
-}); 
+});

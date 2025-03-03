@@ -1,40 +1,54 @@
-import { ruleRepository } from '../repositories/ruleRepository';
+import { IRuleRepository } from '@/interfaces/repositories/IRuleRepository';
+import { RuleRepository } from '@/repositories/ruleRepository';
 
-export const ruleService = {
+export class RuleService {
+  private ruleRepository: IRuleRepository;
+
+  constructor(ruleRepository: IRuleRepository) {
+    this.ruleRepository = ruleRepository;
+  }
+
   /**
    * Get all rules
    */
   async getAllRules() {
-    return ruleRepository.findAll();
-  },
+    return this.ruleRepository.findAll();
+  }
 
   /**
    * Get rule by ID
    */
   async getRuleById(id: number) {
-    return ruleRepository.findById(id);
-  },
+    return this.ruleRepository.findById(id);
+  }
 
   /**
    * Create a new rule
    */
   async createRule(ruleData: any) {
-    return ruleRepository.create(ruleData);
-  },
+    return this.ruleRepository.create(ruleData);
+  }
 
   /**
    * Update a rule
    */
   async updateRule(id: number, ruleData: any) {
-    return ruleRepository.update(id, ruleData);
-  },
+    return this.ruleRepository.update(id, ruleData);
+  }
 
   /**
    * Delete a rule
    */
   async deleteRule(id: number) {
-    return ruleRepository.delete(id);
-  },
+    return this.ruleRepository.delete(id);
+  }
+
+  /**
+   * Get rules by user ID
+   */
+  async getRulesByUserId(userId: number) {
+    return this.ruleRepository.findByUserId(userId);
+  }
 
   /**
    * Seed default rule
@@ -62,6 +76,9 @@ export const ruleService = {
       },
     };
 
-    return ruleRepository.create(defaultRule);
-  },
-};
+    return this.ruleRepository.create(defaultRule);
+  }
+}
+
+// Export a singleton instance with dependency injection
+export const ruleService = new RuleService(new RuleRepository());

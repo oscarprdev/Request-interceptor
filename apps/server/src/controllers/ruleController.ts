@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { ruleService } from '../services/ruleService';
-import { asyncHandler } from '../utils/asyncHandler';
+import { ruleService } from '@/services/ruleService';
+import { asyncHandler } from '@/utils/asyncHandler';
 
 export const ruleController = {
   /**
@@ -12,7 +12,7 @@ export const ruleController = {
     res.status(200).json({
       success: true,
       count: rules.length,
-      data: rules
+      data: rules,
     });
   }),
 
@@ -23,17 +23,17 @@ export const ruleController = {
   getRuleById: asyncHandler(async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const rule = await ruleService.getRuleById(id);
-    
+
     if (!rule) {
       return res.status(404).json({
         success: false,
-        error: 'Rule not found'
+        error: 'Rule not found',
       });
     }
-    
+
     res.status(200).json({
       success: true,
-      data: rule
+      data: rule,
     });
   }),
 
@@ -43,10 +43,10 @@ export const ruleController = {
    */
   createRule: asyncHandler(async (req: Request, res: Response) => {
     const rule = await ruleService.createRule(req.body);
-    
+
     res.status(201).json({
       success: true,
-      data: rule
+      data: rule,
     });
   }),
 
@@ -57,17 +57,17 @@ export const ruleController = {
   updateRule: asyncHandler(async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const rule = await ruleService.updateRule(id, req.body);
-    
+
     if (!rule) {
       return res.status(404).json({
         success: false,
-        error: 'Rule not found'
+        error: 'Rule not found',
       });
     }
-    
+
     res.status(200).json({
       success: true,
-      data: rule
+      data: rule,
     });
   }),
 
@@ -78,17 +78,32 @@ export const ruleController = {
   deleteRule: asyncHandler(async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const success = await ruleService.deleteRule(id);
-    
+
     if (!success) {
       return res.status(404).json({
         success: false,
-        error: 'Rule not found'
+        error: 'Rule not found',
       });
     }
-    
+
     res.status(200).json({
       success: true,
-      data: {}
+      data: {},
+    });
+  }),
+
+  /**
+   * Get rules by user ID
+   * @route GET /api/v1/rules/user/:userId
+   */
+  getRulesByUserId: asyncHandler(async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.userId);
+    const rules = await ruleService.getRulesByUserId(userId);
+
+    res.status(200).json({
+      success: true,
+      count: rules.length,
+      data: rules,
     });
   }),
 
@@ -98,10 +113,10 @@ export const ruleController = {
    */
   seedDefaultRule: asyncHandler(async (req: Request, res: Response) => {
     const rule = await ruleService.seedDefaultRule();
-    
+
     res.status(201).json({
       success: true,
-      data: rule
+      data: rule,
     });
-  })
-}; 
+  }),
+};
