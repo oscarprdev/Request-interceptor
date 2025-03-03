@@ -18,8 +18,8 @@ const ruleValidation = [
 
 // Routes
 router.get('/', ruleController.getAllRules);
-router.get('/:id', ruleController.getRuleById);
 router.get('/user/:userId', ruleController.getRulesByUserId);
+router.get('/:id', ruleController.getRuleById);
 router.post('/', ruleValidation, ruleController.createRule);
 router.put('/:id', ruleValidation, ruleController.updateRule);
 router.delete('/:id', ruleController.deleteRule);

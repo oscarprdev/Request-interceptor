@@ -1,59 +1,57 @@
 import { IRuleRepository } from '@/interfaces/repositories/IRuleRepository';
+import { IRuleService } from '@/interfaces/services/IRuleService';
+import Rule from '@/models/Rule';
 import { RuleRepository } from '@/repositories/ruleRepository';
 
-export class RuleService {
-  private ruleRepository: IRuleRepository;
-
-  constructor(ruleRepository: IRuleRepository) {
-    this.ruleRepository = ruleRepository;
-  }
+export class RuleService implements IRuleService {
+  constructor(private readonly ruleRepository: IRuleRepository) {}
 
   /**
    * Get all rules
    */
-  async getAllRules() {
+  async getAllRules(): Promise<Rule[]> {
     return this.ruleRepository.findAll();
   }
 
   /**
    * Get rule by ID
    */
-  async getRuleById(id: number) {
+  async getRuleById(id: number): Promise<Rule | null> {
     return this.ruleRepository.findById(id);
   }
 
   /**
    * Create a new rule
    */
-  async createRule(ruleData: any) {
+  async createRule(ruleData: any): Promise<Rule> {
     return this.ruleRepository.create(ruleData);
   }
 
   /**
    * Update a rule
    */
-  async updateRule(id: number, ruleData: any) {
+  async updateRule(id: number, ruleData: any): Promise<Rule | null> {
     return this.ruleRepository.update(id, ruleData);
   }
 
   /**
    * Delete a rule
    */
-  async deleteRule(id: number) {
+  async deleteRule(id: number): Promise<boolean> {
     return this.ruleRepository.delete(id);
   }
 
   /**
    * Get rules by user ID
    */
-  async getRulesByUserId(userId: number) {
+  async getRulesByUserId(userId: number): Promise<Rule[]> {
     return this.ruleRepository.findByUserId(userId);
   }
 
   /**
    * Seed default rule
    */
-  async seedDefaultRule() {
+  async seedDefaultRule(): Promise<Rule> {
     const defaultRule = {
       priority: 1,
       condition: {

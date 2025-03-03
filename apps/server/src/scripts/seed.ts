@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 import { config } from '@/config/environment';
 import createTables from './initDb';
 import { ruleService } from '@/services/ruleService';
-import { userRepository } from '@/repositories/userRepository';
+import { userService } from '@/services/userService';
 
 const pool = new Pool({
   connectionString: config.databaseUrl,
@@ -15,7 +15,7 @@ const seedDatabase = async () => {
     console.log('Database tables created or verified');
 
     // Create a default user
-    const defaultUser = await userRepository.create({
+    const defaultUser = await userService.createUser({
       email: 'admin@example.com',
       name: 'Admin User',
       password: 'password123', // In a real app, this would be hashed
@@ -27,7 +27,7 @@ const seedDatabase = async () => {
     console.log('Default rule created:', rule.toJSON());
 
     // Assign rule to user
-    await userRepository.assignRuleToUser(defaultUser.id, rule.id);
+    await userService.assignRuleToUser(defaultUser.id, rule.id);
     console.log(`Rule ${rule.id} assigned to user ${defaultUser.id}`);
 
     console.log('Database seeded successfully!');

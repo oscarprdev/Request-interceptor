@@ -7,4 +7,6 @@ export interface IUserRepository {
   create(userData: any): Promise<User>;
   update(id: number, userData: any): Promise<User | null>;
   delete(id: number): Promise<boolean>;
+  assignRuleToUser(userId: number, ruleId: number): Promise<boolean>;
+  removeRuleFromUser(userId: number, ruleId: number): Promise<boolean>;
 }
