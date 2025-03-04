@@ -96,8 +96,6 @@ const handleSubmit = async () => {
 
 <template>
   <div class="add-rule-form">
-    <h2 class="add-rule-form__title">Add New Rule</h2>
-
     <form @submit.prevent="handleSubmit" class="add-rule-form__form">
       <UiInput
         v-model="formData.urlFilter"
@@ -158,11 +156,6 @@ const handleSubmit = async () => {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-
-  &__title {
-    margin-bottom: 24px;
-    color: var(--background-foreground);
-  }
 
   &__form {
     display: flex;

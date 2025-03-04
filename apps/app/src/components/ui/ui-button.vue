@@ -60,7 +60,7 @@ const handleClick = (event: MouseEvent) => {
     border: none;
 
     &:hover:not(.button--disabled) {
-      background-color: var(--accent-muted);
+      background-color: var(--accent-foreground-muted);
       color: var(--accent-foreground);
     }
   }
