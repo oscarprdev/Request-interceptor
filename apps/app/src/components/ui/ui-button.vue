@@ -17,9 +17,8 @@ const emit = defineEmits<{
 const buttonClass = computed(() => {
   const classes = ['ui-button'];
 
-  if (props.primary) classes.push('btn-primary');
-  else if (props.secondary) classes.push('btn-secondary');
-  else classes.push('btn-default');
+  if (props.secondary) classes.push('btn-secondary');
+  else classes.push('btn-primary');
 
   if (props.size === 'small') classes.push('btn-small');
   else if (props.size === 'large') classes.push('btn-large');
@@ -63,8 +62,8 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .btn-primary:hover:not(.btn-disabled) {
-  background-color: var(--accent-foreground);
-  color: var(--accent);
+  background-color: var(--accent-muted);
+  color: var(--accent-foreground);
 }
 
 .btn-secondary {
@@ -74,18 +73,8 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .btn-secondary:hover:not(.btn-disabled) {
-  background-color: var(--background-foreground);
-  color: var(--background);
-}
-
-.btn-default {
-  background-color: transparent;
-  color: var(--background-foreground);
-  border: 1px solid var(--border);
-}
-
-.btn-default:hover:not(.btn-disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--background-foreground-muted);
+  color: var(--text-light);
 }
 
 .btn-small {

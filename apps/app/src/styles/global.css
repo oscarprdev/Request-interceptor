@@ -1,10 +1,24 @@
 :root {
   --background: #181818;
   --background-foreground: #efefef;
+  --background-foreground-muted: #393939;
   --border: #363636;
 
-  --accent: #007bff;
-  --accent-foreground: #b9dafd;
+  --accent: #4e47e3;
+  --accent-muted: #d8d6ff;
+  --accent-foreground: #e8f2ff;
+
+  --destructive: #dc3545;
+  --destructive-foreground: #f8d7da;
+
+  --badge-1: #00b643;
+  --badge-1-foreground: #b9ffd3;
+
+  --badge-2: #ffc107;
+  --badge-2-foreground: #ffeaac;
+
+  --text-light: #ffffff;
+  --text-muted: #efefef;
 
   --header-height: 50px;
 }
@@ -26,6 +40,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  color: var(--text-light);
 }
 
 header {
@@ -38,40 +53,4 @@ main {
   width: 100%;
   height: calc(100% - var(--header-height));
   padding: 20px;
-}
-
-dialog {
-  display: block;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 90%;
-  max-height: 90%;
-  overflow: auto;
-}
-
-.btn-primary {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background-color: var(--accent-foreground);
-  color: var(--accent);
-}
-
-.btn-secondary {
-  background-color: var(--background);
-  color: var(--background-foreground);
-  border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-  background-color: var(--background-foreground);
-  color: var(--background);
 }

@@ -109,7 +109,7 @@ onUnmounted(() => {
 
 .ui-modal::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(1px);
 }
 
 .modal-small {

@@ -123,8 +123,8 @@ onMounted(() => {
 }
 
 .loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border: 4px solid var(--accent);
+  border-top: 4px solid var(--accent-foreground);
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -143,8 +143,8 @@ onMounted(() => {
 
 .error-container {
   padding: 20px;
-  background-color: #ffebee;
-  border: 1px solid #ffcdd2;
+  background-color: var(--destructive);
+  border: 1px solid var(--destructive-foreground);
   border-radius: 4px;
   margin-bottom: 20px;
 }
@@ -152,7 +152,7 @@ onMounted(() => {
 .empty-state {
   padding: 40px;
   text-align: center;
-  background-color: #f5f5f5;
+  background-color: var(--background);
   border-radius: 4px;
   font-style: italic;
 }
@@ -164,23 +164,23 @@ onMounted(() => {
 .rules-table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
 }
 
 .rules-table th,
 .rules-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border);
 }
 
 .rules-table th {
-  background-color: #f5f5f5;
+  background-color: var(--background);
   font-weight: 600;
 }
 
 .rules-table tr:hover {
-  background-color: #f9f9f9;
+  background-color: var(--background);
 }
 
 .url-cell {
