@@ -44,31 +44,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="rules-container">
-    <header class="rules-header">
+  <main class="rules__container">
+    <header class="rules__header">
       <h1>Rules Management</h1>
       <Button secondary :disabled="loading" @click="fetchRules">
         {{ loading ? 'Loading...' : 'Refresh' }}
       </Button>
     </header>
 
-    <div v-if="loading" class="loading-container">
-      <div class="loading-spinner"></div>
+    <div v-if="loading" class="rules__loading">
+      <div class="rules__loading-spinner"></div>
       <p>Loading rules...</p>
     </div>
 
-    <div v-else-if="error" class="error-container">
+    <div v-else-if="error" class="rules__error">
       <h3>Error</h3>
       <p>{{ error.message }}</p>
       <Button primary @click="fetchRules">Try Again</Button>
     </div>
 
-    <div v-else-if="!hasRules" class="empty-state">
+    <div v-else-if="!hasRules" class="rules__empty">
       <p>No rules found. Create your first rule!</p>
     </div>
 
-    <div v-else class="table-container">
-      <table class="rules-table">
+    <div v-else class="rules__table-container">
+      <table class="rules__table">
         <thead>
           <tr>
             <th>ID</th>
@@ -83,7 +83,7 @@ onMounted(() => {
         <tbody>
           <tr v-for="rule in rules" :key="rule.id">
             <td>{{ rule.id }}</td>
-            <td class="url-cell">{{ rule.urlFilter }}</td>
+            <td class="rules__table-url">{{ rule.urlFilter }}</td>
             <td>{{ rule.requestMethods.join(', ') }}</td>
             <td>{{ rule.resourceTypes.join(', ') }}</td>
             <td>{{ rule.priority }}</td>
@@ -100,36 +100,87 @@ onMounted(() => {
   </main>
 </template>
 
-<style scoped>
-.rules-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+<style scoped lang="scss">
+.rules {
+  &__container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-.rules-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
 
-.loading-spinner {
-  border: 4px solid var(--accent);
-  border-top: 4px solid var(--accent-foreground);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
+    &-spinner {
+      border: 4px solid var(--accent);
+      border-top: 4px solid var(--accent-foreground);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+  }
+
+  &__error {
+    padding: 20px;
+    background-color: var(--destructive);
+    border: 1px solid var(--destructive-foreground);
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  &__empty {
+    padding: 40px;
+    text-align: center;
+    background-color: var(--background);
+    border-radius: 4px;
+    font-style: italic;
+  }
+
+  &__table-container {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: var(--background);
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: var(--background);
+    }
+
+    &-url {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }
 
 @keyframes spin {
@@ -139,54 +190,5 @@ onMounted(() => {
   100% {
     transform: rotate(360deg);
   }
-}
-
-.error-container {
-  padding: 20px;
-  background-color: var(--destructive);
-  border: 1px solid var(--destructive-foreground);
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.empty-state {
-  padding: 40px;
-  text-align: center;
-  background-color: var(--background);
-  border-radius: 4px;
-  font-style: italic;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-.rules-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid var(--border);
-}
-
-.rules-table th,
-.rules-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-
-.rules-table th {
-  background-color: var(--background);
-  font-weight: 600;
-}
-
-.rules-table tr:hover {
-  background-color: var(--background);
-}
-
-.url-cell {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 </style>

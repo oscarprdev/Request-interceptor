@@ -21,6 +21,7 @@
   --text-muted: #efefef;
 
   --header-height: 50px;
+  --radius: 0.5em;
 }
 
 * {
