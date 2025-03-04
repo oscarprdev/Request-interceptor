@@ -3,7 +3,7 @@ import { onMounted, ref, computed } from 'vue';
 import { rulesService } from '../services/rules-service';
 import type { RuleApplication } from '../models/Rule';
 import ReviewRuleModal from '../components/review-rule-modal.vue';
-import Button from '../components/ui/button.vue';
+import Button from '../components/ui/ui-button.vue';
 
 const rules = ref<RuleApplication[]>([]);
 const loading = ref(true);

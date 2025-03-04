@@ -16,18 +16,18 @@ const emit = defineEmits<{
 
 const buttonClass = computed(() => {
   const classes = ['ui-button'];
-  
+
   if (props.primary) classes.push('btn-primary');
   else if (props.secondary) classes.push('btn-secondary');
   else classes.push('btn-default');
-  
+
   if (props.size === 'small') classes.push('btn-small');
   else if (props.size === 'large') classes.push('btn-large');
   else classes.push('btn-medium');
-  
+
   if (props.fullWidth) classes.push('btn-full-width');
   if (props.disabled) classes.push('btn-disabled');
-  
+
   return classes.join(' ');
 });
 
@@ -39,12 +39,7 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
-  <button
-    :class="buttonClass"
-    :type="type || 'button'"
-    :disabled="disabled"
-    @click="handleClick"
-  >
+  <button :class="buttonClass" :type="type || 'button'" :disabled="disabled" @click="handleClick">
     <slot></slot>
   </button>
 </template>
@@ -116,4 +111,4 @@ const handleClick = (event: MouseEvent) => {
   opacity: 0.6;
   cursor: not-allowed;
 }
-</style> 
+</style>
