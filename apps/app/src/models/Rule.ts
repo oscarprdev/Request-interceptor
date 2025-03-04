@@ -1,4 +1,4 @@
-export default interface Rule {
+export interface Rule {
   id: number;
   priority: number;
   urlFilter: string;
@@ -8,4 +8,4 @@ export default interface Rule {
   redirectUrl?: string | null;
   createdAt: Date;
   updatedAt: Date;
-} 
+}

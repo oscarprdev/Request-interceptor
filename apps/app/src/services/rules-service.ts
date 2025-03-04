@@ -1,57 +1,83 @@
-import { trpc } from '../trpc';
+import type { Rule } from '@/models/Rule';
+import { DefaultHttpService } from './http-service';
+import type { SafeResult } from './common';
+import type { CreateRuleInput } from './rules-service.types';
 
-// Helper function to check server connectivity
-const checkServerConnectivity = async (): Promise<boolean> => {
-  try {
-    const response = await fetch('http://localhost:8080/health');
-    return response.ok;
-  } catch (error) {
-    console.error('Server connectivity check failed:', error);
-    return false;
+interface RulesService {
+  getRules(): Promise<SafeResult<Rule[]>>;
+  getRuleById(id: number): Promise<SafeResult<Rule | null>>;
+  createRule(input: CreateRuleInput): Promise<SafeResult<Rule>>;
+}
+
+const BASE_URL = 'http://localhost:3001';
+const API_URL = '/api/v1/rules';
+
+export class DefaultRulesService extends DefaultHttpService implements RulesService {
+  private apiUrl: string = API_URL;
+
+  constructor() {
+    super(BASE_URL);
   }
-};
 
-export const rulesService = {
-  getRules: async () => {
-    try {
-      // Check server connectivity first
-      const isServerAvailable = await checkServerConnectivity();
-      if (!isServerAvailable) {
-        throw new Error('Server is not available. Please check if the server is running.');
-      }
-
-      const rules = await trpc.getRules.query();
-      return rules;
-    } catch (error) {
-      console.error('Error fetching rules:', error);
-      throw error;
+  async getRules(): Promise<SafeResult<Rule[]>> {
+    const isAvailable = await this.isServerAvailable();
+    if (!isAvailable) {
+      return [
+        { error: true, message: 'Server is not available. Please check if the server is running.' },
+        null,
+      ];
     }
-  },
 
-  getRuleById: async (id: number) => {
-    try {
-      const rule = await trpc.getRuleById.query({ id });
-      return rule;
-    } catch (error) {
-      console.error(`Error fetching rule with id ${id}:`, error);
-      throw error;
-    }
-  },
+    const [error, response] = await this.safeFetch<{ data: Rule[] }>({
+      url: this.apiUrl,
+    });
 
-  createRule: async (ruleData: {
-    priority: number;
-    urlFilter: string;
-    resourceTypes: string[];
-    requestMethods: string[];
-    actionType: string;
-    redirectUrl?: string | null;
-  }) => {
-    try {
-      const rule = await trpc.createRule.mutate(ruleData);
-      return rule;
-    } catch (error) {
-      console.error('Error creating rule:', error);
-      throw error;
-    }
-  },
-};
+    if (error) return [error, null];
+
+    return [null, response?.data || []];
+  }
+
+  async getRuleById(id: number): Promise<SafeResult<Rule | null>> {
+    const [error, response] = await this.safeFetch<{ data: Rule }>({
+      url: `${this.apiUrl}/${id}`,
+    });
+
+    if (error) return [error, null];
+
+    return [null, response?.data || null];
+  }
+
+  async createRule(input: CreateRuleInput): Promise<SafeResult<Rule>> {
+    const body = {
+      redirectUrl: 'data:application/json;base64,' + btoa(JSON.stringify(input.response)),
+      requestMethods: input.requestMethods,
+      urlFilter: input.urlFilter,
+      resourceTypes: ['xmlhttprequest'],
+      actionType: 'redirect',
+      priority: 1,
+    };
+
+    const [error, response] = await this.safeFetch<{ data: Rule }>({
+      url: this.apiUrl,
+      method: 'POST',
+      body,
+    });
+
+    if (error) return [error, null];
+
+    return [null, response?.data || null];
+  }
+
+  async deleteRule(id: number): Promise<SafeResult<boolean>> {
+    const [error, response] = await this.safeFetch<{ success: boolean }>({
+      url: `${this.apiUrl}/${id}`,
+      method: 'DELETE',
+    });
+
+    if (error) return [error, null];
+
+    return [null, response?.success || false];
+  }
+}
+
+export const rulesService = new DefaultRulesService();

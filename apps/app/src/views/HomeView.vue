@@ -15,7 +15,7 @@ const fetchRules = async () => {
     rules.value = await rulesService.getRules();
   } catch (err) {
     console.error('Failed to fetch rules:', err);
-    error.value = 'Failed to load rules. Please try again.';
+    error.value = err instanceof Error ? err.message : 'Failed to load rules. Please try again.';
   } finally {
     loading.value = false;
   }
