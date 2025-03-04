@@ -46,9 +46,6 @@ onMounted(() => {
   <main class="rules__container">
     <header class="rules__header">
       <h1>Rules Management</h1>
-      <Button secondary :disabled="loading" @click="fetchRules">
-        {{ loading ? 'Loading...' : 'Refresh' }}
-      </Button>
     </header>
 
     <div v-if="error" class="rules__error">
