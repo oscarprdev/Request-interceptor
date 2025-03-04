@@ -1,24 +1,41 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { rulesService } from '../services/rules-service';
-import type Rule from '../models/Rule';
+import type { RuleApplication } from '../models/Rule';
+import ReviewRuleModal from '../components/review-rule-modal.vue';
+import Button from '../components/ui/button.vue';
 
-const rules = ref<Rule[]>([]);
-const loading = ref(false);
-const error = ref<string | null>(null);
+const rules = ref<RuleApplication[]>([]);
+const loading = ref(true);
+const error = ref<{ error: boolean; message: string } | null>(null);
+const selectedRule = ref<RuleApplication | null>(null);
+const showModal = ref(false);
+
+const hasRules = computed(() => rules.value.length > 0);
 
 const fetchRules = async () => {
   loading.value = true;
   error.value = null;
 
-  try {
-    rules.value = await rulesService.getRules();
-  } catch (err) {
-    console.error('Failed to fetch rules:', err);
-    error.value = err instanceof Error ? err.message : 'Failed to load rules. Please try again.';
-  } finally {
-    loading.value = false;
+  const [err, data] = await rulesService.getRules();
+
+  if (err) {
+    error.value = err;
+  } else if (data) {
+    rules.value = data;
   }
+
+  loading.value = false;
+};
+
+const openReviewModal = (rule: RuleApplication) => {
+  selectedRule.value = rule;
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  selectedRule.value = null;
 };
 
 onMounted(() => {
@@ -27,61 +44,149 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
-    <h1>Rules Management</h1>
+  <main class="rules-container">
+    <header class="rules-header">
+      <h1>Rules Management</h1>
+      <Button secondary :disabled="loading" @click="fetchRules">
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </Button>
+    </header>
 
-    <div v-if="loading">Loading rules...</div>
-
-    <div v-else-if="error" class="error">
-      {{ error }}
-      <button @click="fetchRules">Try Again</button>
+    <div v-if="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading rules...</p>
     </div>
 
-    <div v-else-if="rules.length === 0" class="no-rules">
-      No rules found. Create your first rule!
+    <div v-else-if="error" class="error-container">
+      <h3>Error</h3>
+      <p>{{ error.message }}</p>
+      <Button primary @click="fetchRules">Try Again</Button>
     </div>
 
-    <div v-else class="rules-list">
-      <div v-for="rule in rules" :key="rule.id" class="rule-card">
-        <h3>{{ rule.urlFilter }}</h3>
-        <div class="rule-details">
-          <p><strong>Priority:</strong> {{ rule.priority }}</p>
-          <p><strong>Action Type:</strong> {{ rule.actionType }}</p>
-          <p><strong>Resource Types:</strong> {{ rule.resourceTypes.join(', ') }}</p>
-          <p><strong>Request Methods:</strong> {{ rule.requestMethods.join(', ') }}</p>
-          <p v-if="rule.redirectUrl"><strong>Redirect URL:</strong> {{ rule.redirectUrl }}</p>
-        </div>
-      </div>
+    <div v-else-if="!hasRules" class="empty-state">
+      <p>No rules found. Create your first rule!</p>
     </div>
+
+    <div v-else class="table-container">
+      <table class="rules-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>URL Filter</th>
+            <th>Methods</th>
+            <th>Resource Types</th>
+            <th>Priority</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="rule in rules" :key="rule.id">
+            <td>{{ rule.id }}</td>
+            <td class="url-cell">{{ rule.urlFilter }}</td>
+            <td>{{ rule.requestMethods.join(', ') }}</td>
+            <td>{{ rule.resourceTypes.join(', ') }}</td>
+            <td>{{ rule.priority }}</td>
+            <td>{{ new Date(rule.createdAt).toLocaleDateString() }}</td>
+            <td>
+              <Button secondary size="small" @click="openReviewModal(rule)">Review</Button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ReviewRuleModal v-if="showModal" :rule="selectedRule" @close="closeModal" />
   </main>
 </template>
 
 <style scoped>
-.rules-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+.rules-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.rule-card {
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-container {
+  padding: 20px;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-style: italic;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
+}
+
+.rules-table th,
+.rules-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.rules-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.rules-table tr:hover {
   background-color: #f9f9f9;
 }
 
-.rule-details {
-  margin-top: 10px;
-}
-
-.error {
-  color: red;
-  margin: 20px 0;
-}
-
-.no-rules {
-  margin: 20px 0;
-  font-style: italic;
+.url-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

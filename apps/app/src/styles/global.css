@@ -1,4 +1,11 @@
-::root {
+:root {
+  --background: #181818;
+  --background-foreground: #efefef;
+  --border: #363636;
+
+  --accent: #007bff;
+  --accent-foreground: #b9dafd;
+
   --header-height: 50px;
 }
 
@@ -31,4 +38,40 @@ main {
   width: 100%;
   height: calc(100% - var(--header-height));
   padding: 20px;
+}
+
+dialog {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-foreground);
+  color: var(--accent);
+}
+
+.btn-secondary {
+  background-color: var(--background);
+  color: var(--background-foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--background-foreground);
+  color: var(--background);
 }

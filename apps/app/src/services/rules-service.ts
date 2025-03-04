@@ -1,4 +1,4 @@
-import type { Rule } from '@/models/Rule';
+import type { Rule, RuleApplication } from '@/models/Rule';
 import { DefaultHttpService } from './http-service';
 import type { SafeResult } from './common';
 import type { CreateRuleInput } from './rules-service.types';
@@ -9,7 +9,7 @@ interface RulesService {
   createRule(input: CreateRuleInput): Promise<SafeResult<Rule>>;
 }
 
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'http://localhost:8080';
 const API_URL = '/api/v1/rules';
 
 export class DefaultRulesService extends DefaultHttpService implements RulesService {
@@ -19,7 +19,7 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     super(BASE_URL);
   }
 
-  async getRules(): Promise<SafeResult<Rule[]>> {
+  async getRules(): Promise<SafeResult<RuleApplication[]>> {
     const isAvailable = await this.isServerAvailable();
     if (!isAvailable) {
       return [
@@ -34,20 +34,24 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
 
     if (error) return [error, null];
 
-    return [null, response?.data || []];
+    const rules = response?.data?.map(rule => this.mapRuleToApplication(rule)) || [];
+
+    return [null, rules];
   }
 
-  async getRuleById(id: number): Promise<SafeResult<Rule | null>> {
+  async getRuleById(id: number): Promise<SafeResult<RuleApplication | null>> {
     const [error, response] = await this.safeFetch<{ data: Rule }>({
       url: `${this.apiUrl}/${id}`,
     });
 
     if (error) return [error, null];
 
-    return [null, response?.data || null];
+    const rule = response?.data ? this.mapRuleToApplication(response.data) : null;
+
+    return [null, rule];
   }
 
-  async createRule(input: CreateRuleInput): Promise<SafeResult<Rule>> {
+  async createRule(input: CreateRuleInput): Promise<SafeResult<RuleApplication>> {
     const body = {
       redirectUrl: 'data:application/json;base64,' + btoa(JSON.stringify(input.response)),
       requestMethods: input.requestMethods,
@@ -65,7 +69,9 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
 
     if (error) return [error, null];
 
-    return [null, response?.data || null];
+    const rule = response?.data ? this.mapRuleToApplication(response.data) : null;
+
+    return [null, rule];
   }
 
   async deleteRule(id: number): Promise<SafeResult<boolean>> {
@@ -77,6 +83,22 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     if (error) return [error, null];
 
     return [null, response?.success || false];
+  }
+
+  private mapRuleToApplication(rule: Rule): RuleApplication {
+    const response = JSON.parse(atob(rule.redirectUrl?.split(',')[1] || '{}'));
+
+    return {
+      id: rule.id,
+      priority: rule.priority,
+      urlFilter: rule.urlFilter,
+      resourceTypes: rule.resourceTypes,
+      requestMethods: rule.requestMethods,
+      actionType: rule.actionType,
+      response,
+      createdAt: rule.createdAt,
+      updatedAt: rule.updatedAt,
+    };
   }
 }
 

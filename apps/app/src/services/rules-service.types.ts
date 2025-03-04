@@ -1,5 +1,5 @@
 export interface CreateRuleInput {
   urlFilter: string;
   requestMethods: string[];
-  response: unknown;
+  response: Record<string, unknown>;
 }
