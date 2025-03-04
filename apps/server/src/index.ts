@@ -4,8 +4,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { appRouter } from './trpc';
 import { config } from './config/environment';
 import userRoutes from './routes/userRoutes';
 import ruleRoutes from './routes/ruleRoutes';
@@ -19,7 +17,7 @@ const port = config.port;
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Add your Vue app's URL
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -33,16 +31,6 @@ app.use(express.json()); // Parse JSON bodies
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/rules', ruleRoutes);
 
-// tRPC API route
-app.use(
-  '/trpc',
-  createExpressMiddleware({
-    router: appRouter,
-    createContext: () => ({}),
-  })
-);
-
-// Add a simple health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
@@ -68,12 +56,5 @@ const startServer = async () => {
 };
 
 startServer();
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', err => {
-  console.error('Unhandled Promise Rejection:', err);
-  // Close server & exit process
-  process.exit(1);
-});
 
 export default app;

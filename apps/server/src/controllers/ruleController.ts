@@ -15,7 +15,6 @@ export class RuleController {
       const rules = await this.ruleRepository.findAll();
       res.status(200).json({
         success: true,
-        count: rules.length,
         data: rules,
       });
     } catch (error) {
