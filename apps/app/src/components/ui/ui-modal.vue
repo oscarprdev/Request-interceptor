@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue';
-import Button from './ui-button.vue';
 
 const props = defineProps<{
   title: string;
@@ -89,10 +88,8 @@ onUnmounted(() => {
         <slot></slot>
       </div>
 
-      <div class="modal__footer">
-        <slot name="footer">
-          <Button secondary @click="handleClose">Close</Button>
-        </slot>
+      <div v-if="$slots.footer" class="modal__footer">
+        <slot name="footer"></slot>
       </div>
     </div>
   </dialog>

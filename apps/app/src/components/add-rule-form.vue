@@ -2,14 +2,16 @@
 import { ref, reactive } from 'vue';
 import { z } from 'zod';
 import { rulesService } from '../services/rules-service';
-import Button from './ui/ui-button.vue';
 import UiInput from './ui/ui-input.vue';
 import UiTextarea from './ui/ui-textarea.vue';
 
 const emit = defineEmits<{
   success: [ruleId: number];
   error: [error: string];
+  submitting: [isSubmitting: boolean];
 }>();
+
+const formRef = ref<HTMLFormElement | null>(null);
 
 const ruleSchema = z.object({
   urlFilter: z.string().min(1, 'URL filter is required'),
@@ -57,6 +59,17 @@ const validateField = (field: keyof RuleFormData) => {
   }
 };
 
+const validateResponseJson = () => {
+  try {
+    JSON.parse(formData.response);
+    delete errors.response;
+    return true;
+  } catch (error: unknown) {
+    errors.response = error instanceof Error ? error.message : 'Invalid JSON format';
+    return false;
+  }
+};
+
 const validateForm = () => {
   let isValid = true;
 
@@ -67,13 +80,20 @@ const validateForm = () => {
     }
   });
 
+  if (!validateResponseJson()) {
+    isValid = false;
+  }
+
   return isValid;
 };
 
-const handleSubmit = async () => {
-  if (!validateForm()) return;
+const submitForm = async () => {
+  if (!validateForm()) {
+    return false;
+  }
 
   isSubmitting.value = true;
+  emit('submitting', true);
   submitError.value = '';
 
   const responseObj = JSON.parse(formData.response);
@@ -85,18 +105,25 @@ const handleSubmit = async () => {
   });
 
   if (error) {
+    submitError.value = error.message;
     emit('error', error.message);
+    return false;
   } else if (result) {
     emit('success', result.id);
+    return true;
   }
 
   isSubmitting.value = false;
+  emit('submitting', false);
 };
+
+// Expose the submitForm method to the parent component
+defineExpose({ submitForm });
 </script>
 
 <template>
   <div class="add-rule-form">
-    <form @submit.prevent="handleSubmit" class="add-rule-form__form">
+    <form ref="formRef" @submit.prevent="submitForm" class="add-rule-form__form">
       <UiInput
         v-model="formData.urlFilter"
         label="URL Filter"
@@ -138,15 +165,9 @@ const handleSubmit = async () => {
         :error="errors.response"
         :rows="8"
         help-text="Enter a valid JSON object that will be returned as the response"
-        @blur="validateField('response')" />
+        @blur="validateResponseJson" />
 
       <p v-if="submitError" class="add-rule-form__submit-error">{{ submitError }}</p>
-
-      <div class="add-rule-form__actions">
-        <Button type="submit" primary :disabled="isSubmitting">
-          {{ isSubmitting ? 'Saving...' : 'Save Rule' }}
-        </Button>
-      </div>
     </form>
   </div>
 </template>
@@ -218,13 +239,6 @@ const handleSubmit = async () => {
     background-color: var(--destructive);
     color: white;
     border-radius: var(--radius);
-  }
-
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
   }
 }
 </style>

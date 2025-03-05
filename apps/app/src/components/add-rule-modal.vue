@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Modal from './ui/ui-modal.vue';
 import AddRuleForm from './add-rule-form.vue';
+import Button from './ui/ui-button.vue';
 
 defineProps<{
   isOpen: boolean;
@@ -12,7 +13,9 @@ const emit = defineEmits<{
   success: [ruleId: number];
 }>();
 
+const formRef = ref<InstanceType<typeof AddRuleForm> | null>(null);
 const formError = ref('');
+const isSubmitting = ref(false);
 
 const handleSuccess = (ruleId: number) => {
   emit('success', ruleId);
@@ -23,9 +26,19 @@ const handleError = (error: string) => {
   formError.value = error;
 };
 
+const handleSubmitting = (submitting: boolean) => {
+  isSubmitting.value = submitting;
+};
+
 const handleClose = () => {
   formError.value = '';
   emit('close');
+};
+
+const handleSubmit = async () => {
+  if (formRef.value) {
+    await formRef.value.submitForm();
+  }
 };
 </script>
 
@@ -35,7 +48,20 @@ const handleClose = () => {
       <p>{{ formError }}</p>
     </div>
 
-    <AddRuleForm @success="handleSuccess" @error="handleError" />
+    <AddRuleForm
+      ref="formRef"
+      @success="handleSuccess"
+      @error="handleError"
+      @submitting="handleSubmitting" />
+
+    <template #footer>
+      <div class="add-rule-modal__footer">
+        <Button secondary @click="handleClose" :disabled="isSubmitting">Cancel</Button>
+        <Button primary @click="handleSubmit" :disabled="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Save Rule' }}
+        </Button>
+      </div>
+    </template>
   </Modal>
 </template>
 
@@ -47,6 +73,12 @@ const handleClose = () => {
     background-color: var(--destructive);
     color: white;
     border-radius: var(--radius);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
   }
 }
 </style>
