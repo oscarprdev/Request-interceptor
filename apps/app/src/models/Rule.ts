@@ -6,8 +6,8 @@ export interface Rule {
   requestMethods: string[];
   actionType: string;
   redirectUrl?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RuleApplication {
@@ -18,6 +18,6 @@ export interface RuleApplication {
   requestMethods: string[];
   actionType: string;
   response: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

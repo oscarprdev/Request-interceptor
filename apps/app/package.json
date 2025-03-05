@@ -20,7 +20,8 @@
     "@tanstack/vue-query": "^5.28.4",
     "@trpc/client": "^10.45.0",
     "@trpc/server": "^10.45.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "date-fns": "^2.30.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.1",

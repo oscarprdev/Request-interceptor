@@ -2,11 +2,12 @@ import type { Rule, RuleApplication } from '@/models/Rule';
 import { DefaultHttpService } from './http-service';
 import type { SafeResult } from './common';
 import type { CreateRuleInput } from './rules-service.types';
+import { formatPgDate } from '@/utils/dates';
 
 interface RulesService {
-  getRules(): Promise<SafeResult<Rule[]>>;
-  getRuleById(id: number): Promise<SafeResult<Rule | null>>;
-  createRule(input: CreateRuleInput): Promise<SafeResult<Rule>>;
+  getRules(): Promise<SafeResult<RuleApplication[]>>;
+  getRuleById(id: number): Promise<SafeResult<RuleApplication | null>>;
+  createRule(input: CreateRuleInput): Promise<SafeResult<RuleApplication>>;
 }
 
 const BASE_URL = 'http://localhost:8080';
@@ -96,8 +97,8 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
       requestMethods: rule.requestMethods,
       actionType: rule.actionType,
       response,
-      createdAt: rule.createdAt,
-      updatedAt: rule.updatedAt,
+      createdAt: formatPgDate(rule.createdAt),
+      updatedAt: formatPgDate(rule.updatedAt),
     };
   }
 }

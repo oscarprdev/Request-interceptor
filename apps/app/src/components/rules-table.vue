@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RuleApplication } from '../models/Rule';
 import Button from './ui/ui-button.vue';
+import UiBadge from './ui/ui-badge.vue';
 
 defineProps<{
   rules: RuleApplication[];
@@ -13,6 +14,19 @@ const emit = defineEmits<{
 
 const handleReview = (rule: RuleApplication) => {
   emit('review', rule);
+};
+
+const getMethodVariant = (method: string) => {
+  switch (method) {
+    case 'GET':
+      return 'primary';
+    case 'PUT':
+      return 'secondary';
+    case 'DELETE':
+      return 'destructive';
+    default:
+      return 'default';
+  }
 };
 </script>
 
@@ -37,17 +51,23 @@ const handleReview = (rule: RuleApplication) => {
             <th>Resource Types</th>
             <th>Priority</th>
             <th>Created</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="rules-table__body">
           <tr v-for="rule in rules" :key="rule.id">
             <td>{{ rule.id }}</td>
-            <td class="rules-table__url">{{ rule.urlFilter }}</td>
-            <td>{{ rule.requestMethods.join(', ') }}</td>
+            <td class="rules-table__body--url">{{ rule.urlFilter }}</td>
+            <td class="rules-table__body--methods">
+              <UiBadge
+                v-for="method in rule.requestMethods"
+                :key="method"
+                :label="method"
+                :variant="getMethodVariant(method)" />
+            </td>
             <td>{{ rule.resourceTypes.join(', ') }}</td>
             <td>{{ rule.priority }}</td>
-            <td>{{ new Date(rule.createdAt).toLocaleDateString() }}</td>
+            <td>{{ rule.createdAt }}</td>
             <td>
               <Button secondary size="small" @click="handleReview(rule)">Review</Button>
             </td>
@@ -95,30 +115,50 @@ const handleReview = (rule: RuleApplication) => {
   &__table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid var(--border);
+    border: none;
 
     th,
     td {
       padding: 12px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
     }
 
     th {
       background-color: var(--background);
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--text-light);
+      border-bottom: 2px solid var(--border);
     }
 
-    tr:hover {
-      background-color: var(--background);
+    td {
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--background-foreground-muted);
+      font-weight: 400;
     }
-  }
 
-  &__url {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    tr {
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--background-foreground-muted);
+      }
+    }
+
+    &__body {
+      &--url {
+        max-width: 250px;
+        width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &--methods {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+    }
   }
 }
 
