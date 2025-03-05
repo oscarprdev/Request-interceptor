@@ -2,9 +2,9 @@
 import { ref, reactive } from 'vue';
 import { z } from 'zod';
 import { rulesService } from '../services/rules-service';
-import UiInput from './ui/ui-input.vue';
-import UiTextarea from './ui/ui-textarea.vue';
-
+import Input from './ui/ui-input.vue';
+import Textarea from './ui/ui-textarea.vue';
+import Button from './ui/ui-button.vue';
 const emit = defineEmits<{
   success: [ruleId: number];
   error: [error: string];
@@ -70,6 +70,16 @@ const validateResponseJson = () => {
   }
 };
 
+const formatJson = () => {
+  try {
+    const parsedJson = JSON.parse(formData.response);
+    formData.response = JSON.stringify(parsedJson, null, 2);
+    delete errors.response;
+  } catch (error: unknown) {
+    errors.response = error instanceof Error ? error.message : 'Invalid JSON format';
+  }
+};
+
 const validateForm = () => {
   let isValid = true;
 
@@ -117,14 +127,13 @@ const submitForm = async () => {
   emit('submitting', false);
 };
 
-// Expose the submitForm method to the parent component
 defineExpose({ submitForm });
 </script>
 
 <template>
   <div class="add-rule-form">
     <form ref="formRef" @submit.prevent="submitForm" class="add-rule-form__form">
-      <UiInput
+      <Input
         v-model="formData.urlFilter"
         label="URL Filter"
         name="urlFilter"
@@ -156,16 +165,27 @@ defineExpose({ submitForm });
         <p v-if="errors.requestMethods" class="add-rule-form__error">{{ errors.requestMethods }}</p>
       </div>
 
-      <UiTextarea
-        v-model="formData.response"
-        label="Response (JSON)"
-        name="response"
-        placeholder="{}"
-        required
-        :error="errors.response"
-        :rows="8"
-        help-text="Enter a valid JSON object that will be returned as the response"
-        @blur="validateResponseJson" />
+      <div class="add-rule-form__field add-rule-form__textarea">
+        <Button
+          class="add-rule-form__textarea--format-btn"
+          secondary
+          size="small"
+          type="button"
+          @click="formatJson">
+          Format
+        </Button>
+
+        <Textarea
+          v-model="formData.response"
+          label="Response (JSON)"
+          name="response"
+          placeholder="{}"
+          required
+          :error="errors.response"
+          :rows="8"
+          help-text="Enter a valid JSON object that will be returned as the response"
+          @blur="validateResponseJson" />
+      </div>
 
       <p v-if="submitError" class="add-rule-form__submit-error">{{ submitError }}</p>
     </form>
@@ -193,6 +213,20 @@ defineExpose({ submitForm });
     margin-bottom: 6px;
     font-weight: 500;
     color: var(--background-foreground);
+  }
+
+  &__textarea {
+    position: relative;
+
+    &--format-btn {
+      position: absolute;
+      top: 2.5em;
+      right: 0.5em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
   }
 
   &__required {
