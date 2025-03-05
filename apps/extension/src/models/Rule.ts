@@ -27,5 +27,17 @@ export interface Rule {
   };
 }
 
+export interface ServerRule {
+  id: number;
+  priority: number;
+  urlFilter: string;
+  resourceTypes: string[];
+  requestMethods: string[];
+  actionType: string;
+  redirectUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export type RuleCreateDTO = Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>;
 export type RuleUpdateDTO = Partial<Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>>;

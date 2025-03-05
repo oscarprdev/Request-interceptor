@@ -1,4 +1,4 @@
-import { Rule, RuleCreateDTO, RuleUpdateDTO } from '../models/Rule';
+import { Rule, RuleCreateDTO, RuleUpdateDTO, ServerRule } from '../models/Rule';
 
 export class RuleService {
   private rules: Rule[] = [];
@@ -13,12 +13,16 @@ export class RuleService {
   }
 
   public async initialize(): Promise<void> {
+    const rules = await this.fetchRules();
+    await this.saveRules(rules);
+    await this.updateDynamicRules();
     await this.loadRules();
+
     console.log('RuleService initialized with', this.rules.length, 'rules');
   }
 
   public getRules(): Rule[] {
-    return [...this.rules];
+    return this.rules;
   }
 
   public getRule(id: number): Rule | undefined {
@@ -34,7 +38,7 @@ export class RuleService {
     };
 
     this.rules.push(rule);
-    await this.saveRules();
+    await this.saveRules(this.rules);
     await this.updateDynamicRules();
 
     return rule;
@@ -52,7 +56,7 @@ export class RuleService {
     };
 
     this.rules[index] = updatedRule;
-    await this.saveRules();
+    await this.saveRules(this.rules);
     await this.updateDynamicRules();
 
     return updatedRule;
@@ -66,10 +70,22 @@ export class RuleService {
       return false;
     }
 
-    await this.saveRules();
+    await this.saveRules(this.rules);
     await this.updateDynamicRules();
 
     return true;
+  }
+
+  private async fetchRules(): Promise<Rule[]> {
+    try {
+      const rulesResponse = await fetch('http://localhost:8080/api/v1/rules');
+      const rules = await rulesResponse.json();
+
+      return rules.data.map(this.mapServerRuleToExtensionRule);
+    } catch (error) {
+      console.error('Error fetching rules from server:', error);
+      return [];
+    }
   }
 
   private async updateDynamicRules(): Promise<void> {
@@ -96,9 +112,9 @@ export class RuleService {
     }
   }
 
-  private async saveRules(): Promise<void> {
+  private async saveRules(rules: Rule[]): Promise<void> {
     try {
-      await chrome.storage.local.set({ [this.storageKey]: this.rules });
+      await chrome.storage.local.set({ [this.storageKey]: rules });
     } catch (error) {
       console.error('Error saving rules to storage:', error);
     }
@@ -106,6 +122,26 @@ export class RuleService {
 
   private getNextId(): number {
     return this.rules.length > 0 ? Math.max(...this.rules.map(rule => rule.id)) + 1 : 1;
+  }
+
+  private mapServerRuleToExtensionRule(rule: ServerRule): Rule {
+    return {
+      id: rule.id,
+      priority: rule.priority,
+      condition: {
+        urlFilter: rule.urlFilter,
+        resourceTypes: [...rule.resourceTypes] as chrome.declarativeNetRequest.ResourceType[],
+        requestMethods: [...rule.requestMethods].map(method =>
+          method.toLowerCase()
+        ) as chrome.declarativeNetRequest.RequestMethod[],
+      },
+      action: {
+        type: 'redirect' as chrome.declarativeNetRequest.RuleActionType,
+        redirect: {
+          url: rule.redirectUrl ?? undefined,
+        },
+      },
+    };
   }
 }
 

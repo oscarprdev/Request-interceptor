@@ -6,34 +6,10 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // Initialize the rule service
   await ruleService.initialize();
+  const currentRules = ruleService.getRules();
+  const chromeRules = await chrome.declarativeNetRequest.getDynamicRules();
 
-  // Add a default rule if no rules exist
-  const rules = ruleService.getRules();
-  if (rules.length === 0) {
-    await ruleService.createRule({
-      priority: 1,
-      condition: {
-        urlFilter: 'localhost:3000/example',
-        resourceTypes: ['xmlhttprequest'],
-        requestMethods: ['get', 'post', 'delete'],
-      },
-      action: {
-        type: 'redirect',
-        redirect: {
-          url:
-            'data:application/json;base64,' +
-            btoa(
-              JSON.stringify({
-                message:
-                  'This is a mocked response for both GET and POST requests from the extension',
-              })
-            ),
-        },
-      },
-    });
-  }
-
-  console.log('Extension initialization complete');
+  console.log('Extension initialization complete', currentRules, chromeRules);
 });
 
 // For debugging: Log when a rule is matched
