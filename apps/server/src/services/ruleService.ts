@@ -237,6 +237,8 @@ export class RuleService implements IRuleRepository {
       requestMethods: row.requestMethods,
       actionType: row.actionType,
       redirectUrl: row.redirectUrl,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
     });
   }
 }

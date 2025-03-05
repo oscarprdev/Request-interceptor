@@ -25,8 +25,8 @@ interface RuleAttributes {
   requestMethods: string[];
   actionType: string;
   redirectUrl?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Define which attributes are optional for creation
@@ -42,8 +42,8 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public requestMethods!: string[];
   public actionType!: string;
   public redirectUrl!: string | null;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly createdAt!: string;
+  public readonly updatedAt!: string;
 
   // Static method to create a Rule instance from raw data
   static fromRawData(data: {
@@ -54,6 +54,8 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
     requestMethods: string[];
     actionType: string;
     redirectUrl?: string | null;
+    createdAt: string;
+    updatedAt: string;
   }): Rule {
     return Rule.build(data);
   }
