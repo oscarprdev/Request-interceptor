@@ -54,11 +54,11 @@ const getMethodVariant = (method: string) => {
             <th></th>
           </tr>
         </thead>
-        <tbody class="rules-table__body">
+        <tbody>
           <tr v-for="rule in rules" :key="rule.id">
             <td>{{ rule.id }}</td>
-            <td class="rules-table__body--url">{{ rule.urlFilter }}</td>
-            <td class="rules-table__body--methods">
+            <td class="row-url">{{ rule.urlFilter }}</td>
+            <td>
               <UiBadge
                 v-for="method in rule.requestMethods"
                 :key="method"
@@ -142,21 +142,15 @@ const getMethodVariant = (method: string) => {
       &:hover {
         background-color: var(--background-foreground-muted);
       }
-    }
 
-    &__body {
-      &--url {
-        max-width: 250px;
-        width: 250px;
+      .row-url {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      &--methods {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+      span {
+        margin: 0 1px;
       }
     }
   }
