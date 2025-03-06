@@ -1,33 +1,31 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import {
+  BUTTON_VARIANTS,
+  BUTTON_SIZES,
+  BUTTON_TYPES,
+  type ButtonProps,
+  type ButtonEmits,
+} from './ui-button.types';
 
-const props = defineProps<{
-  primary?: boolean;
-  secondary?: boolean;
-  disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
-  size?: 'small' | 'medium' | 'large';
-  fullWidth?: boolean;
-}>();
+const props = defineProps<ButtonProps>();
+const emit = defineEmits<ButtonEmits>();
 
-const emit = defineEmits<{
-  click: [event: MouseEvent];
-}>();
+const buttonVariants = computed(() => {
+  if (props.variant === BUTTON_VARIANTS.secondary) return 'button--secondary';
+  else return 'button--primary';
+});
 
-const buttonClass = computed(() => {
-  const classes = ['button'];
+const buttonSizes = computed(() => {
+  if (props.size === BUTTON_SIZES.small) return 'button--small';
+  else if (props.size === BUTTON_SIZES.large) return 'button--large';
+  else return 'button--medium';
+});
 
-  if (props.secondary) classes.push('button--secondary');
-  else classes.push('button--primary');
-
-  if (props.size === 'small') classes.push('button--small');
-  else if (props.size === 'large') classes.push('button--large');
-  else classes.push('button--medium');
-
-  if (props.fullWidth) classes.push('button--full-width');
-  if (props.disabled) classes.push('button--disabled');
-
-  return classes.join(' ');
+const buttonTypes = computed(() => {
+  if (props.type === BUTTON_TYPES.submit) return 'button--submit';
+  else if (props.type === BUTTON_TYPES.reset) return 'button--reset';
+  else return 'button--button';
 });
 
 const handleClick = (event: MouseEvent) => {
@@ -38,8 +36,12 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
-  <button :class="buttonClass" :type="type || 'button'" :disabled="disabled" @click="handleClick">
-    <slot></slot>
+  <button
+    :class="['button', buttonVariants, buttonSizes, buttonTypes]"
+    :type="type || 'button'"
+    :disabled="disabled"
+    @click="handleClick">
+    <slot />
   </button>
 </template>
 

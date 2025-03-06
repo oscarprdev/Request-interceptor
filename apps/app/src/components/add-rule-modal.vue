@@ -56,8 +56,8 @@ const handleSubmit = async () => {
 
     <template #footer>
       <div class="add-rule-modal__footer">
-        <Button secondary @click="handleClose" :disabled="isSubmitting">Cancel</Button>
-        <Button primary @click="handleSubmit" :disabled="isSubmitting">
+        <Button variant="secondary" @click="handleClose" :disabled="isSubmitting">Cancel</Button>
+        <Button variant="primary" @click="handleSubmit" :disabled="isSubmitting">
           {{ isSubmitting ? 'Saving...' : 'Save Rule' }}
         </Button>
       </div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { RuleApplication } from '../models/Rule';
 import Button from './ui/ui-button.vue';
-import UiBadge from './ui/ui-badge.vue';
+import Badge from './ui/ui-badge.vue';
+import Switch from './ui/ui-switch.vue';
 
 defineProps<{
   rules: RuleApplication[];
@@ -51,6 +52,7 @@ const getMethodVariant = (method: string) => {
             <th>Resource Types</th>
             <th>Priority</th>
             <th>Created</th>
+            <th>Enabled</th>
             <th></th>
           </tr>
         </thead>
@@ -59,7 +61,7 @@ const getMethodVariant = (method: string) => {
             <td>{{ rule.id }}</td>
             <td class="row-url">{{ rule.urlFilter }}</td>
             <td>
-              <UiBadge
+              <Badge
                 v-for="method in rule.requestMethods"
                 :key="method"
                 :label="method"
@@ -69,7 +71,10 @@ const getMethodVariant = (method: string) => {
             <td>{{ rule.priority }}</td>
             <td>{{ rule.createdAt }}</td>
             <td>
-              <Button secondary size="small" @click="handleReview(rule)">Review</Button>
+              <Switch v-model="rule.isEnabled" />
+            </td>
+            <td>
+              <Button variant="primary" size="small" @click="handleReview(rule)">Review</Button>
             </td>
           </tr>
         </tbody>

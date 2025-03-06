@@ -20,6 +20,8 @@ const fetchRules = async () => {
 
   const [err, data] = await rulesService.getRules();
 
+  console.log(data);
+
   if (err) {
     error.value = err;
   } else if (data) {

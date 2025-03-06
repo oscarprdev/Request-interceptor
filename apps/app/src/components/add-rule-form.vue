@@ -174,7 +174,7 @@ defineExpose({ submitForm });
       <div class="add-rule-form__field add-rule-form__textarea">
         <Button
           class="add-rule-form__textarea--format-btn"
-          secondary
+          variant="secondary"
           size="small"
           type="button"
           @click="formatJson">

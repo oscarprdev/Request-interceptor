@@ -60,6 +60,7 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
       resourceTypes: ['xmlhttprequest'],
       actionType: 'redirect',
       priority: 1,
+      isEnabled: false,
     };
 
     const [error, response] = await this.safeFetch<{ data: Rule }>({
@@ -96,6 +97,7 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
       resourceTypes: rule.resourceTypes,
       requestMethods: rule.requestMethods,
       actionType: rule.actionType,
+      isEnabled: rule.isEnabled,
       response,
       createdAt: formatPgDate(rule.createdAt),
       updatedAt: formatPgDate(rule.updatedAt),

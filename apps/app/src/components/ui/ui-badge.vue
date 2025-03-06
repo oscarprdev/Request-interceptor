@@ -1,30 +1,24 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { BADGE_VARIANTS, type BadgeProps } from './ui-badge.types';
 
-const props = defineProps<{
-  variant?: 'default' | 'primary' | 'secondary' | 'destructive';
-  label: string;
-}>();
+const props = defineProps<BadgeProps>();
 
-const badgeClass = computed(() => {
-  const classes = ['badge'];
-
-  if (props.variant === 'primary') {
-    classes.push('badge--primary');
-  } else if (props.variant === 'secondary') {
-    classes.push('badge--secondary');
-  } else if (props.variant === 'destructive') {
-    classes.push('badge--destructive');
+const badgeVariants = computed(() => {
+  if (props.variant === BADGE_VARIANTS.primary) {
+    return 'badge--primary';
+  } else if (props.variant === BADGE_VARIANTS.secondary) {
+    return 'badge--secondary';
+  } else if (props.variant === BADGE_VARIANTS.destructive) {
+    return 'badge--destructive';
   } else {
-    classes.push('badge--default');
+    return 'badge--default';
   }
-
-  return classes.join(' ');
 });
 </script>
 
 <template>
-  <span :class="badgeClass">{{ label }}</span>
+  <span :class="['badge', badgeVariants]">{{ label }}</span>
 </template>
 
 <style scoped lang="scss">

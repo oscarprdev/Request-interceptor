@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, onMounted, watch, onUnmounted, computed } from 'vue';
+import { MODAL_SIZES, type ModalProps, type ModalEmits } from './ui-modal.types';
 
-const props = defineProps<{
-  title: string;
-  isOpen: boolean;
-  size?: 'small' | 'medium' | 'large' | 'full';
-}>();
-
-const emit = defineEmits<{
-  close: [];
-  afterOpen: [];
-  afterClose: [];
-}>();
+const props = defineProps<ModalProps>();
+const emit = defineEmits<ModalEmits>();
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
@@ -19,7 +11,6 @@ const handleClose = () => {
   if (dialogRef.value) {
     dialogRef.value.close();
     emit('close');
-    emit('afterClose');
   }
 };
 
@@ -35,28 +26,26 @@ const handleClickOutside = (e: MouseEvent) => {
   }
 };
 
-const getModalSizeClass = () => {
+const modalSize = computed(() => {
   switch (props.size) {
-    case 'small':
+    case MODAL_SIZES.small:
       return 'modal--small';
-    case 'large':
+    case MODAL_SIZES.large:
       return 'modal--large';
-    case 'full':
+    case MODAL_SIZES.full:
       return 'modal--full';
     default:
       return 'modal--medium';
   }
-};
+});
 
 watch(
   () => props.isOpen,
   isOpen => {
     if (isOpen && dialogRef.value && !dialogRef.value.open) {
       dialogRef.value.showModal();
-      emit('afterOpen');
     } else if (!isOpen && dialogRef.value && dialogRef.value.open) {
       dialogRef.value.close();
-      emit('afterClose');
     }
   },
   { immediate: true }
@@ -67,7 +56,6 @@ onMounted(() => {
 
   if (props.isOpen && dialogRef.value && !dialogRef.value.open) {
     dialogRef.value.showModal();
-    emit('afterOpen');
   }
 });
 
@@ -77,7 +65,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <dialog ref="dialogRef" class="modal" :class="getModalSizeClass()" @click="handleClickOutside">
+  <dialog ref="dialogRef" :class="['modal', modalSize]" @click="handleClickOutside">
     <div class="modal__content">
       <div class="modal__header">
         <h2 class="modal__title">{{ title }}</h2>
