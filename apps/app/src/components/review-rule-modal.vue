@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { RuleApplication } from '../models/Rule';
 import Modal from './ui/ui-modal.vue';
+import type { ReviewRuleModalProps, ReviewRuleModalEmits } from './review-rule-modal.types';
 
-defineProps<{
-  rule: RuleApplication | null;
-}>();
-
-const emit = defineEmits<{
-  close: [];
-}>();
+defineProps<ReviewRuleModalProps>();
+const emit = defineEmits<ReviewRuleModalEmits>();
 
 const isOpen = ref(true);
 
@@ -22,9 +17,9 @@ const handleClose = () => {
 <template>
   <Modal
     v-if="rule"
-    :isOpen="isOpen"
     size="large"
     title="Rule"
+    :isOpen="isOpen"
     :closeOnEscape="true"
     :closeOnClickOutside="true"
     @close="handleClose">

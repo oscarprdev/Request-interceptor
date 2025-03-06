@@ -3,31 +3,21 @@ import type { RuleApplication } from '../models/Rule';
 import Button from './ui/ui-button.vue';
 import Badge from './ui/ui-badge.vue';
 import Switch from './ui/ui-switch.vue';
+import type { RuleTableProps, RuleTableEmits } from './rule-table.types';
+import { BADGE_VARIANTS } from './ui/ui-badge.types';
+import { REQUEST_METHODS } from './add-rule-form.types';
 
-defineProps<{
-  rules: RuleApplication[];
-  loading?: boolean;
-}>();
-
-const emit = defineEmits<{
-  review: [rule: RuleApplication];
-}>();
+defineProps<RuleTableProps>();
+const emit = defineEmits<RuleTableEmits>();
 
 const handleReview = (rule: RuleApplication) => {
   emit('review', rule);
 };
 
-const getMethodVariant = (method: string) => {
-  switch (method) {
-    case 'GET':
-      return 'primary';
-    case 'PUT':
-      return 'secondary';
-    case 'DELETE':
-      return 'destructive';
-    default:
-      return 'default';
-  }
+const badgeVariantsMap = {
+  [REQUEST_METHODS.GET]: BADGE_VARIANTS.primary,
+  [REQUEST_METHODS.PUT]: BADGE_VARIANTS.secondary,
+  [REQUEST_METHODS.DELETE]: BADGE_VARIANTS.destructive,
 };
 </script>
 
@@ -65,7 +55,10 @@ const getMethodVariant = (method: string) => {
                 v-for="method in rule.requestMethods"
                 :key="method"
                 :label="method"
-                :variant="getMethodVariant(method)" />
+                :variant="
+                  badgeVariantsMap[method as keyof typeof badgeVariantsMap] ||
+                  BADGE_VARIANTS.default
+                " />
             </td>
             <td>{{ rule.resourceTypes.join(', ') }}</td>
             <td>{{ rule.priority }}</td>

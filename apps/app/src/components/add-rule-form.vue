@@ -7,22 +7,16 @@ import Textarea from './ui/ui-textarea.vue';
 import Button from './ui/ui-button.vue';
 import { extensionService } from '@/services/extension-service';
 import { MESSAGE_TYPES } from '@/services/extension-service.types';
-const emit = defineEmits<{
-  success: [ruleId: number];
-  error: [error: string];
-  submitting: [isSubmitting: boolean];
-}>();
+import {
+  REQUEST_METHODS,
+  ruleSchema,
+  type AddRuleFormEmits,
+  type RuleFormData,
+} from './add-rule-form.types';
+
+const emit = defineEmits<AddRuleFormEmits>();
 
 const formRef = ref<HTMLFormElement | null>(null);
-
-const ruleSchema = z.object({
-  urlFilter: z.string().min(1, 'URL filter is required'),
-  requestMethods: z.array(z.string()).min(1, 'At least one request method is required'),
-  response: z.string().min(2, 'Response is required and must be valid JSON'),
-});
-
-type RuleFormData = z.infer<typeof ruleSchema>;
-
 const formData = reactive<RuleFormData>({
   urlFilter: '',
   requestMethods: ['GET'],
@@ -30,11 +24,10 @@ const formData = reactive<RuleFormData>({
 });
 
 const errors = reactive<Record<string, string>>({});
-
 const isSubmitting = ref(false);
 const submitError = ref('');
 
-const availableMethods = ['GET', 'POST', 'PUT', 'DELETE'];
+const availableMethods = Object.values(REQUEST_METHODS);
 
 const toggleMethod = (method: string) => {
   const index = formData.requestMethods.indexOf(method);
@@ -100,13 +93,12 @@ const validateForm = () => {
 };
 
 const submitForm = async () => {
-  if (!validateForm()) {
-    return false;
-  }
+  if (!validateForm()) return false;
 
   isSubmitting.value = true;
-  emit('submitting', true);
   submitError.value = '';
+
+  emit('submitting', true);
 
   const responseObj = JSON.parse(formData.response);
 
@@ -119,14 +111,12 @@ const submitForm = async () => {
   if (error) {
     submitError.value = error.message;
     emit('error', error.message);
-    return false;
   } else if (result) {
     await extensionService.sendMessage({
       type: MESSAGE_TYPES.UPDATE_RULES,
       payload: result.id,
     });
     emit('success', result.id);
-    return true;
   }
 
   isSubmitting.value = false;
@@ -157,9 +147,9 @@ defineExpose({ submitForm });
         <div class="add-rule-form__methods">
           <button
             v-for="method in availableMethods"
-            :key="method"
             type="button"
             class="add-rule-form__method-btn"
+            :key="method"
             :class="{
               'add-rule-form__method-btn--active': formData.requestMethods.includes(method),
             }"
@@ -187,9 +177,9 @@ defineExpose({ submitForm });
           name="response"
           placeholder="{}"
           required
+          help-text="Enter a valid JSON object that will be returned as the response"
           :error="errors.response"
           :rows="8"
-          help-text="Enter a valid JSON object that will be returned as the response"
           @blur="validateResponseJson" />
       </div>
 

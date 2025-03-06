@@ -3,23 +3,18 @@ import { ref } from 'vue';
 import Modal from './ui/ui-modal.vue';
 import AddRuleForm from './add-rule-form.vue';
 import Button from './ui/ui-button.vue';
+import type { AddRuleModalProps, AddRuleModalEmits } from './add-rule-modal.types';
 
-defineProps<{
-  isOpen: boolean;
-}>();
-
-const emit = defineEmits<{
-  close: [];
-  success: [ruleId: number];
-}>();
+defineProps<AddRuleModalProps>();
+const emit = defineEmits<AddRuleModalEmits>();
 
 const formRef = ref<InstanceType<typeof AddRuleForm> | null>(null);
 const formError = ref('');
 const isSubmitting = ref(false);
 
 const handleSuccess = (ruleId: number) => {
+  isSubmitting.value = false;
   emit('success', ruleId);
-  emit('close');
 };
 
 const handleError = (error: string) => {
@@ -43,7 +38,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <Modal v-if="isOpen" title="Add New Rule" :isOpen="isOpen" size="large" @close="handleClose">
+  <Modal v-if="isOpen" title="Add New Rule" size="large" :isOpen="isOpen" @close="handleClose">
     <div v-if="formError" class="add-rule-modal__error">
       <p>{{ formError }}</p>
     </div>
