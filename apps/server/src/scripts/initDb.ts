@@ -7,41 +7,40 @@ const pool = new Pool({
 
 const createTables = async () => {
   try {
-    // Create users table
+    await pool.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`);
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(255) UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        "createdAt" TIMESTAMP NOT NULL,
-        "updatedAt" TIMESTAMP NOT NULL
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
 
-    // Create rules table with separate columns instead of JSON
     await pool.query(`
       CREATE TABLE IF NOT EXISTS rules (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         priority INTEGER NOT NULL,
         "urlFilter" VARCHAR(255) NOT NULL,
         "resourceTypes" TEXT[] NOT NULL,
         "requestMethods" TEXT[] NOT NULL,
         "actionType" VARCHAR(50) NOT NULL,
         "redirectUrl" TEXT,
-        "createdAt" TIMESTAMP NOT NULL,
-        "updatedAt" TIMESTAMP NOT NULL
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
 
-    // Create user_rules junction table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_rules (
-        id SERIAL PRIMARY KEY,
-        "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        "ruleId" INTEGER REFERENCES rules(id) ON DELETE CASCADE,
-        "createdAt" TIMESTAMP NOT NULL,
-        "updatedAt" TIMESTAMP NOT NULL,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "userId" UUID REFERENCES users(id) ON DELETE CASCADE,
+        "ruleId" UUID REFERENCES rules(id) ON DELETE CASCADE,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
         UNIQUE("userId", "ruleId")
       )
     `);
