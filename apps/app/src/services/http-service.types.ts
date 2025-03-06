@@ -3,7 +3,7 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export interface FetchOptions {
   url: string;
   method?: HttpMethod;
-  body?: any;
+  body?: unknown;
   headers?: Record<string, string>;
   timeout?: number;
 }

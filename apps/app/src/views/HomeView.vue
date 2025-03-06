@@ -47,8 +47,7 @@ const closeAddModal = () => {
   showAddModal.value = false;
 };
 
-const handleRuleAdded = (ruleId: number) => {
-  console.log('ruleId', ruleId);
+const handleRuleAdded = () => {
   fetchRules();
 };
 

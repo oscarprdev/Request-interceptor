@@ -36,7 +36,7 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     if (error) return [error, null];
 
     const rules = response?.data?.map(rule => this.mapRuleToApplication(rule)) || [];
-
+    console.log('rules', rules);
     return [null, rules];
   }
 
