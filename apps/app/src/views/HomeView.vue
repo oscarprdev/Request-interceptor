@@ -15,46 +15,35 @@ const showReviewModal = ref(false);
 const showAddModal = ref(false);
 
 const fetchRules = async () => {
-  loading.value = true;
-  error.value = null;
-
   const [err, data] = await rulesService.getRules();
-
-  console.log(data);
 
   if (err) {
     error.value = err;
   } else if (data) {
     rules.value = data;
   }
-
-  loading.value = false;
 };
 
-const openReviewModal = (rule: RuleApplication) => {
+const toggleReviewModal = (rule: RuleApplication | null, value: boolean) => {
   selectedRule.value = rule;
-  showReviewModal.value = true;
+  showReviewModal.value = value;
 };
 
-const closeReviewModal = () => {
-  showReviewModal.value = false;
-  selectedRule.value = null;
-};
-
-const openAddModal = () => {
-  showAddModal.value = true;
-};
-
-const closeAddModal = () => {
-  showAddModal.value = false;
+const toggleAddModal = (value: boolean) => {
+  showAddModal.value = value;
 };
 
 const handleRuleAdded = () => {
   fetchRules();
 };
 
-onMounted(() => {
-  fetchRules();
+onMounted(async () => {
+  loading.value = true;
+  error.value = null;
+
+  await fetchRules();
+
+  loading.value = false;
 });
 </script>
 
@@ -62,20 +51,31 @@ onMounted(() => {
   <main class="rules__container">
     <header class="rules__header">
       <h1>Rules Management</h1>
-      <Button primary @click="openAddModal">Add Rule</Button>
+      <Button variant="primary" @click="toggleAddModal(true)">Add Rule</Button>
     </header>
 
     <div v-if="error" class="rules__error">
       <h3>Error</h3>
       <p>{{ error.message }}</p>
-      <Button primary @click="fetchRules">Try Again</Button>
+      <Button variant="primary" @click="fetchRules">Try Again</Button>
     </div>
 
-    <RulesTable v-else :rules="rules" :loading="loading" @review="openReviewModal" />
+    <RulesTable
+      v-else
+      :rules="rules"
+      :loading="loading"
+      @review="rule => toggleReviewModal(rule, true)"
+      @rules-updated="fetchRules" />
 
-    <ReviewRuleModal v-if="showReviewModal" :rule="selectedRule" @close="closeReviewModal" />
+    <ReviewRuleModal
+      v-if="showReviewModal"
+      :rule="selectedRule"
+      @close="toggleReviewModal(null, false)" />
 
-    <AddRuleModal :isOpen="showAddModal" @close="closeAddModal" @success="handleRuleAdded" />
+    <AddRuleModal
+      :isOpen="showAddModal"
+      @close="toggleAddModal(false)"
+      @success="handleRuleAdded" />
   </main>
 </template>
 

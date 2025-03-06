@@ -1,13 +1,13 @@
 import type { Rule, RuleApplication } from '@/models/Rule';
 import { DefaultHttpService } from './http-service';
 import type { SafeResult } from './common';
-import type { CreateRuleInput } from './rules-service.types';
+import type { CreateRuleInput, UpdateRuleInput } from './rules-service.types';
 import { formatPgDate } from '@/utils/dates';
 
 interface RulesService {
   getRules(): Promise<SafeResult<RuleApplication[]>>;
-  getRuleById(id: number): Promise<SafeResult<RuleApplication | null>>;
   createRule(input: CreateRuleInput): Promise<SafeResult<RuleApplication>>;
+  updateRule(input: UpdateRuleInput): Promise<SafeResult<RuleApplication>>;
 }
 
 const BASE_URL = 'http://localhost:8080';
@@ -40,18 +40,6 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     return [null, rules];
   }
 
-  async getRuleById(id: number): Promise<SafeResult<RuleApplication | null>> {
-    const [error, response] = await this.safeFetch<{ data: Rule }>({
-      url: `${this.apiUrl}/${id}`,
-    });
-
-    if (error) return [error, null];
-
-    const rule = response?.data ? this.mapRuleToApplication(response.data) : null;
-
-    return [null, rule];
-  }
-
   async createRule(input: CreateRuleInput): Promise<SafeResult<RuleApplication>> {
     const body = {
       redirectUrl: 'data:application/json;base64,' + btoa(JSON.stringify(input.response)),
@@ -76,15 +64,18 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     return [null, rule];
   }
 
-  async deleteRule(id: number): Promise<SafeResult<boolean>> {
-    const [error, response] = await this.safeFetch<{ success: boolean }>({
-      url: `${this.apiUrl}/${id}`,
-      method: 'DELETE',
+  async updateRule(input: UpdateRuleInput): Promise<SafeResult<RuleApplication>> {
+    const [error, response] = await this.safeFetch<{ data: Rule }>({
+      url: `${this.apiUrl}/${input.rule.id}`,
+      method: 'PUT',
+      body: input.rule,
     });
 
     if (error) return [error, null];
 
-    return [null, response?.success || false];
+    const rule = response?.data ? this.mapRuleToApplication(response.data) : null;
+
+    return [null, rule];
   }
 
   private mapRuleToApplication(rule: Rule): RuleApplication {

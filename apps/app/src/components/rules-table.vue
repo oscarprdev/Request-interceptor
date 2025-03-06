@@ -6,12 +6,22 @@ import Switch from './ui/ui-switch.vue';
 import type { RuleTableProps, RuleTableEmits } from './rules-table.types';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { REQUEST_METHODS } from './add-rule-form.types';
+import { ref } from 'vue';
+import { rulesService } from '@/services/rules-service';
 
 defineProps<RuleTableProps>();
 const emit = defineEmits<RuleTableEmits>();
 
+const isEnabledTriggered = ref(false);
+
 const handleReview = (rule: RuleApplication) => {
   emit('review', rule);
+};
+
+const handleToggleEnabled = (rule: RuleApplication) => {
+  isEnabledTriggered.value = true;
+  rulesService.updateRule({ rule: { ...rule, isEnabled: !rule.isEnabled } });
+  emit('rules-updated');
 };
 
 const badgeVariantsMap = {
@@ -64,7 +74,7 @@ const badgeVariantsMap = {
             <td>{{ rule.priority }}</td>
             <td>{{ rule.createdAt }}</td>
             <td>
-              <Switch v-model="rule.isEnabled" />
+              <Switch v-model="rule.isEnabled" @change="handleToggleEnabled(rule)" />
             </td>
             <td>
               <Button variant="primary" size="small" @click="handleReview(rule)">Review</Button>
