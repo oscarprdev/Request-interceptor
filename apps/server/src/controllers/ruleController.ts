@@ -28,7 +28,7 @@ export class RuleController {
    */
   async getRuleById(req: Request, res: Response, next?: NextFunction) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const rule = await this.ruleRepository.findById(id);
 
       if (!rule) {
@@ -71,7 +71,7 @@ export class RuleController {
    */
   async updateRule(req: Request, res: Response, next?: NextFunction) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const rule = await this.ruleRepository.update(id, req.body);
 
       if (!rule) {
@@ -97,7 +97,7 @@ export class RuleController {
    */
   async deleteRule(req: Request, res: Response, next?: NextFunction) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const success = await this.ruleRepository.delete(id);
 
       if (!success) {
@@ -123,7 +123,7 @@ export class RuleController {
    */
   async getRulesByUserId(req: Request, res: Response, next?: NextFunction) {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.params.userId;
       const rules = await this.ruleRepository.findByUserId(userId);
 
       res.status(200).json({

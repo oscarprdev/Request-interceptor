@@ -20,7 +20,7 @@ export class RuleService implements IRuleRepository {
     try {
       const query = `
         SELECT * FROM rules 
-        ORDER BY priority ASC
+        ORDER BY "createdAt" DESC
       `;
       const result = await this.pool.query(query);
       return result.rows.map(row => this.mapToRule(row));
@@ -33,7 +33,7 @@ export class RuleService implements IRuleRepository {
   /**
    * Get rule by ID
    */
-  async findById(id: number): Promise<Rule | null> {
+  async findById(id: string): Promise<Rule | null> {
     try {
       const query = `
         SELECT * FROM rules 
@@ -97,7 +97,7 @@ export class RuleService implements IRuleRepository {
   /**
    * Update a rule
    */
-  async update(id: number, ruleData: Partial<RuleInput>): Promise<Rule | null> {
+  async update(id: string, ruleData: Partial<RuleInput>): Promise<Rule | null> {
     try {
       // First check if the rule exists
       const existingRule = await this.findById(id);
@@ -168,7 +168,7 @@ export class RuleService implements IRuleRepository {
   /**
    * Delete a rule
    */
-  async delete(id: number): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
     try {
       // First check if the rule exists
       const existingRule = await this.findById(id);
@@ -196,7 +196,7 @@ export class RuleService implements IRuleRepository {
   /**
    * Get rules by user ID
    */
-  async findByUserId(userId: number): Promise<Rule[]> {
+  async findByUserId(userId: string): Promise<Rule[]> {
     try {
       const query = `
         SELECT r.* FROM rules r

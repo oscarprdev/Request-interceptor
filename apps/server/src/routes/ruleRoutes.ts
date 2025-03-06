@@ -12,6 +12,7 @@ const ruleValidation = [
   body('resourceTypes').isArray().withMessage('Resource types must be an array'),
   body('requestMethods').isArray().withMessage('Request methods must be an array'),
   body('actionType').isString().withMessage('Action type must be a string'),
+  body('isEnabled').isBoolean().withMessage('Is enabled must be a boolean'),
   body('redirectUrl').optional().isString().withMessage('Redirect URL must be a string'),
   validate,
 ];
