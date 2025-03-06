@@ -1,62 +1,24 @@
+import { MESSAGE_TYPES } from './models/Rule';
 import { ruleService } from './services/RuleService';
 
-// Initialize the extension
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log('Extension installed, initializing services');
+  await ruleService.updateRules();
 
-  // Initialize the rule service
-  await ruleService.initialize();
-  const currentRules = ruleService.getRules();
-  const chromeRules = await chrome.declarativeNetRequest.getDynamicRules();
-
-  console.log('Extension initialization complete', currentRules, chromeRules);
+  console.log('Extension initialization complete');
 });
 
-// For debugging: Log when a rule is matched
-chrome.declarativeNetRequest.onRuleMatchedDebug?.addListener(({ request, rule }) => {
-  console.log('Rule matched:', rule);
-  console.log('Request:', request);
-});
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  switch (message.type) {
+    case MESSAGE_TYPES.UPDATE_RULES:
+      ruleService.updateRules();
+      sendResponse({ success: true, message: 'Rules updated successfully' });
+      console.log('Rules updated successfully');
+      return true;
 
-// Listen for storage changes to update rules
-chrome.storage.onChanged.addListener(async (changes, areaName) => {
-  if (areaName === 'local' && changes.userRules) {
-    console.log('Rules updated in storage, reinitializing service');
-    await ruleService.initialize();
+    default:
+      console.error('Unknown message type', message.type);
+      break;
   }
-});
-
-// Add message handlers for communication with popup/options pages
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'getRules') {
-    const rules = ruleService.getRules();
-    sendResponse({ success: true, rules });
-    return true;
-  }
-
-  if (message.type === 'createRule') {
-    ruleService
-      .createRule(message.rule)
-      .then(rule => sendResponse({ success: true, rule }))
-      .catch(error => sendResponse({ success: false, error: error.toString() }));
-    return true;
-  }
-
-  if (message.type === 'updateRule') {
-    ruleService
-      .updateRule(message.id, message.rule)
-      .then(rule => sendResponse({ success: true, rule }))
-      .catch(error => sendResponse({ success: false, error: error.toString() }));
-    return true;
-  }
-
-  if (message.type === 'deleteRule') {
-    ruleService
-      .deleteRule(message.id)
-      .then(success => sendResponse({ success }))
-      .catch(error => sendResponse({ success: false, error: error.toString() }));
-    return true;
-  }
-
+  sendResponse({ success: false, message: 'Unknown message type' });
   return false;
 });

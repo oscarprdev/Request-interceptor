@@ -28,7 +28,7 @@ export interface Rule {
 }
 
 export interface ServerRule {
-  id: number;
+  id: string;
   priority: number;
   urlFilter: string;
   resourceTypes: string[];
@@ -38,6 +38,12 @@ export interface ServerRule {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type MessageType = 'UPDATE_RULES';
+
+export const MESSAGE_TYPES = {
+  UPDATE_RULES: 'UPDATE_RULES',
+} as const as Record<MessageType, MessageType>;
 
 export type RuleCreateDTO = Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>;
 export type RuleUpdateDTO = Partial<Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>>;
