@@ -68,10 +68,11 @@ export class RuleService implements IRuleRepository {
           "requestMethods", 
           "actionType", 
           "redirectUrl", 
+          "isEnabled",
           "createdAt", 
           "updatedAt"
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) 
         RETURNING *
       `;
 
@@ -82,6 +83,7 @@ export class RuleService implements IRuleRepository {
         validatedRule.requestMethods,
         validatedRule.actionType,
         validatedRule.redirectUrl,
+        validatedRule.isEnabled,
       ];
 
       const result = await this.pool.query(query, values);
@@ -216,6 +218,7 @@ export class RuleService implements IRuleRepository {
       resourceTypes: ['xmlhttprequest'],
       requestMethods: ['get', 'post', 'delete'],
       actionType: 'redirect',
+      isEnabled: false,
       redirectUrl:
         'data:application/json;base64,' +
         Buffer.from(
@@ -237,6 +240,7 @@ export class RuleService implements IRuleRepository {
       requestMethods: row.requestMethods,
       actionType: row.actionType,
       redirectUrl: row.redirectUrl,
+      isEnabled: row.isEnabled,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });

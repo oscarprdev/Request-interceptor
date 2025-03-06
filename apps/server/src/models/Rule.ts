@@ -11,6 +11,7 @@ export const RuleSchema = z.object({
   requestMethods: z.array(z.string()),
   actionType: z.string().min(1),
   redirectUrl: z.string().nullable().optional(),
+  isEnabled: z.boolean(),
 });
 
 // Extract TypeScript type from Zod schema
@@ -25,6 +26,7 @@ interface RuleAttributes {
   requestMethods: string[];
   actionType: string;
   redirectUrl?: string | null;
+  isEnabled: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +44,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public requestMethods!: string[];
   public actionType!: string;
   public redirectUrl!: string | null;
+  public isEnabled!: boolean;
   public readonly createdAt!: string;
   public readonly updatedAt!: string;
 
@@ -54,6 +57,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
     requestMethods: string[];
     actionType: string;
     redirectUrl?: string | null;
+    isEnabled: boolean;
     createdAt: string;
     updatedAt: string;
   }): Rule {
@@ -82,6 +86,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
       requestMethods: this.requestMethods,
       actionType: this.actionType,
       redirectUrl: this.redirectUrl,
+      isEnabled: this.isEnabled,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -118,6 +123,10 @@ Rule.init(
     redirectUrl: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    isEnabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

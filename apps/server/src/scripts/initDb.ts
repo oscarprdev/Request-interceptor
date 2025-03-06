@@ -29,6 +29,7 @@ const createTables = async () => {
         "requestMethods" TEXT[] NOT NULL,
         "actionType" VARCHAR(50) NOT NULL,
         "redirectUrl" TEXT,
+        "isEnabled" BOOLEAN DEFAULT FALSE,
         "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
         "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
       )
