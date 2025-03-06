@@ -40,7 +40,7 @@ export class DefaultHttpService implements HttpService {
         signal: controller.signal,
       };
 
-      if (body && method === 'POST') {
+      if (body && (method === 'POST' || method === 'PUT')) {
         options.body = JSON.stringify(body);
       }
 

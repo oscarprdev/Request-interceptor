@@ -1,5 +1,5 @@
 export interface Rule {
-  id: number;
+  id: string;
   priority: number;
   urlFilter: string;
   resourceTypes: string[];
@@ -12,7 +12,7 @@ export interface Rule {
 }
 
 export interface RuleApplication {
-  id: number;
+  id: string;
   priority: number;
   urlFilter: string;
   resourceTypes: string[];

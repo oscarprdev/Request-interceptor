@@ -11,7 +11,7 @@ const inputId = computed(
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit('update', target.value);
+  emit('update:modelValue', target.value);
 };
 </script>
 

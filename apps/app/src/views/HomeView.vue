@@ -35,6 +35,7 @@ const toggleAddModal = (value: boolean) => {
 
 const handleRuleAdded = () => {
   fetchRules();
+  toggleAddModal(false);
 };
 
 onMounted(async () => {

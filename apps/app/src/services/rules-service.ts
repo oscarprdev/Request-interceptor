@@ -36,7 +36,7 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     if (error) return [error, null];
 
     const rules = response?.data?.map(rule => this.mapRuleToApplication(rule)) || [];
-    console.log('rules', rules);
+
     return [null, rules];
   }
 
@@ -65,10 +65,20 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
   }
 
   async updateRule(input: UpdateRuleInput): Promise<SafeResult<RuleApplication>> {
+    const payload = {
+      redirectUrl: 'data:application/json;base64,' + btoa(JSON.stringify(input.rule.response)),
+      requestMethods: input.rule.requestMethods,
+      urlFilter: input.rule.urlFilter,
+      resourceTypes: input.rule.resourceTypes,
+      actionType: input.rule.actionType,
+      priority: input.rule.priority,
+      isEnabled: input.rule.isEnabled,
+    };
+
     const [error, response] = await this.safeFetch<{ data: Rule }>({
       url: `${this.apiUrl}/${input.rule.id}`,
       method: 'PUT',
-      body: input.rule,
+      body: payload,
     });
 
     if (error) return [error, null];

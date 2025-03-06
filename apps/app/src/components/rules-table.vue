@@ -6,21 +6,22 @@ import Switch from './ui/ui-switch.vue';
 import type { RuleTableProps, RuleTableEmits } from './rules-table.types';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { REQUEST_METHODS } from './add-rule-form.types';
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import { rulesService } from '@/services/rules-service';
 
 defineProps<RuleTableProps>();
 const emit = defineEmits<RuleTableEmits>();
 
-const isEnabledTriggered = ref(false);
+const isEnabledTriggered = reactive<{ [key: string]: boolean }>({});
 
 const handleReview = (rule: RuleApplication) => {
   emit('review-rule', rule);
 };
 
-const handleToggleEnabled = (rule: RuleApplication) => {
-  isEnabledTriggered.value = true;
-  rulesService.updateRule({ rule: { ...rule, isEnabled: !rule.isEnabled } });
+const handleToggleEnabled = async (rule: RuleApplication) => {
+  isEnabledTriggered[rule.id] = true;
+  await rulesService.updateRule({ rule: { ...rule, isEnabled: !rule.isEnabled } });
+  isEnabledTriggered[rule.id] = false;
   emit('rules-updated');
 };
 
@@ -50,6 +51,7 @@ const badgeVariantsMap = {
             <th>URL Filter</th>
             <th>Methods</th>
             <th>Created Date</th>
+            <th>Updated Date</th>
             <th>Enabled</th>
             <th></th>
           </tr>
@@ -69,8 +71,12 @@ const badgeVariantsMap = {
                 " />
             </td>
             <td>{{ rule.createdAt }}</td>
+            <td>{{ rule.updatedAt }}</td>
             <td>
-              <Switch v-model="rule.isEnabled" @change="handleToggleEnabled(rule)" />
+              <Switch
+                :disabled="isEnabledTriggered[rule.id]"
+                v-model="rule.isEnabled"
+                @change="handleToggleEnabled(rule)" />
             </td>
             <td>
               <Button variant="primary" size="small" @click="handleReview(rule)">Review</Button>

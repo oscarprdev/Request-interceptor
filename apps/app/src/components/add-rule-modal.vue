@@ -12,9 +12,9 @@ const formRef = ref<InstanceType<typeof AddRuleForm> | null>(null);
 const formError = ref('');
 const isSubmitting = ref(false);
 
-const handleSuccess = (ruleId: number) => {
+const handleSuccess = () => {
   isSubmitting.value = false;
-  emit('success', ruleId);
+  emit('success');
 };
 
 const handleError = (error: string) => {

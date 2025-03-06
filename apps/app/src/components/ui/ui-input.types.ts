@@ -12,7 +12,7 @@ interface InputProps {
 }
 
 interface InputEmits {
-  (e: 'update', value: string): void;
+  (e: 'update:modelValue', value: string): void;
 }
 
 export { type InputProps, type InputEmits };

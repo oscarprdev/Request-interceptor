@@ -116,7 +116,7 @@ const submitForm = async () => {
       type: MESSAGE_TYPES.UPDATE_RULES,
       payload: result.id,
     });
-    emit('success', result.id);
+    emit('success');
   }
 
   isSubmitting.value = false;

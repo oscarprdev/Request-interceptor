@@ -38,7 +38,14 @@ const handleToggle = () => {
 <template>
   <div class="switch">
     <div class="switch__container" @click="handleToggle">
-      <div :class="['switch__toggle', switchSize, switchColor, switchState]">
+      <div
+        :class="[
+          'switch__toggle',
+          { 'switch__toggle--disabled': disabled },
+          switchSize,
+          switchColor,
+          switchState,
+        ]">
         <div class="switch__thumb"></div>
       </div>
 
@@ -101,7 +108,7 @@ const handleToggle = () => {
       }
 
       .switch__thumb {
-        transform: translateX(calc(100% + 4px));
+        transform: translateX(calc(100% + 4px)) translateY(-50%);
       }
     }
 
