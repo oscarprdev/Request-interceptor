@@ -6,7 +6,7 @@ interface RuleTableProps {
 }
 
 interface RuleTableEmits {
-  (e: 'review', rule: RuleApplication): void;
+  (e: 'review-rule', rule: RuleApplication): void;
   (e: 'rules-updated'): void;
 }
 

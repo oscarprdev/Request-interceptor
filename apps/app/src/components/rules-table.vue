@@ -15,7 +15,7 @@ const emit = defineEmits<RuleTableEmits>();
 const isEnabledTriggered = ref(false);
 
 const handleReview = (rule: RuleApplication) => {
-  emit('review', rule);
+  emit('review-rule', rule);
 };
 
 const handleToggleEnabled = (rule: RuleApplication) => {
@@ -49,16 +49,14 @@ const badgeVariantsMap = {
             <th>ID</th>
             <th>URL Filter</th>
             <th>Methods</th>
-            <th>Resource Types</th>
-            <th>Priority</th>
-            <th>Created</th>
+            <th>Created Date</th>
             <th>Enabled</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="rule in rules" :key="rule.id">
-            <td>{{ rule.id }}</td>
+            <td class="ellipsis">{{ rule.id }}</td>
             <td class="row-url">{{ rule.urlFilter }}</td>
             <td>
               <Badge
@@ -70,8 +68,6 @@ const badgeVariantsMap = {
                   BADGE_VARIANTS.default
                 " />
             </td>
-            <td>{{ rule.resourceTypes.join(', ') }}</td>
-            <td>{{ rule.priority }}</td>
             <td>{{ rule.createdAt }}</td>
             <td>
               <Switch v-model="rule.isEnabled" @change="handleToggleEnabled(rule)" />
@@ -160,6 +156,13 @@ const badgeVariantsMap = {
       span {
         margin: 0 1px;
       }
+    }
+
+    .ellipsis {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100px;
     }
   }
 }

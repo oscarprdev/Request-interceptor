@@ -64,7 +64,7 @@ onMounted(async () => {
       v-else
       :rules="rules"
       :loading="loading"
-      @review="rule => toggleReviewModal(rule, true)"
+      @review-rule="rule => toggleReviewModal(rule, true)"
       @rules-updated="fetchRules" />
 
     <ReviewRuleModal
