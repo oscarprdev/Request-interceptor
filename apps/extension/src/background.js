@@ -3,7 +3,6 @@ import { ruleService } from './services/RuleService';
 
 chrome.runtime.onInstalled.addListener(async () => {
   await ruleService.updateRules();
-
   console.log('Extension initialization complete');
 });
 

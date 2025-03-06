@@ -35,6 +35,7 @@ export interface ServerRule {
   requestMethods: string[];
   actionType: string;
   redirectUrl?: string | null;
+  isEnabled: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

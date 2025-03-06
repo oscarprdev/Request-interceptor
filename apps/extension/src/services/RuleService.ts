@@ -3,9 +3,7 @@ import { Rule, ServerRule } from '../models/Rule';
 export class RuleService {
   public async updateRules(): Promise<void> {
     const rules = await this.fetchRules();
-    if (rules.length > 0) {
-      await this.updateDynamicRules(rules);
-    }
+    await this.updateDynamicRules(rules);
   }
 
   private async fetchRules(): Promise<Rule[]> {
@@ -13,7 +11,9 @@ export class RuleService {
       const rulesResponse = await fetch('http://localhost:8080/api/v1/rules');
       const rules = await rulesResponse.json();
 
-      return rules.data.map(this.mapServerRuleToExtensionRule);
+      return rules.data
+        .filter((rule: ServerRule) => !rule.isEnabled)
+        .map(this.mapServerRuleToExtensionRule);
     } catch (error) {
       console.error('Error fetching rules from server:', error);
       return [];
