@@ -140,6 +140,11 @@ export class RuleService implements IRuleRepository {
         values.push(ruleData.redirectUrl);
       }
 
+      if (ruleData.isEnabled !== undefined) {
+        updates.push(`"isEnabled" = $${paramIndex++}`);
+        values.push(ruleData.isEnabled);
+      }
+
       updates.push(`"updatedAt" = NOW()`);
 
       // Add the id as the last parameter
