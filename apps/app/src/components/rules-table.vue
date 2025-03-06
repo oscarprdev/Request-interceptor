@@ -3,7 +3,7 @@ import type { RuleApplication } from '../models/Rule';
 import Button from './ui/ui-button.vue';
 import Badge from './ui/ui-badge.vue';
 import Switch from './ui/ui-switch.vue';
-import type { RuleTableProps, RuleTableEmits } from './rule-table.types';
+import type { RuleTableProps, RuleTableEmits } from './rules-table.types';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { REQUEST_METHODS } from './add-rule-form.types';
 
