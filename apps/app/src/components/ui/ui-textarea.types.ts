@@ -13,6 +13,7 @@ interface TextareaProps {
 }
 
 interface TextareaEmits {
+  (e: 'update:modelValue', value: string): void;
   (e: 'update', value: string): void;
 }
 

@@ -11,6 +11,7 @@ const textareaId = computed(
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLTextAreaElement;
+  emit('update:modelValue', target.value);
   emit('update', target.value);
 };
 </script>
