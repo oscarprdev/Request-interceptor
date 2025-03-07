@@ -12,7 +12,7 @@ export class RuleService {
       const rules = await rulesResponse.json();
 
       return rules.data
-        .filter((rule: ServerRule) => !rule.isEnabled)
+        .filter((rule: ServerRule) => rule.isEnabled)
         .map(this.mapServerRuleToExtensionRule);
     } catch (error) {
       console.error('Error fetching rules from server:', error);
@@ -22,9 +22,10 @@ export class RuleService {
 
   private async updateDynamicRules(rules: Rule[]): Promise<void> {
     try {
+      const currentRules = await chrome.declarativeNetRequest.getDynamicRules();
       await chrome.declarativeNetRequest.updateDynamicRules({
         addRules: rules,
-        removeRuleIds: rules.map(rule => rule.id),
+        removeRuleIds: currentRules.map(rule => rule.id),
       });
     } catch (error) {
       console.error('Error updating dynamic rules:', error);
