@@ -88,6 +88,17 @@ export class DefaultRulesService extends DefaultHttpService implements RulesServ
     return [null, rule];
   }
 
+  async deleteRule(ruleId: string): Promise<SafeResult<void>> {
+    const [error] = await this.safeFetch<{ data: void }>({
+      url: `${this.apiUrl}/${ruleId}`,
+      method: 'DELETE',
+    });
+
+    if (error) return [error, null];
+
+    return [null, null];
+  }
+
   private mapRuleToApplication(rule: Rule): RuleApplication {
     const response = JSON.parse(atob(rule.redirectUrl?.split(',')[1] || '{}'));
 

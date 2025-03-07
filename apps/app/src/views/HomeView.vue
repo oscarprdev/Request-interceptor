@@ -10,7 +10,10 @@ import RulesTable from '../components/rules-table.vue';
 const rules = ref<RuleApplication[]>([]);
 const loading = ref(true);
 const error = ref<{ error: boolean; message: string } | null>(null);
+const isDeleting = ref(false);
+
 const selectedRule = ref<RuleApplication | null>(null);
+
 const showReviewModal = ref(false);
 const showAddModal = ref(false);
 const selectedRuleIds = ref<string[]>([]);
@@ -41,7 +44,14 @@ const handleRuleAdded = () => {
 
 const handleSelectionChange = (ids: string[]) => {
   selectedRuleIds.value = ids;
-  console.log('Selected rule IDs:', ids);
+};
+
+const handleRemoveRules = async () => {
+  isDeleting.value = true;
+  await Promise.all(selectedRuleIds.value.map(id => rulesService.deleteRule(id)));
+  selectedRuleIds.value = [];
+  fetchRules();
+  isDeleting.value = false;
 };
 
 onMounted(async () => {
@@ -62,8 +72,10 @@ onMounted(async () => {
         <Button
           v-if="selectedRuleIds.length > 0"
           variant="destructive"
-          class="rules__action-button">
-          Remove rule{{ selectedRuleIds.length > 1 ? 's' : '' }}
+          class="rules__action-button"
+          @click="handleRemoveRules">
+          <span v-if="!isDeleting">Remove rule{{ selectedRuleIds.length > 1 ? 's' : '' }}</span>
+          <span v-else>Removing...</span>
         </Button>
         <Button variant="primary" @click="toggleAddModal(true)">Add Rule</Button>
       </div>
