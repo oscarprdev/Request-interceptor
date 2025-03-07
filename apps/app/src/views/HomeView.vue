@@ -6,6 +6,8 @@ import ReviewRuleModal from '../components/review-rule-modal.vue';
 import AddRuleModal from '../components/add-rule-modal.vue';
 import Button from '../components/ui/ui-button.vue';
 import RulesTable from '../components/rules-table.vue';
+import { extensionService } from '@/services/extension-service';
+import { MESSAGE_TYPES } from '@/services/extension-service.types';
 
 const rules = ref<RuleApplication[]>([]);
 const loading = ref(true);
@@ -37,8 +39,12 @@ const toggleAddModal = (value: boolean) => {
   showAddModal.value = value;
 };
 
-const handleRuleAdded = () => {
-  fetchRules();
+const handleRuleAdded = async (id: string) => {
+  await extensionService.sendMessage({
+    type: MESSAGE_TYPES.UPDATE_RULES,
+    payload: id,
+  });
+  await fetchRules();
   toggleAddModal(false);
 };
 
@@ -46,11 +52,25 @@ const handleSelectionChange = (ids: string[]) => {
   selectedRuleIds.value = ids;
 };
 
+const handleRulesUpdated = async () => {
+  await fetchRules();
+  await extensionService.sendMessage({
+    type: MESSAGE_TYPES.UPDATE_RULES,
+    payload: [],
+  });
+};
+
 const handleRemoveRules = async () => {
   isDeleting.value = true;
   await Promise.all(selectedRuleIds.value.map(id => rulesService.deleteRule(id)));
+
+  await fetchRules();
+  await extensionService.sendMessage({
+    type: MESSAGE_TYPES.UPDATE_RULES,
+    payload: [],
+  });
+
   selectedRuleIds.value = [];
-  fetchRules();
   isDeleting.value = false;
 };
 
@@ -93,7 +113,7 @@ onMounted(async () => {
       :loading="loading"
       :selected-rules="selectedRuleIds"
       @review-rule="rule => toggleReviewModal(rule, true)"
-      @rules-updated="fetchRules"
+      @rules-updated="handleRulesUpdated"
       @selection-change="handleSelectionChange" />
 
     <ReviewRuleModal

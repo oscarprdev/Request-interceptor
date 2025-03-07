@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 interface AddRuleFormEmits {
-  (e: 'success'): void;
+  (e: 'success', id: string): void;
   (e: 'error', error: string): void;
   (e: 'submitting', isSubmitting: boolean): void;
 }

@@ -5,8 +5,6 @@ import { rulesService } from '../services/rules-service';
 import Input from './ui/ui-input.vue';
 import Textarea from './ui/ui-textarea.vue';
 import Button from './ui/ui-button.vue';
-import { extensionService } from '@/services/extension-service';
-import { MESSAGE_TYPES } from '@/services/extension-service.types';
 import {
   REQUEST_METHODS,
   ruleSchema,
@@ -112,11 +110,7 @@ const submitForm = async () => {
     submitError.value = error.message;
     emit('error', error.message);
   } else if (result) {
-    await extensionService.sendMessage({
-      type: MESSAGE_TYPES.UPDATE_RULES,
-      payload: result.id,
-    });
-    emit('success');
+    emit('success', result.id);
   }
 
   isSubmitting.value = false;

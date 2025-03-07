@@ -1,5 +1,5 @@
 interface AddRuleModalEmits {
-  (e: 'success'): void;
+  (e: 'success', id: string): void;
   (e: 'close'): void;
 }
 
