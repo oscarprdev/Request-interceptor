@@ -12,11 +12,11 @@ const loading = ref(true);
 const error = ref<{ error: boolean; message: string } | null>(null);
 const isDeleting = ref(false);
 
-const selectedRule = ref<RuleApplication | null>(null);
+const selectedReviewRule = ref<RuleApplication | null>(null);
+const selectedRuleIds = ref<string[]>([]);
 
 const showReviewModal = ref(false);
 const showAddModal = ref(false);
-const selectedRuleIds = ref<string[]>([]);
 
 const fetchRules = async () => {
   const [err, data] = await rulesService.getRules();
@@ -29,7 +29,7 @@ const fetchRules = async () => {
 };
 
 const toggleReviewModal = (rule: RuleApplication | null, value: boolean) => {
-  selectedRule.value = rule;
+  selectedReviewRule.value = rule;
   showReviewModal.value = value;
 };
 
@@ -98,7 +98,7 @@ onMounted(async () => {
 
     <ReviewRuleModal
       v-if="showReviewModal"
-      :rule="selectedRule"
+      :rule="selectedReviewRule"
       @close="toggleReviewModal(null, false)" />
 
     <AddRuleModal
