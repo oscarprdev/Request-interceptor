@@ -13,6 +13,7 @@ const emit = defineEmits<ButtonEmits>();
 
 const buttonVariants = computed(() => {
   if (props.variant === BUTTON_VARIANTS.secondary) return 'button--secondary';
+  else if (props.variant === BUTTON_VARIANTS.destructive) return 'button--destructive';
   else return 'button--primary';
 });
 
@@ -75,6 +76,17 @@ const handleClick = (event: MouseEvent) => {
     &:hover:not(.button--disabled) {
       background-color: var(--background-foreground-muted);
       color: var(--text-light);
+    }
+  }
+
+  &--destructive {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+    border: none;
+
+    &:hover:not(.button--disabled) {
+      background-color: var(--destructive-foreground-muted);
+      color: var(--destructive-foreground);
     }
   }
 

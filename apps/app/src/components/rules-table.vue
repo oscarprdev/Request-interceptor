@@ -3,16 +3,18 @@ import type { RuleApplication } from '../models/Rule';
 import Button from './ui/ui-button.vue';
 import Badge from './ui/ui-badge.vue';
 import Switch from './ui/ui-switch.vue';
+import Checkbox from './ui/ui-checkbox.vue';
 import type { RuleTableProps, RuleTableEmits } from './rules-table.types';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { REQUEST_METHODS } from './add-rule-form.types';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { rulesService } from '@/services/rules-service';
 
 defineProps<RuleTableProps>();
 const emit = defineEmits<RuleTableEmits>();
 
 const isEnabledTriggered = reactive<{ [key: string]: boolean }>({});
+const selectedRules = ref<string[]>([]);
 
 const handleReview = (rule: RuleApplication) => {
   emit('review-rule', rule);
@@ -23,6 +25,16 @@ const handleToggleEnabled = async (rule: RuleApplication) => {
   await rulesService.updateRule({ rule: { ...rule, isEnabled: !rule.isEnabled } });
   isEnabledTriggered[rule.id] = false;
   emit('rules-updated');
+};
+
+const handleSelectRule = (ruleIds: string[], checked: boolean) => {
+  if (checked) {
+    selectedRules.value = [...selectedRules.value, ...ruleIds];
+  } else {
+    selectedRules.value = selectedRules.value.filter(id => !ruleIds.includes(id));
+  }
+
+  emit('selection-change', selectedRules.value);
 };
 
 const badgeVariantsMap = {
@@ -47,6 +59,17 @@ const badgeVariantsMap = {
       <table class="rules-table__table">
         <thead>
           <tr>
+            <th class="checkbox-column">
+              <Checkbox
+                :model-value="rules.every(rule => selectedRules.includes(rule.id))"
+                @change="
+                  checked =>
+                    handleSelectRule(
+                      rules.map(rule => rule.id),
+                      checked
+                    )
+                " />
+            </th>
             <th>ID</th>
             <th>URL Filter</th>
             <th>Methods</th>
@@ -58,6 +81,11 @@ const badgeVariantsMap = {
         </thead>
         <tbody>
           <tr v-for="rule in rules" :key="rule.id">
+            <td class="checkbox-column">
+              <Checkbox
+                :model-value="selectedRules.includes(rule.id)"
+                @change="checked => handleSelectRule([rule.id], checked)" />
+            </td>
             <td class="ellipsis">{{ rule.id }}</td>
             <td class="row-url">{{ rule.urlFilter }}</td>
             <td>
@@ -79,7 +107,7 @@ const badgeVariantsMap = {
                 @change="handleToggleEnabled(rule)" />
             </td>
             <td>
-              <Button variant="primary" size="small" @click="handleReview(rule)">Review</Button>
+              <Button variant="secondary" size="small" @click="handleReview(rule)">Review</Button>
             </td>
           </tr>
         </tbody>
@@ -169,6 +197,11 @@ const badgeVariantsMap = {
       overflow: hidden;
       white-space: nowrap;
       max-width: 100px;
+    }
+
+    .checkbox-column {
+      width: 40px;
+      text-align: center;
     }
   }
 }

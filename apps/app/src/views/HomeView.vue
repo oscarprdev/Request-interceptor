@@ -13,6 +13,7 @@ const error = ref<{ error: boolean; message: string } | null>(null);
 const selectedRule = ref<RuleApplication | null>(null);
 const showReviewModal = ref(false);
 const showAddModal = ref(false);
+const selectedRuleIds = ref<string[]>([]);
 
 const fetchRules = async () => {
   const [err, data] = await rulesService.getRules();
@@ -38,6 +39,11 @@ const handleRuleAdded = () => {
   toggleAddModal(false);
 };
 
+const handleSelectionChange = (ids: string[]) => {
+  selectedRuleIds.value = ids;
+  console.log('Selected rule IDs:', ids);
+};
+
 onMounted(async () => {
   loading.value = true;
   error.value = null;
@@ -52,7 +58,15 @@ onMounted(async () => {
   <main class="rules__container">
     <header class="rules__header">
       <h1>Rules Management</h1>
-      <Button variant="primary" @click="toggleAddModal(true)">Add Rule</Button>
+      <div class="rules__actions">
+        <Button
+          v-if="selectedRuleIds.length > 0"
+          variant="destructive"
+          class="rules__action-button">
+          Remove rule{{ selectedRuleIds.length > 1 ? 's' : '' }}
+        </Button>
+        <Button variant="primary" @click="toggleAddModal(true)">Add Rule</Button>
+      </div>
     </header>
 
     <div v-if="error" class="rules__error">
@@ -65,8 +79,10 @@ onMounted(async () => {
       v-else
       :rules="rules"
       :loading="loading"
+      :selected-rules="selectedRuleIds"
       @review-rule="rule => toggleReviewModal(rule, true)"
-      @rules-updated="fetchRules" />
+      @rules-updated="fetchRules"
+      @selection-change="handleSelectionChange" />
 
     <ReviewRuleModal
       v-if="showReviewModal"
@@ -93,6 +109,16 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &__action-button {
+    font-weight: 500;
   }
 
   &__error {

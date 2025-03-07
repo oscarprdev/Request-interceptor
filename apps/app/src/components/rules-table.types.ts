@@ -1,13 +1,13 @@
-import type { RuleApplication } from '@/models/Rule';
+import type { RuleApplication } from '../models/Rule';
 
-interface RuleTableProps {
+export interface RuleTableProps {
   rules: RuleApplication[];
-  loading?: boolean;
+  selectedRules: string[];
+  loading: boolean;
 }
 
-interface RuleTableEmits {
-  (e: 'review-rule', rule: RuleApplication): void;
-  (e: 'rules-updated'): void;
+export interface RuleTableEmits {
+  'review-rule': [rule: RuleApplication];
+  'rules-updated': [];
+  'selection-change': [selectedIds: string[]];
 }
-
-export { type RuleTableProps, type RuleTableEmits };
