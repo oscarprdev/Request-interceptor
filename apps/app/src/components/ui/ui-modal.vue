@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { MODAL_SIZES, type ModalProps, type ModalEmits } from './ui-modal.types';
 
 const props = defineProps<ModalProps>();
@@ -11,18 +11,6 @@ const handleClose = () => {
   if (dialogRef.value) {
     dialogRef.value.close();
     emit('close');
-  }
-};
-
-const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
-    handleClose();
-  }
-};
-
-const handleClickOutside = (e: MouseEvent) => {
-  if (dialogRef.value && e.target === dialogRef.value) {
-    handleClose();
   }
 };
 
@@ -52,20 +40,14 @@ watch(
 );
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown);
-
   if (props.isOpen && dialogRef.value && !dialogRef.value.open) {
     dialogRef.value.showModal();
   }
 });
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown);
-});
 </script>
 
 <template>
-  <dialog ref="dialogRef" :class="['modal', modalSize]" @click="handleClickOutside">
+  <dialog ref="dialogRef" :class="['modal', modalSize]">
     <div class="modal__content">
       <div class="modal__header">
         <h2 class="modal__title">{{ title }}</h2>
@@ -140,7 +122,7 @@ onUnmounted(() => {
 
   &__title {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--background-foreground);
   }
 
