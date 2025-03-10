@@ -65,6 +65,7 @@ const onSubmit = async (e: Event) => {
   });
 
   isLoading.value = false;
+  handleClose();
 };
 
 const onNameInput = (e: Event) => {

@@ -5,10 +5,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { config } from './config/environment';
-import userRoutes from './routes/userRoutes';
-import ruleRoutes from './routes/ruleRoutes';
 import { errorHandler } from './middleware/errorHandler';
 import createTables from './scripts/initDb';
+import router from './routes';
 
 // Initialize express app
 const app = express();
@@ -28,8 +27,7 @@ app.use(morgan('dev')); // Logging
 app.use(express.json()); // Parse JSON bodies
 
 // Routes
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/rules', ruleRoutes);
+app.use(router);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

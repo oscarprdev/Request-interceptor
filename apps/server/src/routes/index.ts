@@ -5,8 +5,10 @@ import collectionRoutes from './collectionRoutes';
 
 const router = Router();
 
+const COMMON_ROUTE = '/api/v1';
+
 // Health check route
-router.get('/health', (req, res) => {
+router.get(`${COMMON_ROUTE}/health`, (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running',
@@ -15,8 +17,8 @@ router.get('/health', (req, res) => {
 });
 
 // API routes
-router.use('/rules', ruleRoutes);
-router.use('/users', userRoutes);
-router.use('/collections', collectionRoutes);
+router.use(`${COMMON_ROUTE}/rules`, ruleRoutes);
+router.use(`${COMMON_ROUTE}/users`, userRoutes);
+router.use(`${COMMON_ROUTE}/collections`, collectionRoutes);
 
 export default router;
