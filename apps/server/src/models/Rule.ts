@@ -12,6 +12,7 @@ export const RuleSchema = z.object({
   actionType: z.string().min(1),
   redirectUrl: z.string().nullable().optional(),
   isEnabled: z.boolean(),
+  collectionId: z.string().optional(),
 });
 
 // Extract TypeScript type from Zod schema
@@ -27,6 +28,7 @@ interface RuleAttributes {
   actionType: string;
   redirectUrl?: string | null;
   isEnabled: boolean;
+  collectionId?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -45,8 +47,34 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public actionType!: string;
   public redirectUrl!: string | null;
   public isEnabled!: boolean;
+  public collectionId!: string | null;
   public readonly createdAt!: string;
   public readonly updatedAt!: string;
+
+  constructor(
+    id: number,
+    priority: number,
+    urlFilter: string,
+    resourceTypes: string[],
+    requestMethods: string[],
+    actionType: string,
+    redirectUrl: string | null,
+    isEnabled: boolean,
+    createdAt: string,
+    updatedAt: string
+  ) {
+    super();
+    this.id = id;
+    this.priority = priority;
+    this.urlFilter = urlFilter;
+    this.resourceTypes = resourceTypes;
+    this.requestMethods = requestMethods;
+    this.actionType = actionType;
+    this.redirectUrl = redirectUrl;
+    this.isEnabled = isEnabled;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
 
   // Static method to create a Rule instance from raw data
   static fromRawData(data: {
@@ -61,19 +89,67 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
     createdAt: string;
     updatedAt: string;
   }): Rule {
-    return Rule.build(data);
+    return new Rule(
+      data.id,
+      data.priority,
+      data.urlFilter,
+      data.resourceTypes,
+      data.requestMethods,
+      data.actionType,
+      data.redirectUrl,
+      data.isEnabled,
+      data.createdAt,
+      data.updatedAt
+    );
   }
 
   // Static method to create a validated Rule
-  static createValidated(input: unknown): Rule {
+  static createValidated(input: RuleInput): Rule {
     // Validate input with Zod
     const validatedData = RuleSchema.parse(input);
 
+    // Validate required fields
+    if (!validatedData.priority || validatedData.priority < 1) {
+      throw new Error('Priority must be a positive integer');
+    }
+
+    if (!validatedData.urlFilter) {
+      throw new Error('URL filter is required');
+    }
+
+    if (
+      !validatedData.resourceTypes ||
+      !Array.isArray(validatedData.resourceTypes) ||
+      validatedData.resourceTypes.length === 0
+    ) {
+      throw new Error('Resource types must be a non-empty array');
+    }
+
+    if (
+      !validatedData.requestMethods ||
+      !Array.isArray(validatedData.requestMethods) ||
+      validatedData.requestMethods.length === 0
+    ) {
+      throw new Error('Request methods must be a non-empty array');
+    }
+
+    if (!validatedData.actionType) {
+      throw new Error('Action type is required');
+    }
+
     // Build the Rule instance
-    return Rule.build({
-      ...validatedData,
-      id: validatedData.id || 0, // Sequelize will replace this with auto-increment if it's a new record
-    });
+    return new Rule(
+      validatedData.id || 0, // Sequelize will replace this with auto-increment if it's a new record
+      validatedData.priority,
+      validatedData.urlFilter,
+      validatedData.resourceTypes,
+      validatedData.requestMethods,
+      validatedData.actionType,
+      validatedData.redirectUrl || null,
+      validatedData.isEnabled,
+      validatedData.createdAt || '',
+      validatedData.updatedAt || ''
+    );
   }
 
   // Convert to a plain object (useful for API responses)
@@ -87,6 +163,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
       actionType: this.actionType,
       redirectUrl: this.redirectUrl,
       isEnabled: this.isEnabled,
+      collectionId: this.collectionId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -127,6 +204,10 @@ Rule.init(
     isEnabled: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+    },
+    collectionId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.DATE,

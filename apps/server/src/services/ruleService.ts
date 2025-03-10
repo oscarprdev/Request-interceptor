@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import { IRuleRepository } from '@/repositories/IRuleRepository';
 import Rule, { RuleInput } from '@/models/Rule';
 import { config } from '@/config/environment';
+import { PaginationOptions, PaginatedResult } from '@/repositories/ICollectionRepository';
 
 export class RuleService implements IRuleRepository {
   private pool: Pool;
@@ -14,16 +15,36 @@ export class RuleService implements IRuleRepository {
   }
 
   /**
-   * Get all rules
+   * Get all rules with pagination
    */
-  async findAll(): Promise<Rule[]> {
+  async findAll(options?: PaginationOptions): Promise<PaginatedResult<Rule>> {
     try {
+      const page = options?.page || 1;
+      const limit = options?.limit || 10;
+      const offset = (page - 1) * limit;
+
+      // Get total count
+      const countQuery = `SELECT COUNT(*) FROM rules`;
+      const countResult = await this.pool.query(countQuery);
+      const total = parseInt(countResult.rows[0].count, 10);
+
+      // Get paginated data
       const query = `
         SELECT * FROM rules 
         ORDER BY "createdAt" DESC
+        LIMIT $1 OFFSET $2
       `;
-      const result = await this.pool.query(query);
-      return result.rows.map(row => this.mapToRule(row));
+
+      const result = await this.pool.query(query, [limit, offset]);
+      const rules = result.rows.map(row => this.mapToRule(row));
+
+      return {
+        data: rules,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     } catch (error) {
       console.error('Error in findAll:', error);
       throw error;
@@ -176,8 +197,9 @@ export class RuleService implements IRuleRepository {
         return false;
       }
 
-      // Delete from user_rules first to maintain referential integrity
+      // Delete from user_rules and collection_rules first to maintain referential integrity
       await this.pool.query('DELETE FROM user_rules WHERE "ruleId" = $1', [id]);
+      await this.pool.query('DELETE FROM collection_rules WHERE "ruleId" = $1', [id]);
 
       // Then delete the rule
       const query = `
@@ -194,21 +216,65 @@ export class RuleService implements IRuleRepository {
   }
 
   /**
-   * Get rules by user ID
+   * Get rules by user ID with pagination
    */
-  async findByUserId(userId: string): Promise<Rule[]> {
+  async findByUserId(userId: string, options?: PaginationOptions): Promise<PaginatedResult<Rule>> {
     try {
+      const page = options?.page || 1;
+      const limit = options?.limit || 10;
+      const offset = (page - 1) * limit;
+
+      // Get total count
+      const countQuery = `
+        SELECT COUNT(*) 
+        FROM rules r
+        JOIN user_rules ur ON r.id = ur."ruleId"
+        WHERE ur."userId" = $1
+      `;
+
+      const countResult = await this.pool.query(countQuery, [userId]);
+      const total = parseInt(countResult.rows[0].count, 10);
+
+      // Get paginated data
       const query = `
         SELECT r.* FROM rules r
         JOIN user_rules ur ON r.id = ur."ruleId"
         WHERE ur."userId" = $1
         ORDER BY r.priority ASC
+        LIMIT $2 OFFSET $3
       `;
 
-      const result = await this.pool.query(query, [userId]);
-      return result.rows.map(row => this.mapToRule(row));
+      const result = await this.pool.query(query, [userId, limit, offset]);
+      const rules = result.rows.map(row => this.mapToRule(row));
+
+      return {
+        data: rules,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     } catch (error) {
       console.error('Error in findByUserId:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Find rules by collection ID
+   */
+  async findByCollectionId(collectionId: string): Promise<Rule[]> {
+    try {
+      const query = `
+        SELECT * FROM rules
+        WHERE "collectionId" = $1
+        ORDER BY priority ASC
+      `;
+
+      const result = await this.pool.query(query, [collectionId]);
+      return result.rows.map(row => this.mapToRule(row));
+    } catch (error) {
+      console.error('Error in findByCollectionId:', error);
       throw error;
     }
   }

@@ -7,15 +7,19 @@ export class RuleController {
   }
 
   /**
-   * Get all rules
+   * Get all rules with pagination
    * @route GET /api/v1/rules
    */
   async getAllRules(req: Request, res: Response, next?: NextFunction) {
     try {
-      const rules = await this.ruleRepository.findAll();
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+
+      const rules = await this.ruleRepository.findAll({ page, limit });
+
       res.status(200).json({
         success: true,
-        data: rules,
+        ...rules,
       });
     } catch (error) {
       next && next(error);
@@ -118,13 +122,34 @@ export class RuleController {
   }
 
   /**
-   * Get rules by user ID
+   * Get rules by user ID with pagination
    * @route GET /api/v1/rules/user/:userId
    */
   async getRulesByUserId(req: Request, res: Response, next?: NextFunction) {
     try {
       const userId = req.params.userId;
-      const rules = await this.ruleRepository.findByUserId(userId);
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+
+      const rules = await this.ruleRepository.findByUserId(userId, { page, limit });
+
+      res.status(200).json({
+        success: true,
+        ...rules,
+      });
+    } catch (error) {
+      next && next(error);
+    }
+  }
+
+  /**
+   * Get rules by collection ID
+   * @route GET /api/v1/rules/collection/:collectionId
+   */
+  async getRulesByCollectionId(req: Request, res: Response, next?: NextFunction) {
+    try {
+      const collectionId = req.params.collectionId;
+      const rules = await this.ruleRepository.findByCollectionId(collectionId);
 
       res.status(200).json({
         success: true,

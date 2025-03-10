@@ -14,6 +14,7 @@ const ruleValidation = [
   body('actionType').isString().withMessage('Action type must be a string'),
   body('isEnabled').isBoolean().withMessage('Is enabled must be a boolean'),
   body('redirectUrl').optional().isString().withMessage('Redirect URL must be a string'),
+  body('collectionId').optional().isUUID().withMessage('Collection ID must be a valid UUID'),
   validate,
 ];
 
@@ -21,6 +22,7 @@ const ruleValidation = [
 router.get('/', ruleController.getAllRules.bind(ruleController));
 router.post('/seed', ruleController.seedDefaultRule.bind(ruleController));
 router.get('/user/:userId', ruleController.getRulesByUserId.bind(ruleController));
+router.get('/collection/:collectionId', ruleController.getRulesByCollectionId.bind(ruleController));
 router.get('/:id', ruleController.getRuleById.bind(ruleController));
 router.post('/', ruleValidation, ruleController.createRule.bind(ruleController));
 router.put('/:id', ruleValidation, ruleController.updateRule.bind(ruleController));

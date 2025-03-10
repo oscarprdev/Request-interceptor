@@ -21,6 +21,28 @@ const createTables = async () => {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS collections (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        "isEnabled" BOOLEAN DEFAULT TRUE,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_collections (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "userId" UUID REFERENCES users(id) ON DELETE CASCADE,
+        "collectionId" UUID REFERENCES collections(id) ON DELETE CASCADE,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        UNIQUE("userId", "collectionId")
+      )
+    `);
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS rules (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         priority INTEGER NOT NULL,
@@ -32,6 +54,17 @@ const createTables = async () => {
         "isEnabled" BOOLEAN DEFAULT FALSE,
         "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
         "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS collection_rules (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "collectionId" UUID REFERENCES collections(id) ON DELETE CASCADE,
+        "ruleId" UUID REFERENCES rules(id) ON DELETE CASCADE,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+        UNIQUE("collectionId", "ruleId")
       )
     `);
 
