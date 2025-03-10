@@ -8,6 +8,7 @@ interface RulesService {
   getRules(): Promise<SafeResult<RuleApplication[]>>;
   createRule(input: CreateRuleInput): Promise<SafeResult<RuleApplication>>;
   updateRule(input: UpdateRuleInput): Promise<SafeResult<RuleApplication>>;
+  deleteRule(ruleId: string): Promise<SafeResult<void>>;
 }
 
 const BASE_URL = 'http://localhost:8080';

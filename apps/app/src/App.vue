@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import './styles/global.css';
+import CollectionsAside from './components/collections-aside.vue';
 </script>
 
 <template>
-  <header>
-    <h1>Request AI</h1>
-  </header>
+  <CollectionsAside />
   <main>
     <RouterView />
   </main>
