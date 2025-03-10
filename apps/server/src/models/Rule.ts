@@ -1,24 +1,21 @@
 import { Model, DataTypes, Optional } from 'sequelize';
-import { sequelize } from '@/config/database';
 import { z } from 'zod';
+import { sequelize } from '@/config/database';
 
-// Define Zod schema for validation
 export const RuleSchema = z.object({
-  id: z.number().optional(),
   priority: z.number().int().positive(),
   urlFilter: z.string().min(1),
   resourceTypes: z.array(z.string()).min(1),
-  requestMethods: z.array(z.string()),
+  requestMethods: z.array(z.string()).min(1),
   actionType: z.string().min(1),
+  isEnabled: z.boolean().default(false),
+  id: z.number().optional(),
   redirectUrl: z.string().nullable().optional(),
-  isEnabled: z.boolean(),
   collectionId: z.string().optional(),
 });
 
-// Extract TypeScript type from Zod schema
 export type RuleInput = z.infer<typeof RuleSchema>;
 
-// Define the attributes interface
 interface RuleAttributes {
   id: number;
   priority: number;
@@ -33,11 +30,9 @@ interface RuleAttributes {
   updatedAt?: string;
 }
 
-// Define which attributes are optional for creation
 interface RuleCreationAttributes
   extends Optional<RuleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-// Extend the Model with proper typing
 class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public id!: number;
   public priority!: number;
@@ -51,32 +46,6 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public readonly createdAt!: string;
   public readonly updatedAt!: string;
 
-  constructor(
-    id: number,
-    priority: number,
-    urlFilter: string,
-    resourceTypes: string[],
-    requestMethods: string[],
-    actionType: string,
-    redirectUrl: string | null,
-    isEnabled: boolean,
-    createdAt: string,
-    updatedAt: string
-  ) {
-    super();
-    this.id = id;
-    this.priority = priority;
-    this.urlFilter = urlFilter;
-    this.resourceTypes = resourceTypes;
-    this.requestMethods = requestMethods;
-    this.actionType = actionType;
-    this.redirectUrl = redirectUrl;
-    this.isEnabled = isEnabled;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  // Static method to create a Rule instance from raw data
   static fromRawData(data: {
     id: number;
     priority: number;
@@ -89,26 +58,38 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
     createdAt: string;
     updatedAt: string;
   }): Rule {
-    return new Rule(
-      data.id,
-      data.priority,
-      data.urlFilter,
-      data.resourceTypes,
-      data.requestMethods,
-      data.actionType,
-      data.redirectUrl,
-      data.isEnabled,
-      data.createdAt,
-      data.updatedAt
-    );
+    return Rule.build(
+      {
+        id: data.id,
+        priority: data.priority,
+        urlFilter: data.urlFilter,
+        resourceTypes: data.resourceTypes,
+        requestMethods: data.requestMethods,
+        actionType: data.actionType,
+        redirectUrl: data.redirectUrl || null,
+        isEnabled: data.isEnabled,
+        collectionId: null,
+      },
+      {
+        isNewRecord: false,
+        raw: false,
+        include: [],
+      }
+    ).set({
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    });
   }
 
-  // Static method to create a validated Rule
-  static createValidated(input: RuleInput): Rule {
-    // Validate input with Zod
-    const validatedData = RuleSchema.parse(input);
+  static createValidated(input: unknown): Rule {
+    const validationResult = RuleSchema.safeParse(input);
 
-    // Validate required fields
+    if (!validationResult.success) {
+      throw new Error(`Validation error: ${validationResult.error.message}`);
+    }
+
+    const validatedData = validationResult.data;
+
     if (!validatedData.priority || validatedData.priority < 1) {
       throw new Error('Priority must be a positive integer');
     }
@@ -137,22 +118,19 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
       throw new Error('Action type is required');
     }
 
-    // Build the Rule instance
-    return new Rule(
-      validatedData.id || 0, // Sequelize will replace this with auto-increment if it's a new record
-      validatedData.priority,
-      validatedData.urlFilter,
-      validatedData.resourceTypes,
-      validatedData.requestMethods,
-      validatedData.actionType,
-      validatedData.redirectUrl || null,
-      validatedData.isEnabled,
-      validatedData.createdAt || '',
-      validatedData.updatedAt || ''
-    );
+    return Rule.build({
+      id: validatedData.id || undefined,
+      priority: validatedData.priority,
+      urlFilter: validatedData.urlFilter,
+      resourceTypes: validatedData.resourceTypes,
+      requestMethods: validatedData.requestMethods,
+      actionType: validatedData.actionType,
+      redirectUrl: validatedData.redirectUrl || null,
+      isEnabled: validatedData.isEnabled,
+      collectionId: validatedData.collectionId || null,
+    });
   }
 
-  // Convert to a plain object (useful for API responses)
   toJSON(): RuleAttributes {
     return {
       id: this.id,
@@ -204,22 +182,20 @@ Rule.init(
     isEnabled: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false,
     },
     collectionId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      references: {
+        model: 'collections',
+        key: 'id',
+      },
     },
   },
   {
     sequelize,
+    modelName: 'Rule',
     tableName: 'rules',
     timestamps: true,
   }
