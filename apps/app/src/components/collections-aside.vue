@@ -4,6 +4,7 @@ import { collectionsService } from '@/services/collections-service';
 import { onMounted, ref } from 'vue';
 import Button from './ui/ui-button.vue';
 import AddCollectionModal from './modals/add-collection-modal.vue';
+import CollectionRuleAside from './collection-rules-aside.vue';
 
 const collections = ref<CollectionApplication[]>([]);
 const isLoading = ref(false);
@@ -53,11 +54,11 @@ onMounted(async () => {
         <p>Loading...</p>
       </div>
       <div v-else>
-        <ul :key="collection.id" v-for="collection in collections">
-          <li>
-            {{ collection.name }}
-          </li>
-        </ul>
+        <CollectionRuleAside
+          v-for="collection in collections"
+          :key="collection.id"
+          :collection-id="collection.id"
+          :collection-name="collection.name" />
       </div>
     </section>
   </aside>
@@ -86,7 +87,10 @@ onMounted(async () => {
   }
 
   &__content {
-    padding: 1rem;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 </style>

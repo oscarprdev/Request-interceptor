@@ -3,6 +3,7 @@ import { DefaultHttpService } from './http-service';
 import type { SafeResult } from './common';
 import type { CreateCollectionInput, UpdateCollectionInput } from './collections-service.types';
 import { formatPgDate } from '@/utils/dates';
+import type { Rule, RuleApplication } from '@/models/Rule';
 
 interface CollectionsService {
   getCollections(): Promise<SafeResult<CollectionApplication[]>>;
@@ -93,6 +94,18 @@ export class DefaultCollectionsService extends DefaultHttpService implements Col
     return [null, null];
   }
 
+  async getRulesByCollectionId(collectionId: string): Promise<SafeResult<RuleApplication[]>> {
+    const [error, response] = await this.safeFetch<{ data: Rule[] }>({
+      url: `${this.apiUrl}/${collectionId}/rules`,
+    });
+
+    if (error) return [error, null];
+
+    const rules = response?.data?.map(rule => this.mapRuleToApplication(rule)) || [];
+
+    return [null, rules];
+  }
+
   private mapCollectionToApplication(collection: Collection): CollectionApplication {
     return {
       id: collection.id,
@@ -101,6 +114,23 @@ export class DefaultCollectionsService extends DefaultHttpService implements Col
       isEnabled: collection.isEnabled,
       createdAt: formatPgDate(collection.createdAt),
       updatedAt: formatPgDate(collection.updatedAt),
+    };
+  }
+
+  private mapRuleToApplication(rule: Rule): RuleApplication {
+    const response = JSON.parse(atob(rule.redirectUrl?.split(',')[1] || '{}'));
+
+    return {
+      id: rule.id,
+      priority: rule.priority,
+      urlFilter: rule.urlFilter,
+      resourceTypes: rule.resourceTypes,
+      requestMethods: rule.requestMethods,
+      actionType: rule.actionType,
+      isEnabled: rule.isEnabled,
+      response,
+      createdAt: formatPgDate(rule.createdAt),
+      updatedAt: formatPgDate(rule.updatedAt),
     };
   }
 }
