@@ -29,6 +29,11 @@ const buttonTypes = computed(() => {
   else return 'button--button';
 });
 
+const buttonDisabled = computed(() => {
+  if (props.disabled) return 'button--disabled';
+  else return '';
+});
+
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled) {
     emit('click', event);
@@ -38,7 +43,7 @@ const handleClick = (event: MouseEvent) => {
 
 <template>
   <button
-    :class="['button', buttonVariants, buttonSizes, buttonTypes]"
+    :class="['button', buttonVariants, buttonSizes, buttonTypes, buttonDisabled]"
     :type="type || 'button'"
     :disabled="disabled"
     @click="handleClick">
