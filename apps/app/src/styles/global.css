@@ -16,11 +16,14 @@
   --destructive: #dc3545;
   --destructive-foreground: #f8d7da;
 
-  --badge-1: #009637;
-  --badge-1-foreground: #d1ffe2;
+  --badge-1: #006696;
+  --badge-1-foreground: #d1eaff;
 
-  --badge-2: #dfa700;
-  --badge-2-foreground: #fff2c9;
+  --badge-2: #009637;
+  --badge-2-foreground: #d1ffe2;
+
+  --badge-3: #dfa700;
+  --badge-3-foreground: #fff2c9;
 
   --text-light: #ffffff;
   --text-muted: #c0c0c0;
