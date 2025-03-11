@@ -1,8 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { IRuleRepository } from '@/repositories/IRuleRepository';
+import { ICollectionRepository } from '@/repositories/ICollectionRepository';
 
 export class RuleController {
-  constructor(private readonly ruleRepository: IRuleRepository) {
+  constructor(
+    private readonly ruleRepository: IRuleRepository,
+    private readonly collectionRepository: ICollectionRepository
+  ) {
     console.log('RuleController initialized');
   }
 
@@ -58,7 +62,10 @@ export class RuleController {
    */
   async createRule(req: Request, res: Response, next?: NextFunction) {
     try {
+      const collectionId = req.params.collectionId;
+      console.log(collectionId);
       const rule = await this.ruleRepository.create(req.body);
+      await this.collectionRepository.assignRuleToCollection(collectionId, String(rule.id));
 
       res.status(201).json({
         success: true,
