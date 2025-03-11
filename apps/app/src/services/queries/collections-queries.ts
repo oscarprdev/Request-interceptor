@@ -2,7 +2,7 @@ import type { Collection } from '@/models/Collection';
 import { API_URL } from '../common';
 import type { Rule } from '@/models/Rule';
 
-type GetRulesByCollectionIdResponse = {
+export type GetRulesByCollectionIdResponse = {
   data: Rule[];
   limit: number;
   page: number;

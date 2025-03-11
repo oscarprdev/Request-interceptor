@@ -1,20 +1,19 @@
+import type { RuleApplication } from '@/models/Rule';
 import { defineStore } from 'pinia';
-
-type StoreRule = {
-  id: string;
-  name: string;
-  method: string;
-};
 
 export const useRulesStore = defineStore('rules', {
   state: () => ({
-    rules: [] as StoreRule[],
+    rules: [] as RuleApplication[],
+    selectedRule: null as RuleApplication | null,
   }),
   actions: {
-    setRules(rules: StoreRule[]) {
+    setRules(rules: RuleApplication[]) {
       this.rules = rules;
     },
-    addRule(rule: StoreRule) {
+    setSelectedRule(rule: RuleApplication | null) {
+      this.selectedRule = rule;
+    },
+    addRule(rule: RuleApplication) {
       this.rules.push(rule);
     },
     deleteRule(ruleId: string) {

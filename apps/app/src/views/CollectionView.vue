@@ -4,7 +4,10 @@ import Button from '@/components/ui/ui-button.vue';
 import { useRulesStore } from '@/stores/rules';
 import { useQuery } from '@tanstack/vue-query';
 import { collectionsQueries } from '@/services/queries/collections-queries';
-import { onMounted } from 'vue';
+import { watch } from 'vue';
+import type { Rule, RuleApplication } from '@/models/Rule';
+import { mapRuleToApplication } from '@/utils/mappers';
+import { Plus } from 'lucide-vue-next';
 
 const route = useRoute();
 const collectionId = route.params.id;
@@ -17,37 +20,57 @@ const { data, isLoading, error } = useQuery({
     collectionsQueries.getRulesByCollectionId({ collectionId: collectionId as string }),
 });
 
-const addRule = () => {
-  rulesStore.addRule({ id: crypto.randomUUID(), name: 'Default Rule', method: 'GET' });
+const onAddRule = () => {
+  rulesStore.addRule({
+    id: crypto.randomUUID(),
+    urlFilter: 'default',
+    requestMethods: ['GET'],
+    priority: 0,
+    resourceTypes: [],
+    actionType: 'block',
+    isEnabled: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    response: {
+      type: 'block',
+      body: 'Blocked by default rule',
+    },
+  });
 };
 
-onMounted(() => {
-  if (data.value && data.value.data.length > 0) {
-    const rules = data.value.data.map(rule => ({
-      id: rule.id,
-      name: rule.urlFilter,
-      method: rule.actionType,
-    }));
-    rulesStore.setRules(rules);
+const onSelectRule = (rule: RuleApplication) => {
+  rulesStore.setSelectedRule(rule);
+};
+
+watch(
+  () => data.value?.data,
+  (data?: Rule[]) => {
+    if (data && data.length > 0) {
+      rulesStore.setRules(data.map(mapRuleToApplication));
+    }
   }
-});
+);
 </script>
 
 <template>
   <section class="collection-view">
     <div class="collection-view__left">
-      <Button variant="ghost" class="collection-view__add-rule-button" @click="addRule"
-        >Add Rule</Button
-      >
-      <div class="collection-view__loading" v-if="isLoading">Loading...</div>
-      <div class="collection-view__error" v-else-if="error">Error: {{ error }}</div>
-      <div class="collection-view__no-rules" v-else-if="data?.data.length === 0">
-        No rules found
+      <div class="rules-header">
+        <h3 class="title">Rules: {{ rulesStore.rules.length }}</h3>
+        <Button variant="ghost" class="add-rule-button" @click="onAddRule"
+          ><Plus class="add-rule-button__icon"
+        /></Button>
       </div>
-      <ul v-else class="collection-view__rules">
-        <li v-for="rule in rulesStore.rules" :key="rule.id">
-          <div class="collection-view__rule-name">{{ rule.name }}</div>
-          <div class="collection-view__rule-method">{{ rule.method }}</div>
+
+      <div class="loading" v-if="isLoading">Loading...</div>
+      <div class="error" v-else-if="error">Error: {{ error }}</div>
+      <div class="no-rules" v-else-if="rulesStore.rules.length === 0">No rules found</div>
+      <ul v-else class="rules">
+        <li class="rule" v-for="rule in rulesStore.rules" :key="rule.id">
+          <button class="rule-button" @click="onSelectRule(rule)">
+            <div class="rule-methods">{{ rule.requestMethods.join(', ') }}</div>
+            <div class="rule-title">{{ rule.urlFilter }}</div>
+          </button>
         </li>
       </ul>
     </div>
@@ -61,11 +84,6 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 
-  &__add-rule-button {
-    width: 100%;
-    border-bottom: 1px solid var(--border);
-  }
-
   &__left {
     display: flex;
     flex-direction: column;
@@ -74,31 +92,97 @@ onMounted(() => {
     min-width: 200px;
     height: 100%;
     border-right: 1px solid var(--border);
+
+    .rules-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      margin: 0;
+
+      .title {
+        font-size: var(--font-sm);
+        font-weight: 600;
+        padding-left: 15px;
+      }
+
+      .add-rule-button {
+        width: fit-content;
+        border-left: 1px solid var(--border);
+        margin: 0;
+        border-radius: 0;
+
+        &__icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    .rules {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .rule {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        border-bottom: 1px solid var(--border);
+
+        .rule-button {
+          width: 100%;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          padding: 15px;
+          background-color: transparent;
+          border: none;
+          cursor: pointer;
+          color: var(--text);
+
+          &:hover {
+            background-color: var(--background-hover);
+          }
+
+          .rule-title {
+            font-size: var(--font-sm);
+            font-weight: 600;
+          }
+
+          .rule-methods {
+            font-size: var(--font-xs);
+          }
+        }
+      }
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 10px;
+      font-size: var(--font-sm);
+    }
+
+    .error {
+      text-align: center;
+      margin-top: 10px;
+      font-size: var(--font-sm);
+      color: var(--destructive);
+    }
+
+    .no-rules {
+      text-align: center;
+      margin-top: 10px;
+      font-size: var(--font-sm);
+      color: var(--text-muted);
+    }
   }
 
   &__right {
     width: 100%;
     height: 100%;
-  }
-
-  &__loading {
-    text-align: center;
-    margin-top: 10px;
-    font-size: var(--font-sm);
-  }
-
-  &__error {
-    text-align: center;
-    margin-top: 10px;
-    font-size: var(--font-sm);
-    color: var(--destructive);
-  }
-
-  &__no-rules {
-    text-align: center;
-    margin-top: 10px;
-    font-size: var(--font-sm);
-    color: var(--text-muted);
   }
 }
 </style>
