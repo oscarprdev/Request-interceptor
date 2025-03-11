@@ -1,8 +1,9 @@
-type ButtonVariant = 'primary' | 'secondary' | 'destructive';
+type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'ghost';
 const BUTTON_VARIANTS = {
   primary: 'primary',
   secondary: 'secondary',
   destructive: 'destructive',
+  ghost: 'ghost',
 } as const satisfies Record<string, ButtonVariant>;
 
 type ButtonSize = 'small' | 'medium' | 'large';
