@@ -10,11 +10,22 @@ export const useRulesStore = defineStore('rules', {
     setRules(rules: RuleApplication[]) {
       this.rules = rules;
     },
-    setSelectedRule(rule: RuleApplication | null) {
-      this.selectedRule = rule;
+    setSelectedRule(ruleId: string) {
+      const rule = this.rules.find(rule => rule.id === ruleId);
+      if (rule) {
+        this.selectedRule = rule;
+      }
+    },
+    updateRule(updatedRule: RuleApplication) {
+      console.log(updatedRule);
+      const index = this.rules.findIndex(rule => rule.id === updatedRule.id);
+      if (index !== -1) {
+        this.rules[index] = { ...this.rules[index], ...updatedRule };
+      }
     },
     addRule(rule: RuleApplication) {
       this.rules.push(rule);
+      this.selectedRule = rule;
     },
     deleteRule(ruleId: string) {
       this.rules = this.rules.filter(rule => rule.id !== ruleId);
