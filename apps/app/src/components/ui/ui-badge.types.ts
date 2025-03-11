@@ -1,8 +1,9 @@
-type BadgeVariant = 'default' | 'primary' | 'secondary' | 'destructive';
+type BadgeVariant = 'default' | 'primary' | 'secondary' | 'tertiary' | 'destructive';
 const BADGE_VARIANTS = {
   default: 'default',
   primary: 'primary',
   secondary: 'secondary',
+  tertiary: 'tertiary',
   destructive: 'destructive',
 } as const satisfies Record<string, BadgeVariant>;
 
