@@ -48,6 +48,7 @@ const handleInput = (event: Event) => {
     margin-bottom: 6px;
     font-weight: 500;
     color: var(--background-foreground);
+    font-size: var(--font-md);
   }
 
   &__required {
@@ -75,6 +76,7 @@ const handleInput = (event: Event) => {
 
     &--error {
       border-color: var(--destructive);
+      font-size: var(--font-md);
 
       &:focus {
         box-shadow: 0 0 0 2px rgba(var(--destructive-rgb), 0.2);
@@ -89,7 +91,7 @@ const handleInput = (event: Event) => {
 
   &__error {
     margin-top: 4px;
-    font-size: 0.875rem;
+    font-size: var(--font-sm);
     color: var(--destructive);
   }
 

@@ -50,7 +50,9 @@ onMounted(() => {
   <dialog ref="dialogRef" :class="['modal', modalSize]">
     <div class="modal__content">
       <div class="modal__header">
-        <h2 class="modal__title">{{ title }}</h2>
+        <h2 class="modal__title">
+          {{ title.charAt(0).toUpperCase() + title.slice(1).toLowerCase() }}
+        </h2>
         <button class="modal__close" @click="handleClose">×</button>
       </div>
 
@@ -116,13 +118,12 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
   }
 
   &__title {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: var(--font-md);
     color: var(--background-foreground);
   }
 

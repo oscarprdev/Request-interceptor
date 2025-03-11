@@ -3,11 +3,12 @@
   --background-foreground: #efefef;
   --background-foreground-muted: #262626;
   --border: #363636;
+  --border-hover: #676767;
 
-  --accent: #4e47e3;
-  --accent-muted: #d8d6ff;
-  --accent-foreground: #e8f2ff;
-  --accent-foreground-muted: #665fe2;
+  --accent: #1cac7a;
+  --accent-muted: #288061;
+  --accent-foreground: #ddfff3;
+  --accent-foreground-muted: #62d0aa;
 
   --destructive: #dc3545;
   --destructive-foreground: #f8d7da;
@@ -19,10 +20,17 @@
   --badge-2-foreground: #fff2c9;
 
   --text-light: #ffffff;
-  --text-muted: #efefef;
+  --text-muted: #c0c0c0;
 
   --header-height: 50px;
-  --radius: 0.5em;
+  --radius: 0.2em;
+
+  --font-2xs: 0.4em;
+  --font-xs: 0.6em;
+  --font-sm: 0.8em;
+  --font-md: 1em;
+  --font-lg: 1.2em;
+  --font-xl: 1.4em;
 }
 
 * {
@@ -35,18 +43,40 @@ html,
 body {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #app {
   width: 100%;
+  max-width: 1400px;
   height: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   color: var(--text-light);
   padding: 0;
   margin: 0;
+  border-right: 1px solid var(--border);
+  border-left: 1px solid var(--border);
 }
 
 main {
-  width: 100%;
   height: calc(100% - var(--header-height));
+  width: 100%;
+  margin: 0 auto;
+}
+
+header {
+  height: var(--header-height);
+  width: 100%;
+  margin: 0 auto;
+  padding: 5px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  border-bottom: 1px solid var(--border);
 }
