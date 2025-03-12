@@ -24,8 +24,8 @@ router.post('/seed', ruleController.seedDefaultRule.bind(ruleController));
 router.get('/user/:userId', ruleController.getRulesByUserId.bind(ruleController));
 router.get('/collection/:collectionId', ruleController.getRulesByCollectionId.bind(ruleController));
 router.post('/:collectionId', ruleValidation, ruleController.createRule.bind(ruleController));
-router.get('/:id', ruleController.getRuleById.bind(ruleController));
 router.put('/:id', ruleValidation, ruleController.updateRule.bind(ruleController));
+router.get('/:id', ruleController.getRuleById.bind(ruleController));
 router.delete('/:id', ruleController.deleteRule.bind(ruleController));
 
 export default router;

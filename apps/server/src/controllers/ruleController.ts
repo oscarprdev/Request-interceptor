@@ -63,7 +63,6 @@ export class RuleController {
   async createRule(req: Request, res: Response, next?: NextFunction) {
     try {
       const collectionId = req.params.collectionId;
-      console.log(collectionId);
       const rule = await this.ruleRepository.create(req.body);
       await this.collectionRepository.assignRuleToCollection(collectionId, String(rule.id));
 

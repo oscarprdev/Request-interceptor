@@ -56,11 +56,14 @@ export class RuleService implements IRuleRepository {
    */
   async findById(id: string): Promise<Rule | null> {
     try {
+      console.log(id);
       const query = `
         SELECT * FROM rules 
         WHERE id = $1
       `;
       const result = await this.pool.query(query, [id]);
+
+      console.log(result);
 
       if (result.rows.length === 0) {
         return null;

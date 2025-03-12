@@ -9,7 +9,7 @@ export const RuleSchema = z.object({
   requestMethods: z.array(z.string()).min(1),
   actionType: z.string().min(1),
   isEnabled: z.boolean().default(false),
-  id: z.number().optional(),
+  id: z.string().optional(),
   redirectUrl: z.string().nullable().optional(),
   collectionId: z.string().optional(),
 });
@@ -17,7 +17,7 @@ export const RuleSchema = z.object({
 export type RuleInput = z.infer<typeof RuleSchema>;
 
 interface RuleAttributes {
-  id: number;
+  id: string;
   priority: number;
   urlFilter: string;
   resourceTypes: string[];
@@ -34,7 +34,7 @@ interface RuleCreationAttributes
   extends Optional<RuleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
-  public id!: number;
+  public id!: string;
   public priority!: number;
   public urlFilter!: string;
   public resourceTypes!: string[];
@@ -47,7 +47,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
   public readonly updatedAt!: string;
 
   static fromRawData(data: {
-    id: number;
+    id: string;
     priority: number;
     urlFilter: string;
     resourceTypes: string[];
@@ -142,7 +142,7 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
 Rule.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       autoIncrement: true,
       primaryKey: true,
     },
