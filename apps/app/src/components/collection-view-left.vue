@@ -23,8 +23,10 @@ const { data, isLoading, error } = useQuery({
 watch(
   () => data.value?.data,
   (data?: Rule[]) => {
+    console.log(data);
     if (data && data.length > 0) {
       rulesStore.setRules(data.map(mapRuleToApplication));
+      rulesStore.setSelectedRule(data[0].id);
     }
   }
 );
@@ -32,7 +34,7 @@ watch(
 
 <template>
   <div class="collection-view__left">
-    <RuleListHeader :rules-length="rulesStore.rules.length" />
+    <RuleListHeader :collection-id="collectionId" :rules-length="rulesStore.rules.length" />
     <div class="loading" v-if="isLoading">Loading...</div>
     <div class="error" v-else-if="error">Error: {{ error }}</div>
     <div class="no-rules" v-else-if="rulesStore.rules.length === 0">No rules found</div>

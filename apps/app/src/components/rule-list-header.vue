@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import type { RuleApplication } from '@/models/Rule';
-import { useRulesStore } from '@/stores/rules';
 import { Plus } from 'lucide-vue-next';
 import Button from '@/components/ui/ui-button.vue';
+import { useCreateRule } from '@/composables/use-create-rule';
 
-defineProps<{
+const props = defineProps<{
+  collectionId: string | string[];
   rulesLength: number;
 }>();
 
@@ -24,11 +25,8 @@ const DEFAULT_RULE: RuleApplication = {
   },
 };
 
-const rulesStore = useRulesStore();
-
-const onAddRule = () => {
-  rulesStore.addRule(DEFAULT_RULE);
-};
+const createRule = useCreateRule({ collectionId: props.collectionId as string });
+const onAddRule = () => createRule(DEFAULT_RULE);
 </script>
 
 <template>

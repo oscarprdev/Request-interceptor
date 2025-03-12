@@ -10,7 +10,7 @@ const collectionId = route.params.id;
 <template>
   <section class="collection-view">
     <CollectionViewLeft :collection-id="collectionId" />
-    <CollectionViewRight :collection-id="collectionId" />
+    <CollectionViewRight />
   </section>
 </template>
 
