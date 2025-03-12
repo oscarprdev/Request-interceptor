@@ -324,6 +324,8 @@ export class CollectionService implements ICollectionRepository {
       const result = await this.pool.query(query, [collectionId, limit, offset]);
       const rules = result.rows.map(row => this.mapToRule(row));
 
+      console.log({ rules: rules[0].dataValues });
+
       return {
         data: rules,
         total,

@@ -58,24 +58,15 @@ class Rule extends Model<RuleAttributes, RuleCreationAttributes> {
     createdAt: string;
     updatedAt: string;
   }): Rule {
-    return Rule.build(
-      {
-        id: data.id,
-        priority: data.priority,
-        urlFilter: data.urlFilter,
-        resourceTypes: data.resourceTypes,
-        requestMethods: data.requestMethods,
-        actionType: data.actionType,
-        redirectUrl: data.redirectUrl || null,
-        isEnabled: data.isEnabled,
-        collectionId: null,
-      },
-      {
-        isNewRecord: false,
-        raw: false,
-        include: [],
-      }
-    ).set({
+    return Rule.build({
+      id: data.id,
+      priority: data.priority,
+      urlFilter: data.urlFilter,
+      resourceTypes: data.resourceTypes,
+      requestMethods: data.requestMethods,
+      actionType: data.actionType,
+      redirectUrl: data.redirectUrl || null,
+      isEnabled: data.isEnabled,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
