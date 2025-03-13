@@ -12,10 +12,8 @@ import Modal from '../ui/ui-modal.vue';
 import Input from '../ui/ui-input.vue';
 import Button from '../ui/ui-button.vue';
 import { useMutation } from '@tanstack/vue-query';
-import {
-  collectionMutations,
-  type CreateCollectionInput,
-} from '@/services/mutations/collection-mutations';
+import { collectionMutations } from '@/services/mutations/collection-mutations';
+import type { CreateCollectionInput } from '@/services/mutations/collection-mutations.types';
 
 defineProps<AddCollectionModalProps>();
 const emit = defineEmits<AddCollectionModalEmits>();

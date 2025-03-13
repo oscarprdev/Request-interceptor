@@ -1,10 +1,8 @@
-import type { Rule } from '@/models/Rule';
 import { API_URL } from '../common';
-
-export type RuleToServer = Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>;
+import type { CreateRuleInput, UpdateRuleInput } from './rules-mutations.types';
 
 export const rulesMutations = {
-  createRule: async ({ rule, collectionId }: { collectionId: string; rule: RuleToServer }) => {
+  createRule: async ({ rule, collectionId }: CreateRuleInput) => {
     const response = await fetch(`${API_URL}/rules/${collectionId}`, {
       method: 'POST',
       headers: {
@@ -14,7 +12,7 @@ export const rulesMutations = {
     });
     return await response.json();
   },
-  updateRule: async ({ rule, ruleId }: { rule: RuleToServer; ruleId: string }) => {
+  updateRule: async ({ rule, ruleId }: UpdateRuleInput) => {
     const response = await fetch(`${API_URL}/rules/${ruleId}`, {
       method: 'PUT',
       headers: {
