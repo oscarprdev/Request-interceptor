@@ -1,34 +1,27 @@
 import { Pool } from 'pg';
-import { IRuleRepository } from '@/repositories/IRuleRepository';
-import Rule, { RuleInput } from '@/models/Rule';
+import { RuleRepository, PaginationOptions, PaginatedResult } from '@/repositories/IRuleRepository';
+import Rule from '@/models/Rule';
 import { config } from '@/config/environment';
-import { PaginationOptions, PaginatedResult } from '@/repositories/ICollectionRepository';
 
-export class RuleService implements IRuleRepository {
+export class RuleService implements RuleRepository {
   private pool: Pool;
 
   constructor() {
     this.pool = new Pool({
       connectionString: config.databaseUrl,
     });
-    console.log('RuleService initialized');
   }
 
-  /**
-   * Get all rules with pagination
-   */
-  async findAll(options?: PaginationOptions): Promise<PaginatedResult<Rule>> {
+  async list(options?: PaginationOptions): Promise<PaginatedResult<Rule>> {
     try {
       const page = options?.page || 1;
       const limit = options?.limit || 10;
       const offset = (page - 1) * limit;
 
-      // Get total count
       const countQuery = `SELECT COUNT(*) FROM rules`;
       const countResult = await this.pool.query(countQuery);
       const total = parseInt(countResult.rows[0].count, 10);
 
-      // Get paginated data
       const query = `
         SELECT * FROM rules 
         ORDER BY "createdAt" DESC
@@ -46,15 +39,12 @@ export class RuleService implements IRuleRepository {
         totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
-      console.error('Error in findAll:', error);
+      console.error('Error in list:', error);
       throw error;
     }
   }
 
-  /**
-   * Get rule by ID
-   */
-  async findById(id: string): Promise<Rule | null> {
+  async describe(id: string): Promise<Rule | null> {
     try {
       const query = `
         SELECT * FROM rules 
@@ -68,19 +58,13 @@ export class RuleService implements IRuleRepository {
 
       return this.mapToRule(result.rows[0]);
     } catch (error) {
-      console.error('Error in findById:', error);
+      console.error('Error in describe:', error);
       throw error;
     }
   }
 
-  /**
-   * Create a new rule
-   */
-  async create(ruleData: RuleInput): Promise<Rule> {
+  async create(rule: Rule): Promise<Rule> {
     try {
-      // Create a validated Rule model instance
-      const validatedRule = Rule.createValidated(ruleData);
-
       const query = `
         INSERT INTO rules (
           priority, 
@@ -98,13 +82,13 @@ export class RuleService implements IRuleRepository {
       `;
 
       const values = [
-        validatedRule.priority,
-        validatedRule.urlFilter,
-        validatedRule.resourceTypes,
-        validatedRule.requestMethods,
-        validatedRule.actionType,
-        validatedRule.redirectUrl,
-        validatedRule.isEnabled,
+        rule.priority,
+        rule.urlFilter,
+        rule.resourceTypes,
+        rule.requestMethods,
+        rule.actionType,
+        rule.redirectUrl,
+        rule.isEnabled,
       ];
 
       const result = await this.pool.query(query, values);
@@ -115,70 +99,48 @@ export class RuleService implements IRuleRepository {
     }
   }
 
-  /**
-   * Update a rule
-   */
-  async update(id: string, ruleData: Partial<RuleInput>): Promise<Rule | null> {
+  async update(rule: Rule): Promise<Rule | null> {
     try {
-      // First check if the rule exists
-      const existingRule = await this.findById(id);
+      const existingRule = await this.describe(rule.id);
       if (!existingRule) {
         return null;
       }
 
-      // Build the SET part of the query dynamically based on provided fields
-      const updates: string[] = [];
-      const values: any[] = [];
-      let paramIndex = 1;
-
-      if (ruleData.priority !== undefined) {
-        updates.push(`priority = $${paramIndex++}`);
-        values.push(ruleData.priority);
-      }
-
-      if (ruleData.urlFilter !== undefined) {
-        updates.push(`"urlFilter" = $${paramIndex++}`);
-        values.push(ruleData.urlFilter);
-      }
-
-      if (ruleData.resourceTypes !== undefined) {
-        updates.push(`"resourceTypes" = $${paramIndex++}`);
-        values.push(ruleData.resourceTypes);
-      }
-
-      if (ruleData.requestMethods !== undefined) {
-        updates.push(`"requestMethods" = $${paramIndex++}`);
-        values.push(ruleData.requestMethods);
-      }
-
-      if (ruleData.actionType !== undefined) {
-        updates.push(`"actionType" = $${paramIndex++}`);
-        values.push(ruleData.actionType);
-      }
-
-      if (ruleData.redirectUrl !== undefined) {
-        updates.push(`"redirectUrl" = $${paramIndex++}`);
-        values.push(ruleData.redirectUrl);
-      }
-
-      if (ruleData.isEnabled !== undefined) {
-        updates.push(`"isEnabled" = $${paramIndex++}`);
-        values.push(ruleData.isEnabled);
-      }
-
-      updates.push(`"updatedAt" = NOW()`);
-
-      // Add the id as the last parameter
-      values.push(id);
-
       const query = `
         UPDATE rules 
-        SET ${updates.join(', ')} 
-        WHERE id = $${paramIndex} 
+        SET priority = $1, 
+        "urlFilter" = $2, 
+        "resourceTypes" = $3, 
+        "requestMethods" = $4, 
+        "actionType" = $5,
+        "redirectUrl" = $6, 
+        "isEnabled" = $7,
+        "updatedAt" = NOW()
+        WHERE id = $8 
         RETURNING *
       `;
 
-      const result = await this.pool.query(query, values);
+      const {
+        priority,
+        urlFilter,
+        resourceTypes,
+        requestMethods,
+        actionType,
+        redirectUrl,
+        isEnabled,
+        updatedAt,
+      } = rule;
+
+      const result = await this.pool.query(query, [
+        priority,
+        urlFilter,
+        resourceTypes,
+        requestMethods,
+        actionType,
+        redirectUrl,
+        isEnabled,
+        updatedAt,
+      ]);
       return this.mapToRule(result.rows[0]);
     } catch (error) {
       console.error('Error in update:', error);
@@ -186,22 +148,16 @@ export class RuleService implements IRuleRepository {
     }
   }
 
-  /**
-   * Delete a rule
-   */
   async delete(id: string): Promise<boolean> {
     try {
-      // First check if the rule exists
-      const existingRule = await this.findById(id);
+      const existingRule = await this.describe(id);
       if (!existingRule) {
         return false;
       }
 
-      // Delete from user_rules and collection_rules first to maintain referential integrity
-      await this.pool.query('DELETE FROM user_rules WHERE "ruleId" = $1', [id]);
+      // await this.pool.query('DELETE FROM user_rules WHERE "ruleId" = $1', [id]);
       await this.pool.query('DELETE FROM collection_rules WHERE "ruleId" = $1', [id]);
 
-      // Then delete the rule
       const query = `
         DELETE FROM rules 
         WHERE id = $1
@@ -215,36 +171,34 @@ export class RuleService implements IRuleRepository {
     }
   }
 
-  /**
-   * Get rules by user ID with pagination
-   */
-  async findByUserId(userId: string, options?: PaginationOptions): Promise<PaginatedResult<Rule>> {
+  async listByCollectionId(
+    collectionId: string,
+    options?: PaginationOptions
+  ): Promise<PaginatedResult<Rule>> {
     try {
       const page = options?.page || 1;
       const limit = options?.limit || 10;
       const offset = (page - 1) * limit;
 
-      // Get total count
       const countQuery = `
         SELECT COUNT(*) 
         FROM rules r
-        JOIN user_rules ur ON r.id = ur."ruleId"
-        WHERE ur."userId" = $1
+        JOIN collection_rules cr ON r.id = cr."ruleId"
+        WHERE cr."collectionId" = $1
       `;
 
-      const countResult = await this.pool.query(countQuery, [userId]);
+      const countResult = await this.pool.query(countQuery, [collectionId]);
       const total = parseInt(countResult.rows[0].count, 10);
 
-      // Get paginated data
       const query = `
         SELECT r.* FROM rules r
-        JOIN user_rules ur ON r.id = ur."ruleId"
-        WHERE ur."userId" = $1
+        JOIN collection_rules cr ON r.id = cr."ruleId"
+        WHERE cr."collectionId" = $1
         ORDER BY r.priority ASC
         LIMIT $2 OFFSET $3
       `;
 
-      const result = await this.pool.query(query, [userId, limit, offset]);
+      const result = await this.pool.query(query, [collectionId, limit, offset]);
       const rules = result.rows.map(row => this.mapToRule(row));
 
       return {
@@ -255,68 +209,25 @@ export class RuleService implements IRuleRepository {
         totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
-      console.error('Error in findByUserId:', error);
+      console.error('Error in listByCollectionId:', error);
       throw error;
     }
-  }
-
-  /**
-   * Find rules by collection ID
-   */
-  async findByCollectionId(collectionId: string): Promise<Rule[]> {
-    try {
-      const query = `
-        SELECT * FROM rules
-        WHERE "collectionId" = $1
-        ORDER BY priority ASC
-      `;
-
-      const result = await this.pool.query(query, [collectionId]);
-      return result.rows.map(row => this.mapToRule(row));
-    } catch (error) {
-      console.error('Error in findByCollectionId:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Seed default rule
-   */
-  async seedDefaultRule(): Promise<Rule> {
-    const defaultRule = {
-      priority: 1,
-      urlFilter: 'localhost:3000/example',
-      resourceTypes: ['xmlhttprequest'],
-      requestMethods: ['get', 'post', 'delete'],
-      actionType: 'redirect',
-      isEnabled: false,
-      redirectUrl:
-        'data:application/json;base64,' +
-        Buffer.from(
-          JSON.stringify({
-            message: 'This is a mocked response for both GET and POST requests from the extension',
-          })
-        ).toString('base64'),
-    };
-
-    return this.create(defaultRule);
   }
 
   private mapToRule(row: any): Rule {
-    return Rule.fromRawData({
-      id: row.id,
-      priority: row.priority,
-      urlFilter: row.urlFilter,
-      resourceTypes: row.resourceTypes,
-      requestMethods: row.requestMethods,
-      actionType: row.actionType,
-      redirectUrl: row.redirectUrl,
-      isEnabled: row.isEnabled,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    });
+    return new Rule(
+      row.id,
+      row.priority,
+      row.urlFilter,
+      row.resourceTypes,
+      row.requestMethods,
+      row.actionType,
+      row.redirectUrl,
+      row.isEnabled,
+      row.createdAt,
+      row.updatedAt
+    );
   }
 }
 
-// Export a singleton instance
 export const ruleService = new RuleService();

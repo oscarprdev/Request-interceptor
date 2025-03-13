@@ -1,31 +1,15 @@
 import { Router } from 'express';
 import { ruleController } from '@/controllers';
-import { body } from 'express-validator';
-import { validate } from '@/middleware/validator';
 
 const router = Router();
 
-// Validation rules
-const ruleValidation = [
-  body('priority').isInt({ min: 1 }).withMessage('Priority must be a positive integer'),
-  body('urlFilter').isString().withMessage('URL filter must be a string'),
-  body('resourceTypes').isArray().withMessage('Resource types must be an array'),
-  body('requestMethods').isArray().withMessage('Request methods must be an array'),
-  body('actionType').isString().withMessage('Action type must be a string'),
-  body('isEnabled').isBoolean().withMessage('Is enabled must be a boolean'),
-  body('redirectUrl').optional().isString().withMessage('Redirect URL must be a string'),
-  body('collectionId').optional().isUUID().withMessage('Collection ID must be a valid UUID'),
-  validate,
-];
+router.get('/', ruleController.list.bind(ruleController));
+router.post('/', ruleController.create.bind(ruleController));
+router.put('/', ruleController.update.bind(ruleController));
 
-// Routes
-router.get('/', ruleController.getAllRules.bind(ruleController));
-router.post('/seed', ruleController.seedDefaultRule.bind(ruleController));
-router.get('/user/:userId', ruleController.getRulesByUserId.bind(ruleController));
-router.get('/collection/:collectionId', ruleController.getRulesByCollectionId.bind(ruleController));
-router.post('/:collectionId', ruleValidation, ruleController.createRule.bind(ruleController));
-router.put('/:id', ruleValidation, ruleController.updateRule.bind(ruleController));
-router.get('/:id', ruleController.getRuleById.bind(ruleController));
-router.delete('/:id', ruleController.deleteRule.bind(ruleController));
+router.get('/:id', ruleController.describe.bind(ruleController));
+router.delete('/:id', ruleController.delete.bind(ruleController));
+
+router.get('/collection/:collectionId', ruleController.listByCollectionId.bind(ruleController));
 
 export default router;

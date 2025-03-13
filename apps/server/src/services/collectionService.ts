@@ -10,7 +10,6 @@ export class CollectionService implements CollectionRepository {
     this.pool = new Pool({
       connectionString: config.databaseUrl,
     });
-    console.log('CollectionService initialized');
   }
 
   /**
@@ -127,53 +126,6 @@ export class CollectionService implements CollectionRepository {
       throw error;
     }
   }
-
-  // /**
-  //  * Get rules by collection ID with pagination
-  //  */
-  // async findRulesByCollectionId(
-  //   collectionId: string,
-  //   options?: PaginationOptions
-  // ): Promise<PaginatedResult<Rule>> {
-  //   try {
-  //     const page = options?.page || 1;
-  //     const limit = options?.limit || 10;
-  //     const offset = (page - 1) * limit;
-
-  //     const countQuery = `
-  //       SELECT COUNT(*)
-  //       FROM rules r
-  //       JOIN collection_rules cr ON r.id = cr."ruleId"
-  //       WHERE cr."collectionId" = $1
-  //     `;
-
-  //     const countResult = await this.pool.query(countQuery, [collectionId]);
-  //     const total = parseInt(countResult.rows[0].count, 10);
-
-  //     const query = `
-  //       SELECT r.*
-  //       FROM rules r
-  //       JOIN collection_rules cr ON r.id = cr."ruleId"
-  //       WHERE cr."collectionId" = $1
-  //       ORDER BY r.priority ASC
-  //       LIMIT $2 OFFSET $3
-  //     `;
-
-  //     const result = await this.pool.query(query, [collectionId, limit, offset]);
-  //     const rules = result.rows.map(row => this.mapToRule(row));
-
-  //     return {
-  //       data: rules,
-  //       total,
-  //       page,
-  //       limit,
-  //       totalPages: Math.ceil(total / limit),
-  //     };
-  //   } catch (error) {
-  //     console.error('Error in findRulesByCollectionId:', error);
-  //     throw error;
-  //   }
-  // }
 
   private mapToCollection(row: any): Collection {
     return new Collection(row.id, row.name, row.isEnabled, row.createdAt, row.updatedAt);

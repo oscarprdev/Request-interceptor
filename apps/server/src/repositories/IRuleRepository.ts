@@ -1,13 +1,26 @@
-import Rule, { RuleInput } from '@/models/Rule';
-import { PaginationOptions, PaginatedResult } from './ICollectionRepository';
+import Rule from '@/models/Rule';
 
-export interface IRuleRepository {
-  findAll(options?: PaginationOptions): Promise<PaginatedResult<Rule>>;
-  findById(id: string): Promise<Rule | null>;
-  create(ruleData: RuleInput): Promise<Rule>;
-  update(id: string, ruleData: Partial<RuleInput>): Promise<Rule | null>;
+export interface PaginationOptions {
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface RuleRepository {
+  list(options?: PaginationOptions): Promise<PaginatedResult<Rule>>;
+  describe(id: string): Promise<Rule | null>;
+  create(rule: Rule): Promise<Rule>;
+  update(rule: Rule): Promise<Rule | null>;
   delete(id: string): Promise<boolean>;
-  findByUserId(userId: string, options?: PaginationOptions): Promise<PaginatedResult<Rule>>;
-  findByCollectionId(collectionId: string): Promise<Rule[]>;
-  seedDefaultRule(): Promise<Rule>;
+  listByCollectionId(
+    collectionId: string,
+    options?: PaginationOptions
+  ): Promise<PaginatedResult<Rule>>;
 }

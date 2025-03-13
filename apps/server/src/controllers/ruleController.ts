@@ -1,25 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-import { IRuleRepository } from '@/repositories/IRuleRepository';
-import { ICollectionRepository } from '@/repositories/ICollectionRepository';
+import { RuleRepository } from '@/repositories/IRuleRepository';
+import Rule from '@/models/Rule';
 
 export class RuleController {
-  constructor(
-    private readonly ruleRepository: IRuleRepository,
-    private readonly collectionRepository: ICollectionRepository
-  ) {
-    console.log('RuleController initialized');
-  }
+  constructor(private readonly ruleRepository: RuleRepository) {}
 
   /**
    * Get all rules with pagination
    * @route GET /api/v1/rules
    */
-  async getAllRules(req: Request, res: Response, next?: NextFunction) {
+  async list(req: Request, res: Response, next?: NextFunction) {
     try {
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
 
-      const rules = await this.ruleRepository.findAll({ page, limit });
+      const rules = await this.ruleRepository.list({ page, limit });
 
       res.status(200).json({
         success: true,
@@ -34,10 +29,10 @@ export class RuleController {
    * Get rule by ID
    * @route GET /api/v1/rules/:id
    */
-  async getRuleById(req: Request, res: Response, next?: NextFunction) {
+  async describe(req: Request, res: Response, next?: NextFunction) {
     try {
       const id = req.params.id;
-      const rule = await this.ruleRepository.findById(id);
+      const rule = await this.ruleRepository.describe(id);
 
       if (!rule) {
         res.status(404).json({
@@ -60,11 +55,25 @@ export class RuleController {
    * Create a new rule
    * @route POST /api/v1/rules
    */
-  async createRule(req: Request, res: Response, next?: NextFunction) {
+  async create(req: Request, res: Response, next?: NextFunction) {
     try {
-      const collectionId = req.params.collectionId;
-      const rule = await this.ruleRepository.create(req.body);
-      await this.collectionRepository.assignRuleToCollection(collectionId, String(rule.id));
+      const { id, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
+      const defaultPriority = 1;
+      const defaultResourcesTypes = ['xmlhttprequest'];
+      const defaultActionType = 'block';
+
+      const newRule = new Rule(
+        id,
+        defaultPriority,
+        urlFilter,
+        defaultResourcesTypes,
+        requestMethods,
+        defaultActionType,
+        redirectUrl,
+        isEnabled
+      );
+
+      const rule = await this.ruleRepository.create(newRule);
 
       res.status(201).json({
         success: true,
@@ -79,10 +88,30 @@ export class RuleController {
    * Update a rule
    * @route PUT /api/v1/rules/:id
    */
-  async updateRule(req: Request, res: Response, next?: NextFunction) {
+  async update(req: Request, res: Response, next?: NextFunction) {
     try {
-      const id = req.params.id;
-      const rule = await this.ruleRepository.update(id, req.body);
+      const { id, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
+      const currentRule = await this.ruleRepository.describe(id);
+      if (!currentRule) {
+        res.status(404).json({
+          success: false,
+          error: 'Rule not found',
+        });
+        return;
+      }
+
+      const ruleUpdated = new Rule(
+        id,
+        currentRule.priority,
+        urlFilter,
+        currentRule.resourceTypes,
+        requestMethods,
+        currentRule.actionType,
+        redirectUrl,
+        isEnabled
+      );
+
+      const rule = await this.ruleRepository.update(ruleUpdated);
 
       if (!rule) {
         res.status(404).json({
@@ -105,7 +134,7 @@ export class RuleController {
    * Delete a rule
    * @route DELETE /api/v1/rules/:id
    */
-  async deleteRule(req: Request, res: Response, next?: NextFunction) {
+  async delete(req: Request, res: Response, next?: NextFunction) {
     try {
       const id = req.params.id;
       const success = await this.ruleRepository.delete(id);
@@ -128,56 +157,20 @@ export class RuleController {
   }
 
   /**
-   * Get rules by user ID with pagination
-   * @route GET /api/v1/rules/user/:userId
+   * Get rules by collection ID
+   * @route GET /api/v1/rules/collection/:collectionId
    */
-  async getRulesByUserId(req: Request, res: Response, next?: NextFunction) {
+  async listByCollectionId(req: Request, res: Response, next?: NextFunction) {
     try {
-      const userId = req.params.userId;
+      const collectionId = req.params.collectionId;
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
 
-      const rules = await this.ruleRepository.findByUserId(userId, { page, limit });
+      const rules = await this.ruleRepository.listByCollectionId(collectionId, { page, limit });
 
       res.status(200).json({
         success: true,
         ...rules,
-      });
-    } catch (error) {
-      next && next(error);
-    }
-  }
-
-  /**
-   * Get rules by collection ID
-   * @route GET /api/v1/rules/collection/:collectionId
-   */
-  async getRulesByCollectionId(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const collectionId = req.params.collectionId;
-      const rules = await this.ruleRepository.findByCollectionId(collectionId);
-
-      res.status(200).json({
-        success: true,
-        count: rules.length,
-        data: rules,
-      });
-    } catch (error) {
-      next && next(error);
-    }
-  }
-
-  /**
-   * Seed default rule
-   * @route POST /api/v1/rules/seed
-   */
-  async seedDefaultRule(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const rule = await this.ruleRepository.seedDefaultRule();
-
-      res.status(201).json({
-        success: true,
-        data: rule,
       });
     } catch (error) {
       next && next(error);
