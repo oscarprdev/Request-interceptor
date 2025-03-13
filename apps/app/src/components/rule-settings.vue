@@ -1,22 +1,23 @@
 <script lang="ts" setup>
-import type { RuleApplication } from '@/models/Rule';
-import { useRulesStore } from '@/stores/rules';
-
-const emit = defineEmits<{
-  (e: 'update-rule', rule: RuleApplication): void;
-}>();
-
-const rulesStore = useRulesStore();
-
-const onSubmit = () => {
-  if (rulesStore.selectedRule) {
-    emit('update-rule', { ...rulesStore.selectedRule, requestMethods: ['POST'] });
-  }
-};
+import Dropdown from './ui/ui-dropdown.vue';
+const methodsDropdownOptions = [
+  {
+    id: 'get',
+    label: 'GET',
+    value: 'GET',
+  },
+  {
+    id: 'post',
+    label: 'POST',
+    value: 'POST',
+  },
+];
 </script>
 <template>
   <div class="rule-settings">
-    <button @click="onSubmit">try</button>
+    <div class="rule-settings__url-filter">
+      <Dropdown :options="methodsDropdownOptions" />
+    </div>
   </div>
 </template>
 
@@ -25,5 +26,13 @@ const onSubmit = () => {
   width: 50%;
   height: 100%;
   border-right: 1px solid var(--border);
+
+  &__url-filter {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+    border: 1px solid var(--border);
+    width: 100%;
+  }
 }
 </style>
