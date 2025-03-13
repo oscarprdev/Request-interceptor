@@ -13,18 +13,12 @@ interface FormState {
     value: string;
     error: string | null;
   };
-  description: {
-    value: string;
-    error: string | null;
-  };
 }
 
 const inputNameSchema = z.string().min(5);
-const descriptionInputSchema = z.string().min(10);
 
 const formStateSchema = z.object({
   name: inputNameSchema,
-  description: descriptionInputSchema,
 });
 
 export {
@@ -32,6 +26,5 @@ export {
   type AddCollectionModalEmits,
   type FormState,
   inputNameSchema,
-  descriptionInputSchema,
   formStateSchema,
 };

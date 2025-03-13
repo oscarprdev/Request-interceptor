@@ -3,7 +3,7 @@ import { useRulesStore } from '@/stores/rules';
 import RuleListHeader from './rule-list-header.vue';
 import RuleListItem from './rule-list-item.vue';
 import { useQuery } from '@tanstack/vue-query';
-import { collectionsQueries } from '@/services/queries/collections-queries';
+import { rulesQueries } from '@/services/queries/rules-queries';
 import type { Rule } from '@/models/Rule';
 import { watch } from 'vue';
 import { mapRuleToApplication } from '@/utils/mappers';
@@ -17,7 +17,7 @@ const QUERY_KEY = 'rules';
 const { data, isLoading, error } = useQuery({
   queryKey: [QUERY_KEY, props.collectionId],
   queryFn: () =>
-    collectionsQueries.getRulesByCollectionId({ collectionId: props.collectionId as string }),
+    rulesQueries.getRulesByCollectionId({ collectionId: props.collectionId as string }),
 });
 
 watch(

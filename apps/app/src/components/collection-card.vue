@@ -14,9 +14,6 @@ defineProps<{
       <Library class="collection__header-icon" />
       <h2>{{ collection.name }}</h2>
     </div>
-    <div class="collection__description">
-      <p>{{ collection.description }}</p>
-    </div>
     <div class="collection__time">
       <Clock class="collection__time-icon" />
       {{ formatPgDate(collection.updatedAt) }}
