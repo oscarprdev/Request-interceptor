@@ -1,72 +1,32 @@
-export interface CollectionInput {
-  name: string;
-  description?: string;
-  isEnabled?: boolean;
-}
+import { z } from 'zod';
+
+const collectionSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  isEnabled: z.boolean().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
 
 class Collection {
-  id: string;
-  name: string;
-  description: string | null;
-  isEnabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-
   constructor(
-    id: string,
-    name: string,
-    description: string | null,
-    isEnabled: boolean,
-    createdAt: Date,
-    updatedAt: Date
+    readonly id: string,
+    readonly name: string,
+    readonly isEnabled: boolean,
+    readonly createdAt?: Date,
+    readonly updatedAt?: Date
   ) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.isEnabled = isEnabled;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this.validate({ id, name, isEnabled, createdAt, updatedAt });
   }
 
-  static createValidated(input: CollectionInput): Collection {
-    // Validate required fields
-    if (!input.name) {
-      throw new Error('Collection name is required');
+  private validate(input: z.infer<typeof collectionSchema>) {
+    const result = collectionSchema.safeParse(input);
+
+    if (result.error) {
+      throw new Error(result.error.errors.join('\n'));
     }
 
-    // Create a new Collection instance with default values for optional fields
-    return new Collection(
-      '', // ID will be assigned by the database
-      input.name,
-      input.description || null,
-      input.isEnabled !== undefined ? input.isEnabled : true,
-      new Date(),
-      new Date()
-    );
-  }
-
-  static fromRawData(data: {
-    id: string;
-    name: string;
-    description: string | null;
-    isEnabled: boolean;
-    createdAt: Date | string;
-    updatedAt: Date | string;
-  }): Collection {
-    // Convert string dates to Date objects if needed
-    const createdAt =
-      typeof data.createdAt === 'string' ? new Date(data.createdAt) : data.createdAt;
-    const updatedAt =
-      typeof data.updatedAt === 'string' ? new Date(data.updatedAt) : data.updatedAt;
-
-    return new Collection(
-      data.id,
-      data.name,
-      data.description,
-      data.isEnabled,
-      createdAt,
-      updatedAt
-    );
+    return result.data;
   }
 }
 
