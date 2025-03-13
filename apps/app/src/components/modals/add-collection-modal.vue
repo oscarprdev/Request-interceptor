@@ -11,7 +11,11 @@ import {
 import Modal from '../ui/ui-modal.vue';
 import Input from '../ui/ui-input.vue';
 import Button from '../ui/ui-button.vue';
-import { collectionsService } from '@/services/collections-service';
+import { useMutation } from '@tanstack/vue-query';
+import {
+  collectionMutations,
+  type CreateCollectionInput,
+} from '@/services/mutations/collection-mutations';
 
 defineProps<AddCollectionModalProps>();
 const emit = defineEmits<AddCollectionModalEmits>();
@@ -20,7 +24,6 @@ const handleClose = () => {
   emit('close');
 };
 
-const isLoading = ref(false);
 const formState = ref<FormState>({
   name: {
     value: '',
@@ -31,16 +34,20 @@ const formState = ref<FormState>({
     error: null,
   },
 });
+const { mutate, isPending } = useMutation({
+  mutationFn: async (input: CreateCollectionInput) =>
+    await collectionMutations.createCollection(input),
+  onSuccess: () => emit('close'),
+});
 
 const isDisabled = computed(() => {
   return Boolean(
-    isLoading.value || !formState.value.name.value || !formState.value.description.value
+    isPending.value || !formState.value.name.value || !formState.value.description.value
   );
 });
 
 const onSubmit = async (e: Event) => {
   e.preventDefault();
-  isLoading.value = true;
 
   const validationResult = formStateSchema.safeParse({
     name: formState.value.name.value,
@@ -52,20 +59,16 @@ const onSubmit = async (e: Event) => {
       const fieldName = error.path[0];
       formState.value[fieldName as keyof FormState].error = error.message;
     });
-    isLoading.value = false;
     return;
   }
 
   formState.value.name.error = null;
   formState.value.description.error = null;
 
-  await collectionsService.createCollection({
+  mutate({
     name: validationResult.data.name,
     description: validationResult.data.description,
   });
-
-  isLoading.value = false;
-  handleClose();
 };
 
 const onNameInput = (e: Event) => {
@@ -127,7 +130,7 @@ onMounted(() => {
         variant="primary"
         type="submit"
         :disabled="isDisabled">
-        <template v-if="isLoading"> Loading... </template>
+        <template v-if="isPending"> Loading... </template>
         <template v-else> Create Collection </template>
       </Button>
     </form>
