@@ -12,11 +12,8 @@ export interface Rule {
 }
 
 export interface RuleInput {
-  priority: number;
   urlFilter: string;
-  resourceTypes: string[];
   requestMethods: string[];
-  actionType: string;
   redirectUrl?: string | null;
   isEnabled?: boolean;
 }
@@ -25,9 +22,7 @@ export interface RuleApplication {
   id: string;
   priority: number;
   urlFilter: string;
-  resourceTypes: string[];
   requestMethods: string[];
-  actionType: string;
   redirectUrl?: string | null;
   response?: Record<string, unknown>;
   isEnabled: boolean;

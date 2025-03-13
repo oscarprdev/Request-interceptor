@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { RuleApplication } from '@/models/Rule';
 import { Plus } from 'lucide-vue-next';
 import Button from '@/components/ui/ui-button.vue';
 import { useCreateRule } from '@/composables/use-create-rule';
@@ -9,24 +8,21 @@ const props = defineProps<{
   rulesLength: number;
 }>();
 
-const DEFAULT_RULE: RuleApplication = {
-  id: crypto.randomUUID(),
-  urlFilter: 'default',
-  requestMethods: ['GET'],
-  priority: 1,
-  resourceTypes: ['xmlhttprequest'],
-  actionType: 'block',
-  isEnabled: true,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  response: {
-    type: 'block',
-    body: 'Blocked by default rule',
-  },
-};
-
 const createRule = useCreateRule({ collectionId: props.collectionId as string });
-const onAddRule = () => createRule(DEFAULT_RULE);
+const onAddRule = () =>
+  createRule({
+    id: crypto.randomUUID(),
+    urlFilter: 'default',
+    requestMethods: ['GET'],
+    priority: 1,
+    isEnabled: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    response: {
+      type: 'block',
+      body: 'Blocked by default rule',
+    },
+  });
 </script>
 
 <template>

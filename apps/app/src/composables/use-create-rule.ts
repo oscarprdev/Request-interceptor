@@ -16,6 +16,10 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
         rule: mapRuleToServer(rule),
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),
+    onError: () => {
+      // delete rule from store
+      // show error toast
+    },
   });
   const debounce = useDebounce((rule: RuleApplication) => mutate(rule), 100);
 
