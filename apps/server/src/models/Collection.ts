@@ -1,11 +1,19 @@
 import { z } from 'zod';
 
 const collectionSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  isEnabled: z.boolean().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  id: z.string().uuid({ message: 'Collection ID is required and must be a valid UUID' }),
+  name: z
+    .string({ message: 'Name is required' })
+    .min(1, { message: 'Name must be at least 1 character long' }),
+  isEnabled: z
+    .boolean()
+    .optional()
+    .default(true)
+    .refine(val => typeof val === 'boolean', {
+      message: 'isEnabled must be a boolean',
+    }),
+  createdAt: z.date({ message: 'CreatedAt must be a valid date' }).optional(),
+  updatedAt: z.date({ message: 'UpdatedAt must be a valid date' }).optional(),
 });
 
 class Collection {

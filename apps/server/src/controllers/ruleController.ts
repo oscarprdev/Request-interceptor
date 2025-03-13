@@ -1,9 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { RuleRepository } from '@/repositories/IRuleRepository';
+import { RuleRepository } from '@/repositories/RuleRepository';
 import Rule from '@/models/Rule';
+import { RuleCollectionsRepository } from '@/repositories/RuleCollectionsRepository';
+import { CollectionRepository } from '@/repositories/CollectionRepository';
 
 export class RuleController {
-  constructor(private readonly ruleRepository: RuleRepository) {}
+  constructor(
+    private readonly ruleRepository: RuleRepository,
+    private readonly collectionRepository: CollectionRepository,
+    private readonly ruleCollectionsRepository: RuleCollectionsRepository
+  ) {}
 
   /**
    * Get all rules with pagination
@@ -35,11 +41,10 @@ export class RuleController {
       const rule = await this.ruleRepository.describe(id);
 
       if (!rule) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: 'Rule not found',
         });
-        return;
       }
 
       res.status(200).json({
@@ -57,6 +62,15 @@ export class RuleController {
    */
   async create(req: Request, res: Response, next?: NextFunction) {
     try {
+      const collectionId = req.params.collectionId;
+      const collection = await this.collectionRepository.describe(collectionId);
+      if (!collection) {
+        return res.status(404).json({
+          success: false,
+          error: 'Collection not found',
+        });
+      }
+
       const { id, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
       const defaultPriority = 1;
       const defaultResourcesTypes = ['xmlhttprequest'];
@@ -74,6 +88,8 @@ export class RuleController {
       );
 
       const rule = await this.ruleRepository.create(newRule);
+
+      await this.ruleCollectionsRepository.assignRuleToCollection(rule.id, collection.id);
 
       res.status(201).json({
         success: true,
@@ -93,11 +109,10 @@ export class RuleController {
       const { id, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
       const currentRule = await this.ruleRepository.describe(id);
       if (!currentRule) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: 'Rule not found',
         });
-        return;
       }
 
       const ruleUpdated = new Rule(
@@ -114,11 +129,10 @@ export class RuleController {
       const rule = await this.ruleRepository.update(ruleUpdated);
 
       if (!rule) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: 'Rule not found',
         });
-        return;
       }
 
       res.status(200).json({
@@ -140,11 +154,10 @@ export class RuleController {
       const success = await this.ruleRepository.delete(id);
 
       if (!success) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: 'Rule not found',
         });
-        return;
       }
 
       res.status(200).json({

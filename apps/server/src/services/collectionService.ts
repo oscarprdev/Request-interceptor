@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import Collection from '@/models/Collection';
 import { config } from '@/config/environment';
-import { CollectionRepository } from '@/repositories/ICollectionRepository';
+import { CollectionRepository } from '@/repositories/CollectionRepository';
 
 export class CollectionService implements CollectionRepository {
   private pool: Pool;

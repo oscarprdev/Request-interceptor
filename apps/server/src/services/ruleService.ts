@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { RuleRepository, PaginationOptions, PaginatedResult } from '@/repositories/IRuleRepository';
+import { RuleRepository, PaginationOptions, PaginatedResult } from '@/repositories/RuleRepository';
 import Rule from '@/models/Rule';
 import { config } from '@/config/environment';
 

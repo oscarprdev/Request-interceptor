@@ -24,7 +24,6 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS collections (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name VARCHAR(255) NOT NULL,
-        description TEXT,
         "isEnabled" BOOLEAN DEFAULT TRUE,
         "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
         "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()

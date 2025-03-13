@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CollectionRepository } from '@/repositories/ICollectionRepository';
+import { CollectionRepository } from '@/repositories/CollectionRepository';
 import Collection from '@/models/Collection';
 
 export class CollectionController {

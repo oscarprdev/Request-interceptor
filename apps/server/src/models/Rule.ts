@@ -1,16 +1,27 @@
 import { z } from 'zod';
 
 const ruleSchema = z.object({
-  id: z.string().uuid(),
-  priority: z.number().int().positive(),
-  urlFilter: z.string().min(1),
-  resourceTypes: z.array(z.string()).min(1),
-  requestMethods: z.array(z.string()).min(1),
-  actionType: z.string().min(1),
-  redirectUrl: z.string().nullable().optional(),
-  isEnabled: z.boolean().default(false),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  id: z.string({ message: 'Rule ID is required' }).uuid({ message: 'Rule ID is not a valid UUID' }),
+  priority: z
+    .number()
+    .int({ message: 'Priority must be an integer' })
+    .positive({ message: 'Priority must be a positive number' }),
+  urlFilter: z
+    .string({ message: 'URL filter is required' })
+    .min(1, { message: 'URL filter must be at least 1 character long' }),
+  resourceTypes: z
+    .array(z.string({ message: 'Resource type must be a string' }))
+    .min(1, { message: 'At least one resource type is required' }),
+  requestMethods: z
+    .array(z.string({ message: 'Request method must be a string' }))
+    .min(1, { message: 'At least one request method is required' }),
+  actionType: z
+    .string({ message: 'Action type is required' })
+    .min(1, { message: 'Action type must be at least 1 character long' }),
+  redirectUrl: z.string({ message: 'Redirect URL must be a string' }).nullable().optional(),
+  isEnabled: z.boolean({ message: 'IsEnabled must be a boolean' }).default(false),
+  createdAt: z.date({ message: 'CreatedAt must be a valid date' }).optional(),
+  updatedAt: z.date({ message: 'UpdatedAt must be a valid date' }).optional(),
 });
 
 class Rule {
