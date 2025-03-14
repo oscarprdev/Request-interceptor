@@ -34,9 +34,9 @@ const { data: rules, isLoading, error } = query;
 const onAddRule = () =>
   action({
     id: crypto.randomUUID(),
-    urlFilter: 'default',
+    urlFilter: `Rule #${rulesStore.rules.length + 1}`,
     requestMethods: ['GET'],
-    priority: 1,
+    priority: rulesStore.rules.length + 1,
     isEnabled: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -55,7 +55,9 @@ watch(
   (rules?: Rule[]) => {
     if (rules && rules.length > 0) {
       rulesStore.setRules(rules.map(mapRuleToApplication));
-      rulesStore.setSelectedRule(rules[0].id);
+      if (!rulesStore.selectedRule || rules.length === 1) {
+        rulesStore.setSelectedRule(rules[0].id);
+      }
     }
   }
 );
@@ -74,8 +76,9 @@ watch(
     <div class="no-rules" v-else-if="rulesStore.rules.length === 0">No rules found</div>
     <ul v-else class="rules">
       <li
-        v-for="rule in rules?.data"
+        v-for="rule in rulesStore.rules"
         :key="rule.id"
+        :id="`rule-${rule.id}`"
         :class="['rule', { 'rule--selected': rulesStore.selectedRule?.id === rule.id }]">
         <button class="rule-button" @click="onSelectRule(rule.id)">
           <div class="rule-methods">
@@ -107,6 +110,7 @@ watch(
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
+    height: 45px;
     padding: 0;
     margin: 0;
 

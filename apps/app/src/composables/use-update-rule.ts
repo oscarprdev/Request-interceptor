@@ -6,6 +6,8 @@ import { mapRuleToServer } from '@/utils/mappers';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
+const ACTION_TIMEOUT = 500;
+
 export const useUpdateRule = () => {
   const previousRule = ref<RuleApplication | null>(null);
   const rulesStore = useRulesStore();
@@ -23,7 +25,7 @@ export const useUpdateRule = () => {
       }
     },
   });
-  const debounce = useDebounce((rule: RuleApplication) => mutate(rule), 100);
+  const debounce = useDebounce((rule: RuleApplication) => mutate(rule), ACTION_TIMEOUT);
 
   return {
     action: (rule: RuleApplication) => {

@@ -5,6 +5,8 @@ import { useDebounce } from '@/utils/debounce';
 import { mapRuleToServer } from '@/utils/mappers';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
+const ACTION_TIMEOUT = 100;
+
 export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
@@ -19,9 +21,10 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
     onError: () => {
       // delete rule from store
       // show error toast
+      queryClient.invalidateQueries({ queryKey: ['rules'] });
     },
   });
-  const debounce = useDebounce((rule: RuleApplication) => mutate(rule), 100);
+  const debounce = useDebounce((rule: RuleApplication) => mutate(rule), ACTION_TIMEOUT);
 
   return {
     action: (rule: RuleApplication) => {

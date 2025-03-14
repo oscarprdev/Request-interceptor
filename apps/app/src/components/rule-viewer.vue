@@ -12,28 +12,29 @@ const methodsDropdownOptions = ALLOWED_METHODS.map(method => ({
   label: method,
 }));
 
-const ruleStore = useRulesStore();
+const rulesStore = useRulesStore();
 const { action } = useUpdateRule();
 
 const selectedOption = computed(() => {
-  const method = methodsDropdownOptions.find(
-    method => method.id === ruleStore.selectedRule?.requestMethods[0].toLowerCase()
+  return methodsDropdownOptions.find(
+    method => method.id === rulesStore.selectedRule?.requestMethods[0].toLowerCase()
   );
-  return method;
 });
 
 const onMethodDropdownChange = (id: string) => {
   const method = methodsDropdownOptions.find(method => method.id === id);
-  const selectedRule = ruleStore.selectedRule;
+  const selectedRule = rulesStore.selectedRule;
+
   if (method && selectedRule) {
-    ruleStore.updateRule({ ...selectedRule, requestMethods: [method.value] });
+    selectedRule.requestMethods = [method.value];
+    action(selectedRule);
   }
 };
 
 const onUrlFilterChanges = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const urlFilter = target.value;
-  const selectedRule = ruleStore.selectedRule;
+  const selectedRule = rulesStore.selectedRule;
 
   if (selectedRule) {
     selectedRule.urlFilter = urlFilter;
@@ -53,7 +54,10 @@ const onUrlFilterChanges = (event: Event) => {
             :options="methodsDropdownOptions" />
         </div>
         <div class="url-filter__input">
-          <input placeholder="Enter the URL intercepted" @input="onUrlFilterChanges" />
+          <input
+            placeholder="Enter the URL intercepted"
+            :value="rulesStore.selectedRule?.urlFilter"
+            @input="onUrlFilterChanges" />
         </div>
       </div>
     </article>

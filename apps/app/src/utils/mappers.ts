@@ -19,4 +19,5 @@ export const mapRuleToServer = (rule: RuleApplication): RuleToServer => ({
   requestMethods: rule.requestMethods,
   urlFilter: rule.urlFilter,
   isEnabled: rule.isEnabled ?? false,
+  priority: rule.priority ?? 1,
 });

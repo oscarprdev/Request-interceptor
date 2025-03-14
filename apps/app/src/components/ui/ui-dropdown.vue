@@ -26,13 +26,14 @@ const onToggleDropdown = () => {
 const onSelectOption = (option: DropdownOption) => {
   optionSelected.value = option;
   isOpened.value = false;
-  emit('change', option.value);
+
+  emit('change', option.id);
 };
 
 watch(
   () => props.defaultSelected,
   selected => {
-    console.log({ selected });
+    optionSelected.value = selected || null;
   },
   { immediate: true }
 );
