@@ -7,9 +7,9 @@ import {
   formStateSchema,
   inputNameSchema,
 } from './add-collection-modal.types';
-import Modal from '../ui/ui-modal.vue';
-import Input from '../ui/ui-input.vue';
-import Button from '../ui/ui-button.vue';
+import Modal from '@/components/ui/ui-modal.vue';
+import Input from '@/components/ui/ui-input.vue';
+import Button from '@/components/ui/ui-button.vue';
 import { useMutation } from '@tanstack/vue-query';
 import { collectionMutations } from '@/services/mutations/collection-mutations';
 import type { CreateCollectionInput } from '@/services/mutations/collection-mutations.types';

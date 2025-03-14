@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useCreateRule } from '@/composables/use-create-rule';
-import { Button, Badge } from '@/components/ui';
+import Button from '@/components/ui/ui-button.vue';
+import Badge from '@/components/ui/ui-badge.vue';
 import type { Rule } from '@/models/Rule';
 import { rulesQueries } from '@/services/queries/rules-queries';
 import { useRulesStore } from '@/stores/rules';

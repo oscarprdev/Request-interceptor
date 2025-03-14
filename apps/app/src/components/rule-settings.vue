@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Dropdown } from '@/components/ui';
+import Dropdown from '@/components/ui/ui-dropdown.vue';
 
 const methodsDropdownOptions = [
   {

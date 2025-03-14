@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import {
-  Button,
-  type DropdownEmits,
-  type DropdownOption,
-  type DropdownProps,
-} from '@/components/ui';
 import { ChevronDown } from 'lucide-vue-next';
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import type { DropdownEmits, DropdownOption, DropdownProps } from './ui-dropdown.types';
+import Button from '@/components/ui/ui-button.vue';
 
 const props = defineProps<DropdownProps>();
 const emit = defineEmits<DropdownEmits>();
