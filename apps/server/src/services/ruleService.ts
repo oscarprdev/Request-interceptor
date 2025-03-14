@@ -24,7 +24,7 @@ export class RuleService implements RuleRepository {
 
       const query = `
         SELECT * FROM rules 
-        ORDER BY "createdAt" DESC
+        ORDER BY "priority" DESC
         LIMIT $1 OFFSET $2
       `;
 
@@ -67,6 +67,7 @@ export class RuleService implements RuleRepository {
     try {
       const query = `
         INSERT INTO rules (
+          id,
           priority, 
           "urlFilter", 
           "resourceTypes", 
@@ -77,11 +78,12 @@ export class RuleService implements RuleRepository {
           "createdAt", 
           "updatedAt"
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) 
         RETURNING *
       `;
 
       const values = [
+        rule.id,
         rule.priority,
         rule.urlFilter,
         rule.resourceTypes,
@@ -215,7 +217,6 @@ export class RuleService implements RuleRepository {
   }
 
   private mapToRule(row: any): Rule {
-    console.log(row);
     return new Rule(
       row.id,
       row.priority,

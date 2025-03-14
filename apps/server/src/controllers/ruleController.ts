@@ -71,14 +71,13 @@ export class RuleController {
         });
       }
 
-      const { id, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
-      const defaultPriority = 1;
+      const { id, urlFilter, requestMethods, redirectUrl, isEnabled, priority } = req.body;
       const defaultResourcesTypes = ['xmlhttprequest'];
       const defaultActionType = 'block';
 
       const newRule = new Rule(
         id,
-        defaultPriority,
+        priority,
         urlFilter,
         defaultResourcesTypes,
         requestMethods,
@@ -116,7 +115,7 @@ export class RuleController {
       }
 
       const ruleUpdated = new Rule(
-        currentRule.id,
+        id,
         currentRule.priority,
         urlFilter,
         currentRule.resourceTypes,
