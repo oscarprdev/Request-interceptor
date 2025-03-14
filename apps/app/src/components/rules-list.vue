@@ -34,7 +34,8 @@ const { data: rules, isLoading, error } = query;
 const onAddRule = () =>
   action({
     id: crypto.randomUUID(),
-    urlFilter: `Rule #${rulesStore.rules.length + 1}`,
+    title: `Rule #${rulesStore.rules.length + 1}`,
+    urlFilter: '',
     requestMethods: ['GET'],
     priority: rulesStore.rules.length + 1,
     isEnabled: true,
@@ -88,7 +89,7 @@ watch(
               :key="method"
               :variant="METHOD_BADGE_MAP[method as keyof typeof METHOD_BADGE_MAP]"></Badge>
           </div>
-          <div class="rule-title">{{ rule.urlFilter }}</div>
+          <div class="rule-title">{{ rule.title }}</div>
         </button>
       </li>
     </ul>

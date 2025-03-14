@@ -1,5 +1,6 @@
 export interface Rule {
   id: string;
+  title: string;
   priority: number;
   urlFilter: string;
   resourceTypes: string[];
@@ -11,15 +12,9 @@ export interface Rule {
   updatedAt: string;
 }
 
-export interface RuleInput {
-  urlFilter: string;
-  requestMethods: string[];
-  redirectUrl?: string | null;
-  isEnabled?: boolean;
-}
-
 export interface RuleApplication {
   id: string;
+  title: string;
   priority: number;
   urlFilter: string;
   requestMethods: string[];
