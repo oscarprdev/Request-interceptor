@@ -74,7 +74,6 @@ const onUrlFilterChanges = (event: Event) => {
   .settings {
     width: 50%;
     border-right: 1px solid var(--border);
-    padding: 5px;
 
     .url-filter {
       display: flex;
@@ -85,7 +84,12 @@ const onUrlFilterChanges = (event: Event) => {
       &__dropdown {
         width: fit-content;
         height: 100%;
-        border: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+
+        .dropdown__content {
+          border-left: none;
+        }
       }
 
       &__input {
@@ -98,8 +102,8 @@ const onUrlFilterChanges = (event: Event) => {
           height: 100%;
           padding: 5px 10px;
           background-color: transparent;
-          border: 1px solid var(--border);
-          border-left: none;
+          border: none;
+          border-bottom: 1px solid var(--border);
           outline: none;
           color: var(--text-light);
         }

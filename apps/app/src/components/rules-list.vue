@@ -111,7 +111,7 @@ watch(
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
-    height: 45px;
+    height: var(--rule-header);
     padding: 0;
     margin: 0;
 

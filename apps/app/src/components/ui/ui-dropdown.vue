@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ChevronDown } from 'lucide-vue-next';
-import { ref, onUnmounted, watch } from 'vue';
+import { ref, onUnmounted, watch, onMounted } from 'vue';
 import type { DropdownEmits, DropdownOption, DropdownProps } from './ui-dropdown.types';
 import Button from '@/components/ui/ui-button.vue';
 
@@ -37,6 +37,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  document.addEventListener('click', onClickOutside);
+});
 
 onUnmounted(() => {
   document.removeEventListener('click', onClickOutside);

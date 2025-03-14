@@ -36,6 +36,8 @@
   --font-md: 1em;
   --font-lg: 1.2em;
   --font-xl: 1.4em;
+
+  --rule-header: 40px;
 }
 
 * {
