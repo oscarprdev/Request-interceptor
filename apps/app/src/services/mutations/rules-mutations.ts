@@ -12,8 +12,8 @@ export const rulesMutations = {
     });
     return await response.json();
   },
-  updateRule: async ({ rule, ruleId }: UpdateRuleInput) => {
-    const response = await fetch(`${API_URL}/rules/${ruleId}`, {
+  updateRule: async ({ rule }: UpdateRuleInput) => {
+    const response = await fetch(`${API_URL}/rules`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

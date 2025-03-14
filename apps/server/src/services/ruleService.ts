@@ -121,6 +121,7 @@ export class RuleService implements RuleRepository {
       `;
 
       const {
+        id,
         priority,
         urlFilter,
         resourceTypes,
@@ -128,7 +129,6 @@ export class RuleService implements RuleRepository {
         actionType,
         redirectUrl,
         isEnabled,
-        updatedAt,
       } = rule;
 
       const result = await this.pool.query(query, [
@@ -139,7 +139,7 @@ export class RuleService implements RuleRepository {
         actionType,
         redirectUrl,
         isEnabled,
-        updatedAt,
+        id,
       ]);
       return this.mapToRule(result.rows[0]);
     } catch (error) {
@@ -215,6 +215,7 @@ export class RuleService implements RuleRepository {
   }
 
   private mapToRule(row: any): Rule {
+    console.log(row);
     return new Rule(
       row.id,
       row.priority,

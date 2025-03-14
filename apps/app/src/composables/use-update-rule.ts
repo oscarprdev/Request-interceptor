@@ -14,7 +14,6 @@ export const useUpdateRule = () => {
     mutationKey: ['update-rule'],
     mutationFn: async (rule: RuleApplication) =>
       await rulesMutations.updateRule({
-        ruleId: rule.id,
         rule: mapRuleToServer(rule),
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),

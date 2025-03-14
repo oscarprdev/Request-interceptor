@@ -7,4 +7,4 @@ export type RuleToServer = Omit<
 
 export type CreateRuleInput = { rule: RuleToServer; collectionId: string };
 
-export type UpdateRuleInput = { rule: RuleToServer; ruleId: string };
+export type UpdateRuleInput = { rule: RuleToServer };

@@ -6,14 +6,14 @@ type DropdownOption = {
 
 type DropdownProps = {
   options: DropdownOption[];
+  defaultSelected?: DropdownOption;
   placeholder?: string;
   disabled?: boolean;
   modelValue?: string;
 };
 
 type DropdownEmits = {
-  'update:modelValue': [value: string];
-  change: [option: DropdownOption];
+  (e: 'change', id: string): void;
 };
 
 export type { DropdownOption, DropdownProps, DropdownEmits };

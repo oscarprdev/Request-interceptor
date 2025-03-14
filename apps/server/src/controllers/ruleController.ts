@@ -116,7 +116,7 @@ export class RuleController {
       }
 
       const ruleUpdated = new Rule(
-        id,
+        currentRule.id,
         currentRule.priority,
         urlFilter,
         currentRule.resourceTypes,
