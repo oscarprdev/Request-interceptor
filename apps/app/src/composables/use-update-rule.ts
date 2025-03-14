@@ -10,7 +10,7 @@ export const useUpdateRule = () => {
   const previousRule = ref<RuleApplication | null>(null);
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ['update-rule'],
     mutationFn: async (rule: RuleApplication) =>
       await rulesMutations.updateRule({
@@ -26,9 +26,12 @@ export const useUpdateRule = () => {
   });
   const debounce = useDebounce((rule: RuleApplication) => mutate(rule), 100);
 
-  return (rule: RuleApplication) => {
-    previousRule.value = rulesStore.selectedRule;
-    rulesStore.updateRule(rule);
-    debounce(rule);
+  return {
+    action: (rule: RuleApplication) => {
+      previousRule.value = rulesStore.selectedRule;
+      rulesStore.updateRule(rule);
+      debounce(rule);
+    },
+    loading: isPending,
   };
 };

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
-import CollectionViewLeft from '@/components/collection-view-left.vue';
 import CollectionViewRight from '@/components/collection-view-right.vue';
+import RulesList from '@/components/rules-list.vue';
 
 const route = useRoute();
 const collectionId = route.params.id;
@@ -9,7 +9,7 @@ const collectionId = route.params.id;
 
 <template>
   <section class="collection-view">
-    <CollectionViewLeft :collection-id="collectionId" />
+    <RulesList :collection-id="collectionId" />
     <CollectionViewRight />
   </section>
 </template>

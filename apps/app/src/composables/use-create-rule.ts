@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ['create-rule'],
     mutationFn: async (rule: RuleApplication) =>
       await rulesMutations.createRule({
@@ -23,8 +23,11 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
   });
   const debounce = useDebounce((rule: RuleApplication) => mutate(rule), 100);
 
-  return (rule: RuleApplication) => {
-    rulesStore.addRule(rule);
-    debounce(rule);
+  return {
+    action: (rule: RuleApplication) => {
+      rulesStore.addRule(rule);
+      debounce(rule);
+    },
+    loading: isPending,
   };
 };
