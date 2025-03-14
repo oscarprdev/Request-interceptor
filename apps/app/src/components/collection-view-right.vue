@@ -4,9 +4,9 @@ import RuleResponse from './rule-response.vue';
 import RuleSettings from './rule-settings.vue';
 import type { RuleApplication } from '@/models/Rule';
 
-const updateRule = useUpdateRule();
+const { action } = useUpdateRule();
 
-const onUpdateRule = (rule: RuleApplication) => updateRule(rule);
+const onUpdateRule = (rule: RuleApplication) => action(rule);
 </script>
 
 <template>

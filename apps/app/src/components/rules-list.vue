@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useCreateRule } from '@/composables/use-create-rule';
+import { Button, Badge } from '@/components/ui';
 import type { Rule } from '@/models/Rule';
 import { rulesQueries } from '@/services/queries/rules-queries';
 import { useRulesStore } from '@/stores/rules';
@@ -8,7 +9,6 @@ import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { Plus } from 'lucide-vue-next';
-import { Button, Badge } from '@/components/ui';
 
 const props = defineProps<{
   collectionId: string | string[];

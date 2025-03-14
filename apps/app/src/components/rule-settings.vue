@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import Dropdown from './ui/ui-dropdown.vue';
+import { Dropdown } from '@/components/ui';
+
 const methodsDropdownOptions = [
   {
     id: 'get',
@@ -15,8 +16,11 @@ const methodsDropdownOptions = [
 </script>
 <template>
   <div class="rule-settings">
-    <div class="rule-settings__url-filter">
-      <Dropdown :options="methodsDropdownOptions" />
+    <div class="url-filter">
+      <div class="url-filter__dropdown">
+        <Dropdown :options="methodsDropdownOptions" />
+      </div>
+      <input class="url-filter__input" placeholder="hola" />
     </div>
   </div>
 </template>
@@ -27,12 +31,20 @@ const methodsDropdownOptions = [
   height: 100%;
   border-right: 1px solid var(--border);
 
-  &__url-filter {
+  .url-filter {
     display: flex;
     align-items: center;
     margin: 5px;
     border: 1px solid var(--border);
     width: 100%;
+
+    &__dropdown {
+      width: 100px;
+    }
+
+    &__input {
+      width: 100%;
+    }
   }
 }
 </style>
