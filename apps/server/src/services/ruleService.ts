@@ -68,6 +68,7 @@ export class RuleService implements RuleRepository {
       const query = `
         INSERT INTO rules (
           id,
+          title,
           priority, 
           "urlFilter", 
           "resourceTypes", 
@@ -78,12 +79,13 @@ export class RuleService implements RuleRepository {
           "createdAt", 
           "updatedAt"
         ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()) 
         RETURNING *
       `;
 
       const values = [
         rule.id,
+        rule.title,
         rule.priority,
         rule.urlFilter,
         rule.resourceTypes,
@@ -110,20 +112,22 @@ export class RuleService implements RuleRepository {
 
       const query = `
         UPDATE rules 
-        SET priority = $1, 
-        "urlFilter" = $2, 
-        "resourceTypes" = $3, 
-        "requestMethods" = $4, 
-        "actionType" = $5,
-        "redirectUrl" = $6, 
-        "isEnabled" = $7,
+        SET title = $1, 
+        priority = $2, 
+        "urlFilter" = $3, 
+        "resourceTypes" = $4, 
+        "requestMethods" = $5, 
+        "actionType" = $6,
+        "redirectUrl" = $7, 
+        "isEnabled" = $8,
         "updatedAt" = NOW()
-        WHERE id = $8 
+        WHERE id = $9
         RETURNING *
       `;
 
       const {
         id,
+        title,
         priority,
         urlFilter,
         resourceTypes,
@@ -134,6 +138,7 @@ export class RuleService implements RuleRepository {
       } = rule;
 
       const result = await this.pool.query(query, [
+        title,
         priority,
         urlFilter,
         resourceTypes,
@@ -219,6 +224,7 @@ export class RuleService implements RuleRepository {
   private mapToRule(row: any): Rule {
     return new Rule(
       row.id,
+      row.title,
       row.priority,
       row.urlFilter,
       row.resourceTypes,

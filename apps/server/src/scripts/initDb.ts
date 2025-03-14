@@ -45,6 +45,7 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS rules (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         priority INTEGER NOT NULL,
+        title TEXT NOT NULL,
         "urlFilter" VARCHAR(255) NOT NULL,
         "resourceTypes" TEXT[] NOT NULL,
         "requestMethods" TEXT[] NOT NULL,

@@ -2,13 +2,12 @@ import { z } from 'zod';
 
 const ruleSchema = z.object({
   id: z.string({ message: 'Rule ID is required' }).uuid({ message: 'Rule ID is not a valid UUID' }),
+  title: z.string({ message: 'Rule title is required' }),
   priority: z
     .number()
     .int({ message: 'Priority must be an integer' })
     .positive({ message: 'Priority must be a positive number' }),
-  urlFilter: z
-    .string({ message: 'URL filter is required' })
-    .min(1, { message: 'URL filter must be at least 1 character long' }),
+  urlFilter: z.string({ message: 'URL filter is required' }),
   resourceTypes: z
     .array(z.string({ message: 'Resource type must be a string' }))
     .min(1, { message: 'At least one resource type is required' }),
@@ -27,6 +26,7 @@ const ruleSchema = z.object({
 class Rule {
   constructor(
     readonly id: string,
+    readonly title: string,
     readonly priority: number,
     readonly urlFilter: string,
     readonly resourceTypes: string[],
@@ -39,6 +39,7 @@ class Rule {
   ) {
     this.validate({
       id,
+      title,
       priority,
       urlFilter,
       resourceTypes,
