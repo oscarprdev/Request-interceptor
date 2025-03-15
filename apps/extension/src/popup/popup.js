@@ -1,14 +1,14 @@
-// Global state
+const APP_URL = 'http://localhost:5173';
+const API_URL = 'http://localhost:8080';
+
 let serverRulesCache = [];
 let collectionsCache = [];
 let currentCollectionId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initial container setup for views
   const container = document.querySelector('.container');
   const oldContent = container.innerHTML;
 
-  // Create views container structure
   container.innerHTML = `
     <header>
       <h1 id="popupTitle">Request Interceptor</h1>
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('refreshBtn').addEventListener('click', refreshCollections);
   document.getElementById('backToCollections').addEventListener('click', showCollectionsView);
   document.getElementById('newCollectionBtn').addEventListener('click', () => {
-    chrome.tabs.create({ url: 'http://localhost:5173/' });
+    chrome.tabs.create({ url: APP_URL });
   });
 
   await refreshCollections();
@@ -126,9 +126,8 @@ async function selectCollection(collectionId) {
     showRulesView();
     await loadRulesForCollection(collectionId);
 
-    // Set up the New Rule button with the current collection ID
     document.getElementById('newRuleBtn').addEventListener('click', () => {
-      chrome.tabs.create({ url: `http://localhost:5173/collections/${collectionId}` });
+      chrome.tabs.create({ url: `${APP_URL}/collections/${collectionId}` });
     });
   }
 }
@@ -136,7 +135,7 @@ async function selectCollection(collectionId) {
 function showCollectionsView() {
   document.getElementById('collectionsView').style.display = 'block';
   document.getElementById('rulesView').style.display = 'none';
-  document.getElementById('popupTitle').textContent = 'Request Interceptor';
+  document.getElementById('popupTitle').textContent = 'RequestTick';
 }
 
 function showRulesView() {
@@ -154,7 +153,6 @@ async function loadRulesForCollection(collectionId) {
     const rules = await fetchRulesByCollectionId(collectionId);
     serverRulesCache = [...rules];
 
-    // Update rules counter to show only enabled rules
     updateRulesCounter();
 
     if (serverRulesCache.length === 0) {
@@ -183,39 +181,30 @@ async function loadRulesForCollection(collectionId) {
         const ruleId = event.target.id.replace('switch-', '');
         const isEnabled = event.target.checked;
 
-        // Get the rule item element to update its class
         const ruleItem = document.getElementById(ruleId);
+        const enableState = document.getElementById(`enabled-state-${ruleId}`);
 
         try {
           await updateRuleEnabledState(ruleId, isEnabled);
           await chrome.runtime.sendMessage({ type: 'UPDATE_RULES_FROM_POPUP' });
 
-          // Update the rule in our cache
           const ruleIndex = serverRulesCache.findIndex(r => r.id === ruleId);
           if (ruleIndex !== -1) {
             serverRulesCache[ruleIndex].isEnabled = isEnabled;
           }
 
-          // Update the UI
-          const switchLabel = switchInput.nextElementSibling;
-          switchLabel.textContent = isEnabled ? 'Enabled' : 'Disabled';
-
-          // Update the rule item class to show the enabled/disabled state visually
           if (isEnabled) {
             ruleItem.classList.remove('rule-item--disabled');
             ruleItem.classList.add('rule-item--enabled');
-
-            // Add a subtle animation effect
+            enableState.textContent = 'Active';
             ruleItem.style.transition = 'border-left-color 0.3s ease, opacity 0.3s ease';
           } else {
             ruleItem.classList.remove('rule-item--enabled');
             ruleItem.classList.add('rule-item--disabled');
-
-            // Add a subtle animation effect
+            enableState.textContent = 'Inactive';
             ruleItem.style.transition = 'border-left-color 0.3s ease, opacity 0.3s ease';
           }
 
-          // Update rules counter
           updateRulesCounter();
         } catch (error) {
           console.error('Error updating rule:', error);
@@ -231,11 +220,9 @@ async function loadRulesForCollection(collectionId) {
 
 function updateRulesCounter() {
   const rulesCount = document.getElementById('rulesCount');
-  // Count only enabled rules
   const enabledRulesCount = serverRulesCache.filter(rule => rule.isEnabled).length;
   rulesCount.textContent = enabledRulesCount;
 
-  // Update the counter class based on whether there are enabled rules
   if (enabledRulesCount > 0) {
     rulesCount.classList.remove('count-badge--zero');
   } else {
@@ -245,7 +232,7 @@ function updateRulesCounter() {
 
 async function fetchCollections() {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/collections');
+    const response = await fetch(`${API_URL}/api/v1/collections`);
     const data = await response.json();
     return data.data || [];
   } catch (error) {
@@ -256,7 +243,7 @@ async function fetchCollections() {
 
 async function fetchRulesByCollectionId(collectionId) {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/rules/collection/${collectionId}`);
+    const response = await fetch(`${API_URL}/api/v1/rules/collection/${collectionId}`);
     const data = await response.json();
     return data.data || [];
   } catch (error) {
@@ -283,7 +270,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
       isEnabled: isEnabled,
     };
 
-    const response = await fetch('http://localhost:8080/api/v1/rules', {
+    const response = await fetch(`${API_URL}/api/v1/rules`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -302,7 +289,6 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
   }
 }
 
-// Define createRuleElement before it's used
 function createRuleElement(rule) {
   const urlFilter = rule.urlFilter || 'Not specified';
   const requestMethods = rule.requestMethods || ['get'];
@@ -336,7 +322,7 @@ function createRuleElement(rule) {
         </div>
         <div class="detail-group">
           <div class="detail-label">Status:</div>
-          <div class="detail-value">${isEnabled ? 'Enabled' : 'Disabled'}</div>
+          <div id='enabled-state-${rule.id}' class="detail-value">${isEnabled ? 'Enabled' : 'Disabled'}</div>
         </div>
       </div>
     </div>
@@ -366,9 +352,7 @@ function truncateText(text, maxLength) {
 // Add a function to fetch rule count for a collection
 async function fetchRuleCount(collectionId) {
   try {
-    const response = await fetch(
-      `http://localhost:8080/api/v1/rules-collections/count/${collectionId}`
-    );
+    const response = await fetch(`${API_URL}/api/v1/rules-collections/count/${collectionId}`);
     const data = await response.json();
     return data.success ? data.data : 0;
   } catch (error) {
