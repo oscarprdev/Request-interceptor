@@ -1,4 +1,6 @@
 export interface CreateCollectionInput {
+  id: string;
+  isEnabled: boolean;
   name: string;
 }
 

@@ -55,6 +55,8 @@ const onSubmit = async (e: Event) => {
   formState.value.name.error = null;
 
   mutate({
+    id: crypto.randomUUID(),
+    isEnabled: true,
     name: validationResult.data.name,
   });
 };

@@ -52,6 +52,7 @@ const onCloseAddCollectionModal = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    min-height: 150px;
     gap: 10px;
     padding: 10px;
     border-radius: var(--radius);
