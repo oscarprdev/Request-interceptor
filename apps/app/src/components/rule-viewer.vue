@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import Dropdown from '@/components/ui/ui-dropdown.vue';
-import Button from '@/components/ui/ui-button.vue';
 import { useUpdateRule } from '@/composables/use-update-rule';
 import { useRulesStore } from '@/stores/rules';
 import { computed } from 'vue';
-import { Plus } from 'lucide-vue-next';
+import RuleResponse from './rule-response.vue';
 
 const ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -16,6 +15,25 @@ const methodsDropdownOptions = ALLOWED_METHODS.map(method => ({
 
 const rulesStore = useRulesStore();
 const { action } = useUpdateRule();
+
+// Response content handling
+const responseContent = computed(() => {
+  if (rulesStore.selectedRule?.redirectUrl) {
+    try {
+      // Extract JSON content from data URL if it exists
+      const base64Match = rulesStore.selectedRule.redirectUrl.match(/base64,(.+)/);
+      if (base64Match && base64Match[1]) {
+        const jsonStr = atob(base64Match[1]);
+        return JSON.stringify(JSON.parse(jsonStr), null, 2);
+      }
+    } catch (e) {
+      console.error('Error parsing redirectUrl:', e);
+    }
+  }
+  return rulesStore.selectedRule?.response
+    ? JSON.stringify(rulesStore.selectedRule.response, null, 2)
+    : '{\n  "message": "Your response data here"\n}';
+});
 
 const selectedOption = computed(() => {
   return methodsDropdownOptions.find(
@@ -43,6 +61,20 @@ const onUrlFilterChanges = (event: Event) => {
     action(selectedRule);
   }
 };
+
+const onResponseChange = (value: string) => {
+  const selectedRule = rulesStore.selectedRule;
+  if (!selectedRule) return;
+
+  const jsonData = JSON.parse(value);
+
+  const base64Data = btoa(JSON.stringify(jsonData));
+  selectedRule.redirectUrl = `data:application/json;base64,${base64Data}`;
+
+  selectedRule.response = jsonData;
+
+  action(selectedRule);
+};
 </script>
 
 <template>
@@ -65,28 +97,33 @@ const onUrlFilterChanges = (event: Event) => {
           </div>
         </div>
       </div>
-
-      <div class="rule-headers">
-        <div class="rule-headers__header">
-          <h3 class="title">Headers</h3>
-          <Button variant="ghost" size="small" class="button"><Plus /></Button>
-        </div>
+    </article>
+    <article class="response">
+      <div class="response__header">
+        <h3 class="response__title">Response</h3>
+        <p class="response__subtitle">Edit the JSON response for this rule</p>
+      </div>
+      <div class="response__editor">
+        <RuleResponse
+          v-model="responseContent"
+          language="json"
+          placeholder="Enter JSON response here..."
+          @response-change="onResponseChange" />
       </div>
     </article>
-    <article class="response">response</article>
   </section>
 </template>
 
 <style lang="scss">
 .rule-viewer {
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 
   .settings {
     display: flex;
     flex-direction: column;
-    width: 50%;
     border-right: 1px solid var(--border);
 
     .url-filter {
@@ -138,47 +175,34 @@ const onUrlFilterChanges = (event: Event) => {
         }
       }
     }
-
-    .rule-headers {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      width: calc(100% - 20px);
-      height: 500px;
-      padding: 10px;
-      margin: 10px;
-      background-color: var(--background-foreground-muted);
-
-      &__header {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px;
-        border-bottom: 1px solid var(--border);
-
-        .title {
-          font-size: var(--font-md);
-          color: var(--text-muted);
-          margin-left: 5px;
-        }
-
-        .button {
-          width: 25px;
-          padding: 1px 5px;
-          border: 1px solid var(--border);
-          color: var(--text-muted);
-        }
-
-        .button:hover {
-          color: var(--text-light);
-          border: 1px solid var(--border-hover);
-        }
-      }
-    }
   }
 
   .response {
-    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+
+    &__header {
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    &__title {
+      font-size: var(--font-md);
+      color: var(--text-light);
+      margin: 0 0 5px 0;
+    }
+
+    &__subtitle {
+      font-size: var(--font-sm);
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    &__editor {
+      flex: 1;
+      width: 100%;
+    }
   }
 }
 </style>
