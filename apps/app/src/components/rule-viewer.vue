@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import Dropdown from '@/components/ui/ui-dropdown.vue';
+import Switch from '@/components/ui/ui-switch.vue';
 import { useUpdateRule } from '@/composables/use-update-rule';
 import { useRulesStore } from '@/stores/rules';
 import { computed } from 'vue';
@@ -41,6 +42,10 @@ const selectedOption = computed(() => {
   );
 });
 
+const isRuleEnabled = computed(() => {
+  return rulesStore.selectedRule?.isEnabled || false;
+});
+
 const onTitleChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const title = target.value;
@@ -48,6 +53,15 @@ const onTitleChange = (event: Event) => {
 
   if (selectedRule) {
     selectedRule.title = title;
+    action(selectedRule);
+  }
+};
+
+const onEnableToggle = (value: boolean) => {
+  const selectedRule = rulesStore.selectedRule;
+
+  if (selectedRule) {
+    selectedRule.isEnabled = value;
     action(selectedRule);
   }
 };
@@ -91,14 +105,23 @@ const onResponseChange = (value: string) => {
 <template>
   <section class="rule-viewer">
     <article class="settings">
-      <div class="rule-title">
-        <h3 class="rule-title__label">Rule Title</h3>
-        <div class="rule-title__container">
-          <input
-            placeholder="Enter rule title"
-            :value="rulesStore.selectedRule?.title"
-            @input="onTitleChange"
-            class="rule-title__input" />
+      <div class="rule-opts">
+        <h3 class="rule-opts__label">Rule Configuration</h3>
+        <div class="rule-opts__container">
+          <div class="rule-opts__title">
+            <input
+              placeholder="Enter rule title"
+              :value="rulesStore.selectedRule?.title"
+              @input="onTitleChange"
+              class="rule-opts__input" />
+          </div>
+          <div class="rule-opts__switch">
+            <Switch
+              :model-value="isRuleEnabled"
+              @change="onEnableToggle"
+              size="medium"
+              label="Enable" />
+          </div>
         </div>
       </div>
 
@@ -148,7 +171,7 @@ const onResponseChange = (value: string) => {
     flex-direction: column;
     border-right: 1px solid var(--border);
 
-    .rule-title {
+    .rule-opts {
       display: flex;
       flex-direction: column;
       gap: 3px;
@@ -166,14 +189,20 @@ const onResponseChange = (value: string) => {
       &__container {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         box-sizing: border-box;
-        height: 40px;
+        min-height: 40px;
         width: 100%;
+      }
+
+      &__title {
+        flex: 1;
+        margin-right: 16px;
       }
 
       &__input {
         width: 100%;
-        height: 100%;
+        height: 40px;
         padding: 5px 10px;
         background-color: var(--background);
         border: 1px solid var(--border);
@@ -185,6 +214,12 @@ const onResponseChange = (value: string) => {
           border-color: var(--accent);
           box-shadow: 0 0 0 1px var(--accent-muted);
         }
+      }
+
+      &__switch {
+        display: flex;
+        align-items: center;
+        min-width: 100px;
       }
     }
 
