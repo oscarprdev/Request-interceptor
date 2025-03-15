@@ -166,4 +166,17 @@ const onClickCollectionCard = () => {
     color: var(--text-light);
   }
 }
+
+:deep(.dropdown) {
+  position: static;
+}
+
+:deep(.dropdown__content) {
+  position: absolute;
+  top: 30px;
+  right: -100px;
+  left: auto;
+  width: 120px;
+  z-index: 50;
+}
 </style>
