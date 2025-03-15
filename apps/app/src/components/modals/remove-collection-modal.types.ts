@@ -5,5 +5,4 @@ export interface RemoveCollectionModalProps {
 
 export interface RemoveCollectionModalEmits {
   (e: 'close'): void;
-  (e: 'success'): void;
 }

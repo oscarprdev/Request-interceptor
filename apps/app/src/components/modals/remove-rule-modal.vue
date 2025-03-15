@@ -10,15 +10,14 @@ const emit = defineEmits<RemoveRuleModalEmits>();
 
 const { deleteRule, isDeleting } = useDeleteRule();
 
-const handleClose = () => {
+const onClose = () => {
   emit('close');
 };
 
-const handleDelete = () => {
+const onDelete = () => {
   if (props.ruleId) {
     deleteRule(props.ruleId);
-    emit('success');
-    handleClose();
+    onClose();
   }
 };
 
@@ -28,15 +27,15 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-  <Modal v-if="isOpen" title="Delete Rule" size="small" :isOpen="isOpen" @close="handleClose">
+  <Modal v-if="isOpen" title="Delete Rule" size="small" :isOpen="isOpen" @close="onClose">
     <div class="remove-rule-modal">
       <p class="remove-rule-modal__message">
         Are you sure you want to delete this rule? This action cannot be undone.
       </p>
 
       <div class="remove-rule-modal__actions">
-        <Button variant="ghost" @click="handleClose">Cancel</Button>
-        <Button variant="destructive" :disabled="isDeleting" @click="handleDelete">
+        <Button variant="ghost" @click="onClose">Cancel</Button>
+        <Button variant="destructive" :disabled="isDeleting" @click="onDelete">
           {{ buttonText }}
         </Button>
       </div>

@@ -3,6 +3,9 @@ import { computed, ref } from 'vue';
 import { MoreVertical } from 'lucide-vue-next';
 import Dropdown from '@/components/ui/ui-dropdown.vue';
 import RemoveCollectionModal from '@/components/modals/remove-collection-modal.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps<{
   collection: {
@@ -48,10 +51,14 @@ const onOpenRemoveModal = () => {
 const onCloseRemoveModal = () => {
   isRemoveModalOpen.value = false;
 };
+
+const onClickCollectionCard = () => {
+  router.push(`/collections/${props.collection.id}`);
+};
 </script>
 
 <template>
-  <RouterLink :to="`/collections/${collection.id}`" class="collection-card">
+  <article @click="onClickCollectionCard" class="collection-card">
     <div class="collection-card__header">
       <h3 class="title">{{ collection.name }}</h3>
 
@@ -66,23 +73,18 @@ const onCloseRemoveModal = () => {
       </div>
     </div>
 
-    <p v-if="collection.description" class="collection-card__description">
-      {{ collection.description }}
-    </p>
-
     <footer class="collection-card__footer">
       <div class="collection-card__metadata">
         <p class="collection-card__date">{{ formattedDate }}</p>
-        <p class="collection-card__rules-count">{{ collection.rulesCount || 0 }} rules</p>
+        <p class="collection-card__rules-count">{{ collection.rulesCount || '-' }} rules</p>
       </div>
     </footer>
-  </RouterLink>
+  </article>
 
   <RemoveCollectionModal
     :isOpen="isRemoveModalOpen"
     :collectionId="collection.id"
-    @close="onCloseRemoveModal"
-    @success="handleCollectionDeleted" />
+    @close="onCloseRemoveModal" />
 </template>
 
 <style lang="scss" scoped>

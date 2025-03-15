@@ -17,8 +17,7 @@ export function useDeleteCollection() {
       toast.success('Collection deleted successfully');
       isDeleting.value = false;
     },
-    onError: error => {
-      console.error('Error deleting collection:', error);
+    onError: () => {
       toast.error('Failed to delete collection');
       isDeleting.value = false;
     },

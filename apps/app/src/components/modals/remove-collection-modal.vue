@@ -2,11 +2,9 @@
 import { computed } from 'vue';
 import Modal from '@/components/ui/ui-modal.vue';
 import Button from '@/components/ui/ui-button.vue';
+import type { RemoveCollectionModalProps } from './remove-collection-modal.types';
+import type { RemoveCollectionModalEmits } from './remove-collection-modal.types';
 import { useDeleteCollection } from '@/composables/use-delete-collection';
-import {
-  type RemoveCollectionModalProps,
-  type RemoveCollectionModalEmits,
-} from './remove-collection-modal.types';
 
 const props = defineProps<RemoveCollectionModalProps>();
 const emit = defineEmits<RemoveCollectionModalEmits>();
@@ -20,7 +18,6 @@ const handleClose = () => {
 const handleDelete = () => {
   if (props.collectionId) {
     deleteCollection(props.collectionId);
-    emit('success');
     handleClose();
   }
 };

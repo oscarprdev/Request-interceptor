@@ -5,7 +5,6 @@ interface RemoveRuleModalProps {
 
 interface RemoveRuleModalEmits {
   (e: 'close'): void;
-  (e: 'success'): void;
 }
 
 export type { RemoveRuleModalProps, RemoveRuleModalEmits };
