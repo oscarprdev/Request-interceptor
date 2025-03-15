@@ -5,6 +5,12 @@ import Dropdown from '@/components/ui/ui-dropdown.vue';
 import RemoveCollectionModal from '@/components/modals/remove-collection-modal.vue';
 import { useRouter } from 'vue-router';
 
+type COLLECTION_ACTIONS_TYPES = 'UPDATE' | 'REMOVE';
+const COLLECTION_ACTIONS = {
+  UPDATE: 'UPDATE',
+  REMOVE: 'REMOVE',
+} as const as Record<COLLECTION_ACTIONS_TYPES, COLLECTION_ACTIONS_TYPES>;
+
 const router = useRouter();
 
 const props = defineProps<{
@@ -24,24 +30,21 @@ const formattedDate = computed(() => {
   return new Date(props.collection.createdAt).toLocaleDateString();
 });
 
-const dropdownOptions = [
-  {
-    id: 'update',
-    label: 'Update',
-    value: 'update',
-  },
-  {
-    id: 'remove',
-    label: 'Remove',
-    value: 'remove',
-  },
-];
+const dropdownOptions = Object.values(COLLECTION_ACTIONS).map(action => ({
+  id: action,
+  label: `${action[0]}${action.substring(1, action.length)}`,
+  value: action,
+}));
 
-const onDropdownChange = (id: string) => {
-  if (id === 'remove') {
-    onOpenRemoveModal();
+const onDropdownChange = (action: string) => {
+  switch (action) {
+    case COLLECTION_ACTIONS.REMOVE:
+      onOpenRemoveModal();
+      break;
+    // Update functionality will be implemented later
+    default:
+      break;
   }
-  // Update functionality will be implemented later
 };
 
 const onOpenRemoveModal = () => {
