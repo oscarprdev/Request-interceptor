@@ -1,9 +1,13 @@
+import type { RuleApplication } from '@/models/Rule';
 import { rulesMutations } from '@/services/mutations/rules-mutations';
 import { useRulesStore } from '@/stores/rules';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 export const useDeleteRule = () => {
+  const ruleToDelete = ref<RuleApplication | null>(null);
+
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
 
@@ -17,6 +21,9 @@ export const useDeleteRule = () => {
       }
     },
     onError: () => {
+      if (ruleToDelete.value) {
+        rulesStore.addRule(ruleToDelete.value);
+      }
       queryClient.invalidateQueries({ queryKey: ['rules'] });
       toast.error('Error deleting rule');
     },
@@ -24,6 +31,7 @@ export const useDeleteRule = () => {
 
   return {
     deleteRule: (ruleId: string) => {
+      ruleToDelete.value = rulesStore.rules.find(rule => rule.id === ruleId) || null;
       rulesStore.deleteRule(ruleId);
       mutate(ruleId);
     },

@@ -25,6 +25,11 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
       if (ruleToCreate.value) {
         rulesStore.deleteRule(ruleToCreate.value.id);
       }
+
+      if (rulesStore.rules.length > 0) {
+        rulesStore.setSelectedRule(rulesStore.rules[0].id);
+      }
+
       queryClient.invalidateQueries({ queryKey: ['rules'] });
       toast.error('Error creating rule');
     },

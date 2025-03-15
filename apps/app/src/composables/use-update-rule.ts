@@ -10,7 +10,8 @@ import { toast } from 'vue-sonner';
 const ACTION_TIMEOUT = 500;
 
 export const useUpdateRule = () => {
-  const previousRule = ref<RuleApplication | null>(null);
+  const ruleToUpdate = ref<RuleApplication | null>(null);
+
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
@@ -21,8 +22,8 @@ export const useUpdateRule = () => {
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),
     onError: () => {
-      if (previousRule.value) {
-        rulesStore.updateRule(previousRule.value);
+      if (ruleToUpdate.value) {
+        rulesStore.updateRule(ruleToUpdate.value);
       }
       toast.error('Error updating rule');
     },
@@ -31,7 +32,7 @@ export const useUpdateRule = () => {
 
   return {
     action: (rule: RuleApplication) => {
-      previousRule.value = rulesStore.selectedRule;
+      ruleToUpdate.value = rulesStore.selectedRule;
       rulesStore.updateRule(rule);
       debounce(rule);
     },
