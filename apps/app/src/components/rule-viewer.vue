@@ -41,6 +41,17 @@ const selectedOption = computed(() => {
   );
 });
 
+const onTitleChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const title = target.value;
+  const selectedRule = rulesStore.selectedRule;
+
+  if (selectedRule) {
+    selectedRule.title = title;
+    action(selectedRule);
+  }
+};
+
 const onMethodDropdownChange = (id: string) => {
   const method = methodsDropdownOptions.find(method => method.id === id);
   const selectedRule = rulesStore.selectedRule;
@@ -80,6 +91,17 @@ const onResponseChange = (value: string) => {
 <template>
   <section class="rule-viewer">
     <article class="settings">
+      <div class="rule-title">
+        <h3 class="rule-title__label">Rule Title</h3>
+        <div class="rule-title__container">
+          <input
+            placeholder="Enter rule title"
+            :value="rulesStore.selectedRule?.title"
+            @input="onTitleChange"
+            class="rule-title__input" />
+        </div>
+      </div>
+
       <div class="url-filter">
         <h3 class="url-filter__title">URL Filter</h3>
         <div class="url-filter__container">
@@ -125,6 +147,46 @@ const onResponseChange = (value: string) => {
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
+
+    .rule-title {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px;
+      background-color: var(--background-foreground-muted);
+
+      &__label {
+        font-size: var(--font-md);
+        color: var(--text-muted);
+        margin-left: 5px;
+      }
+
+      &__container {
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        height: 40px;
+        width: 100%;
+      }
+
+      &__input {
+        width: 100%;
+        height: 100%;
+        padding: 5px 10px;
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        outline: none;
+        color: var(--text-light);
+        border-radius: var(--radius);
+
+        &:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 1px var(--accent-muted);
+        }
+      }
+    }
 
     .url-filter {
       display: flex;
