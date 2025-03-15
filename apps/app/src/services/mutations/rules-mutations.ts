@@ -1,5 +1,5 @@
 import { API_URL } from '../common';
-import type { CreateRuleInput, UpdateRuleInput } from './rules-mutations.types';
+import type { CreateRuleInput, DeleteRuleInput, UpdateRuleInput } from './rules-mutations.types';
 
 export const rulesMutations = {
   createRule: async ({ rule, collectionId }: CreateRuleInput) => {
@@ -19,6 +19,12 @@ export const rulesMutations = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(rule),
+    });
+    return await response.json();
+  },
+  deleteRule: async ({ ruleId }: DeleteRuleInput) => {
+    const response = await fetch(`${API_URL}/rules/${ruleId}`, {
+      method: 'DELETE',
     });
     return await response.json();
   },

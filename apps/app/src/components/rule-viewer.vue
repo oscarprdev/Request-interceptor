@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import Dropdown from '@/components/ui/ui-dropdown.vue';
 import Switch from '@/components/ui/ui-switch.vue';
+import Button from '@/components/ui/ui-button.vue';
 import { useUpdateRule } from '@/composables/use-update-rule';
 import { useRulesStore } from '@/stores/rules';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import RuleResponse from './rule-response.vue';
+import RemoveRuleModal from '@/components/modals/remove-rule-modal.vue';
+import { useQueryClient } from '@tanstack/vue-query';
 
 const ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -14,14 +17,14 @@ const methodsDropdownOptions = ALLOWED_METHODS.map(method => ({
   label: method,
 }));
 
+const isRemoveModalOpen = ref(false);
+
 const rulesStore = useRulesStore();
 const { action } = useUpdateRule();
 
-// Response content handling
 const responseContent = computed(() => {
   if (rulesStore.selectedRule?.redirectUrl) {
     try {
-      // Extract JSON content from data URL if it exists
       const base64Match = rulesStore.selectedRule.redirectUrl.match(/base64,(.+)/);
       if (base64Match && base64Match[1]) {
         const jsonStr = atob(base64Match[1]);
@@ -55,6 +58,14 @@ const onTitleChange = (event: Event) => {
     selectedRule.title = title;
     action(selectedRule);
   }
+};
+
+const onOpenRemoveModal = () => {
+  isRemoveModalOpen.value = true;
+};
+
+const onCloseRemoveModal = () => {
+  isRemoveModalOpen.value = false;
 };
 
 const onEnableToggle = (value: boolean) => {
@@ -115,12 +126,21 @@ const onResponseChange = (value: string) => {
               @input="onTitleChange"
               class="rule-opts__input" />
           </div>
-          <div class="rule-opts__switch">
-            <Switch
-              :model-value="isRuleEnabled"
-              @change="onEnableToggle"
-              size="medium"
-              label="Enable" />
+          <div class="rule-opts__actions">
+            <div class="rule-opts__switch">
+              <Switch
+                :model-value="isRuleEnabled"
+                @change="onEnableToggle"
+                size="medium"
+                label="Enable" />
+            </div>
+            <Button
+              variant="ghost"
+              size="small"
+              class="rule-opts__remove-btn"
+              @click="onOpenRemoveModal">
+              Remove Rule
+            </Button>
           </div>
         </div>
       </div>
@@ -156,6 +176,11 @@ const onResponseChange = (value: string) => {
           @response-change="onResponseChange" />
       </div>
     </article>
+
+    <RemoveRuleModal
+      :isOpen="isRemoveModalOpen"
+      :ruleId="rulesStore.selectedRule?.id"
+      @close="onCloseRemoveModal" />
   </section>
 </template>
 
@@ -216,10 +241,20 @@ const onResponseChange = (value: string) => {
         }
       }
 
+      &__actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
       &__switch {
         display: flex;
         align-items: center;
         min-width: 100px;
+      }
+
+      &__remove-btn {
+        color: var(--error);
       }
     }
 
