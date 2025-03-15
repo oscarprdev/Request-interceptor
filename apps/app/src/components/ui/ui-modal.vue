@@ -74,7 +74,7 @@ onMounted(() => {
   border-radius: var(--radius);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   background-color: var(--background);
-  color: var(--background-foreground);
+  color: var(--text-muted);
   margin: auto;
 
   &::backdrop {
@@ -124,7 +124,7 @@ onMounted(() => {
   &__title {
     margin: 0;
     font-size: var(--font-md);
-    color: var(--background-foreground);
+    color: var(--text-muted);
   }
 
   &__close {
@@ -132,7 +132,7 @@ onMounted(() => {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: var(--background-foreground);
+    color: var(--text-muted);
     opacity: 0.7;
 
     &:hover {

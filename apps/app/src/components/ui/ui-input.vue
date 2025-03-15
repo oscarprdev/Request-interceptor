@@ -47,7 +47,7 @@ const handleInput = (event: Event) => {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
-    color: var(--background-foreground);
+    color: var(--text-muted);
     font-size: var(--font-md);
   }
 
@@ -62,7 +62,7 @@ const handleInput = (event: Event) => {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background-color: var(--background);
-    color: var(--background-foreground);
+    color: var(--text-muted);
     font-size: 1rem;
     transition:
       border-color 0.2s,
@@ -98,7 +98,7 @@ const handleInput = (event: Event) => {
   &__help {
     margin-top: 4px;
     font-size: 0.875rem;
-    color: var(--background-foreground-muted);
+    color: var(--text-muted);
   }
 }
 </style>

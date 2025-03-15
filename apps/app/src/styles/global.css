@@ -1,33 +1,33 @@
 :root {
-  --background: #181818;
-  --background-foreground: #efefef;
-  --background-foreground-muted: #262626;
-  --background-hover: #262626;
-  --background-hover-foreground: #ffffff;
+  --background: #1a1b1e;
+  --background-hover: #2a2b30;
+  --background-foreground: #27282c;
+  --background-foreground-muted: #2a2b2f;
 
-  --border: #363636;
-  --border-hover: #676767;
+  --text-light: #e1e3ea;
+  --text-muted: #e1e3ead4;
 
-  --accent: #1cac7a;
-  --accent-muted: #288061;
-  --accent-foreground: #ddfff3;
-  --accent-foreground-muted: #62d0aa;
+  --border: #373940;
+  --border-hover: #474a54;
+
+  --accent: #4f6eff;
+  --accent-muted: rgba(79, 110, 255, 0.15);
 
   --destructive: #dc3545;
-  --destructive-foreground: #f8d7da;
+  --destructive-foreground: #dc35462e;
   --destructive-foreground-muted: #9d2732;
 
-  --badge-1: #006696;
-  --badge-1-foreground: #d1eaff;
+  --badge-get-background: #4f6eff;
+  --badge-get-foreground: rgba(79, 110, 255, 0.2);
 
-  --badge-2: #009637;
-  --badge-2-foreground: #d1ffe2;
+  --badge-post-background: #2ed7a2;
+  --badge-post-foreground: rgba(46, 215, 162, 0.2);
 
-  --badge-3: #dfa700;
-  --badge-3-foreground: #fff2c9;
+  --badge-put-background: #ff9f43;
+  --badge-put-foreground: rgba(255, 159, 67, 0.2);
 
-  --text-light: #ffffff;
-  --text-muted: #c0c0c0;
+  --badge-delete-background: #ff4560;
+  --badge-delete-foreground: rgba(255, 69, 96, 0.2);
 
   --header-height: 50px;
   --radius: 0.2em;
@@ -90,4 +90,28 @@ header {
   justify-content: space-between;
   font-size: var(--font-xs);
   border-bottom: 1px solid var(--border);
+}
+
+.badge-get {
+  background-color: var(--badge-get-foreground);
+  color: var(--badge-get-background);
+  border: 1px solid var(--badge-get-background);
+}
+
+.badge-post {
+  background-color: var(--badge-post-foreground);
+  color: var(--badge-post-background);
+  border: 1px solid var(--badge-post-background);
+}
+
+.badge-put {
+  background-color: var(--badge-put-foreground);
+  color: var(--badge-put-background);
+  border: 1px solid var(--badge-put-background);
+}
+
+.badge-delete {
+  background-color: var(--badge-delete-foreground);
+  color: var(--badge-delete-background);
+  border: 1px solid var(--badge-delete-background);
 }

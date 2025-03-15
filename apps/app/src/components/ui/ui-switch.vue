@@ -134,7 +134,7 @@ const handleToggle = () => {
   &__label {
     margin-left: 10px;
     font-size: 1rem;
-    color: var(--background-foreground);
+    color: var(--text-muted);
   }
 }
 </style>

@@ -34,6 +34,11 @@
   --method-post-text: #0c9c70;
   --method-put-text: #e67e10;
   --method-delete-text: #d62c45;
+
+  /* Add missing color variables */
+  --disabled-color: #4e4e5a;
+  --accent-color: var(--accent);
+  --text-color: var(--text-light);
 }
 
 * {
@@ -94,6 +99,19 @@ h1 {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.new-btn {
+  width: 100%;
+  background-color: var(--accent-muted);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.new-btn:hover {
+  background-color: var(--accent);
+  border: 1px solid var(--accent-muted);
+  color: var(--text-light);
 }
 
 .rules-header {
@@ -211,18 +229,20 @@ h2 {
   margin-top: 2px;
 }
 
-.rule-switch {
+.rule-switch,
+.collection-switch {
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 8px;
   position: relative;
 }
 
+/* Single definition for switch input styling */
 .switch-input {
   position: relative;
+  appearance: none;
   width: 36px;
   height: 20px;
-  appearance: none;
   background-color: var(--background-foreground-muted);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -259,6 +279,7 @@ h2 {
   cursor: pointer;
   user-select: none;
   min-width: 55px;
+  display: inline-block;
 }
 
 .expand-icon {
@@ -338,4 +359,139 @@ h2 {
   background-color: var(--accent-muted);
   color: var(--accent);
   border: 1px solid var(--accent);
+}
+
+/* Collection styling without enabled/disabled states */
+.collection-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: var(--radius);
+  background-color: var(--background-foreground);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.collection-item:hover {
+  background-color: var(--background-hover);
+}
+
+.collection-badge {
+  background-color: #6c5ce7;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 30px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-right: 10px;
+}
+
+.collection-name {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rule-count {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-left: 12px;
+  background-color: var(--background-foreground-muted);
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Remove collection enabled/disabled classes */
+.collection-item--enabled,
+.collection-item--disabled {
+  display: none; /* Remove these classes entirely */
+}
+
+/* Update collection count badge */
+.count-badge {
+  background-color: var(--accent);
+  color: white;
+  border-radius: 12px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Ensure consistency between rule and collection views */
+.view-header h2 {
+  font-size: var(--font-md);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Making sure view transitions are smooth */
+.view {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.view[style*='display: none'] {
+  opacity: 0;
+}
+
+/* View headers styling */
+.view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+/* Add gap between list items */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+/* Remove default bottom margin on collection-item and rule-item since we're using gap */
+.rule-item {
+  margin-bottom: 0;
+}
+
+/* Fix collections details section */
+.collection-details {
+  padding: 0;
+  height: 0;
+  overflow: hidden;
+  background-color: var(--background-foreground-muted);
+  transition:
+    height 0.3s ease,
+    padding 0.3s ease;
+}
+
+.collection-item.expanded .collection-details {
+  padding: 10px 12px;
+  height: auto;
+  border-top: 1px solid var(--border);
+}
+
+.rule-count-value {
+  font-size: var(--font-sm);
+  color: var(--text-light);
+}
+
+.collection-item .detail-group:last-child {
+  margin-bottom: 0;
 }

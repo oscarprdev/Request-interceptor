@@ -34,7 +34,7 @@ const onAddRule = () =>
   action({
     id: crypto.randomUUID(),
     title: `Rule #${rulesStore.rules.length + 1}`,
-    urlFilter: '',
+    urlFilter: 'http://example.com',
     requestMethods: ['GET'],
     priority: rulesStore.rules.length + 1,
     isEnabled: true,
@@ -120,7 +120,6 @@ watch(
 
     .add-rule-button {
       width: fit-content;
-      border-left: 1px solid var(--border);
       font-weight: 600;
       margin: 0;
       border-radius: 0;

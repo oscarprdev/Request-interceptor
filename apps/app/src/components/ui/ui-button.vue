@@ -64,41 +64,42 @@ const handleClick = (event: MouseEvent) => {
   outline: none;
 
   &--primary {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
-    border: none;
+    background-color: var(--accent-muted);
+    border: 1px solid var(--accent);
+    color: var(--accent);
 
     &:hover:not(.button--disabled) {
-      background-color: var(--accent-foreground-muted);
-      color: var(--accent-foreground);
+      background-color: var(--accent);
+      color: var(--text-light);
+      border: 1px solid var(--accent-muted);
     }
   }
 
   &--secondary {
-    background-color: var(--background);
-    color: var(--background-foreground);
+    background-color: var(--background-foreground);
+    color: var(--background);
     border: 1px solid var(--border);
 
     &:hover:not(.button--disabled) {
-      background-color: var(--background-foreground-muted);
+      background-color: var(--background);
       color: var(--text-light);
     }
   }
 
   &--destructive {
-    background-color: var(--destructive);
-    color: var(--destructive-foreground);
-    border: none;
+    background-color: var(--destructive-foreground);
+    color: var(--destructive);
+    border: 1px solid var(--destructive);
 
     &:hover:not(.button--disabled) {
       background-color: var(--destructive-foreground-muted);
-      color: var(--destructive-foreground);
+      color: var(--text-light);
     }
   }
 
   &--ghost {
     background-color: transparent;
-    color: var(--background-foreground);
+    color: var(--text-muted);
     border: none;
 
     &:hover:not(.button--disabled) {

@@ -6,13 +6,13 @@ const props = defineProps<BadgeProps>();
 
 const badgeVariants = computed(() => {
   if (props.variant === BADGE_VARIANTS.primary) {
-    return 'badge--primary';
+    return 'badge-get';
   } else if (props.variant === BADGE_VARIANTS.secondary) {
-    return 'badge--secondary';
+    return 'badge-post';
   } else if (props.variant === BADGE_VARIANTS.tertiary) {
-    return 'badge--tertiary';
+    return 'badge-put';
   } else if (props.variant === BADGE_VARIANTS.destructive) {
-    return 'badge--destructive';
+    return 'badge-delete';
   } else {
     return 'badge--default';
   }
@@ -37,30 +37,6 @@ const badgeVariants = computed(() => {
     background-color: var(--accent-muted);
     color: var(--accent);
     border: 1px solid var(--accent);
-  }
-
-  &--primary {
-    background-color: var(--badge-1-foreground);
-    color: var(--badge-1);
-    border: 1px solid var(--badge-1);
-  }
-
-  &--secondary {
-    background-color: var(--badge-2-foreground);
-    color: var(--badge-2);
-    border: 1px solid var(--badge-2);
-  }
-
-  &--tertiary {
-    background-color: var(--badge-3-foreground);
-    color: var(--badge-3);
-    border: 1px solid var(--badge-3);
-  }
-
-  &--destructive {
-    background-color: var(--destructive-foreground);
-    color: var(--destructive);
-    border: 1px solid var(--destructive-foreground);
   }
 }
 </style>
