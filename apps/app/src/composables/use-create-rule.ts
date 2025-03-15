@@ -4,10 +4,13 @@ import { useRulesStore } from '@/stores/rules';
 import { useDebounce } from '@/utils/debounce';
 import { mapRuleToServer } from '@/utils/mappers';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 
 const ACTION_TIMEOUT = 100;
 
 export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
+  const ruleToCreate = ref<RuleApplication | null>(null);
   const rulesStore = useRulesStore();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
@@ -19,15 +22,18 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),
     onError: () => {
-      // delete rule from store
-      // show error toast
+      if (ruleToCreate.value) {
+        rulesStore.deleteRule(ruleToCreate.value.id);
+      }
       queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.error('Error creating rule');
     },
   });
   const debounce = useDebounce((rule: RuleApplication) => mutate(rule), ACTION_TIMEOUT);
 
   return {
     action: (rule: RuleApplication) => {
+      ruleToCreate.value = rule;
       rulesStore.addRule(rule);
       debounce(rule);
     },

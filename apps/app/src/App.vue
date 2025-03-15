@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Toaster } from 'vue-sonner';
 import './styles/global.css';
 </script>
 
@@ -11,6 +12,7 @@ import './styles/global.css';
   <main>
     <RouterView />
   </main>
+  <Toaster richColors />
 </template>
 
 <style scoped>

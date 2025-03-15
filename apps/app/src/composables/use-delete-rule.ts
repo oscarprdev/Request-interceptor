@@ -1,6 +1,7 @@
 import { rulesMutations } from '@/services/mutations/rules-mutations';
 import { useRulesStore } from '@/stores/rules';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { toast } from 'vue-sonner';
 
 export const useDeleteRule = () => {
   const rulesStore = useRulesStore();
@@ -17,6 +18,7 @@ export const useDeleteRule = () => {
     },
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.error('Error deleting rule');
     },
   });
 

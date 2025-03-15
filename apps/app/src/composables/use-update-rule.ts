@@ -5,6 +5,7 @@ import { useDebounce } from '@/utils/debounce';
 import { mapRuleToServer } from '@/utils/mappers';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 
 const ACTION_TIMEOUT = 500;
 
@@ -23,6 +24,7 @@ export const useUpdateRule = () => {
       if (previousRule.value) {
         rulesStore.updateRule(previousRule.value);
       }
+      toast.error('Error updating rule');
     },
   });
   const debounce = useDebounce((rule: RuleApplication) => mutate(rule), ACTION_TIMEOUT);
