@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RequestTick</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>RequestTick</h1>
+        <div class="actions">
+          <button id="refreshRules" class="btn refresh-btn">Refresh</button>
+        </div>
+      </header>
+
+      <div class="rules-container">
+        <div class="rules-header">
+          <h2>Active Rules</h2>
+          <span id="rulesCount" class="rules-count">0</span>
+        </div>
+
+        <div id="rulesList" class="rules-list">
+          <div class="loading">Loading rules...</div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <button id="newRuleBtn" class="btn new-rule-btn">New Rule</button>
+      </footer>
+    </div>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

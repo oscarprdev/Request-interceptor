@@ -1,0 +1,324 @@
+:root {
+  --background: #1a1b1e;
+  --background-hover: #2a2b30;
+  --background-foreground: #27282c;
+  --background-foreground-muted: #2a2b2f;
+  --text-light: #e1e3ea;
+  --text-muted: #868a96;
+  --border: #373940;
+  --border-hover: #474a54;
+  --accent: #4f6eff;
+  --accent-muted: rgba(79, 110, 255, 0.15);
+  --error: #ff4560;
+  --success: #2ed7a2;
+  --radius: 4px;
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
+
+  /* Method colors - base colors */
+  --method-get: #4f6eff;
+  --method-post: #2ed7a2;
+  --method-put: #ff9f43;
+  --method-delete: #ff4560;
+
+  /* Method colors - light backgrounds */
+  --method-get-bg: rgba(79, 110, 255, 0.2);
+  --method-post-bg: rgba(46, 215, 162, 0.2);
+  --method-put-bg: rgba(255, 159, 67, 0.2);
+  --method-delete-bg: rgba(255, 69, 96, 0.2);
+
+  /* Method colors - dark text */
+  --method-get-text: #274adb;
+  --method-post-text: #0c9c70;
+  --method-put-text: #e67e10;
+  --method-delete-text: #d62c45;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+  background-color: var(--background);
+  color: var(--text-light);
+  width: 400px;
+  max-height: 600px;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  height: 100%;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: var(--font-lg);
+  color: var(--text-light);
+}
+
+.btn {
+  background-color: var(--background-foreground);
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--background-hover);
+  border-color: var(--border-hover);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: var(--font-md);
+  font-weight: 500;
+}
+
+.rules-count {
+  background-color: var(--accent);
+  color: var(--text-light);
+  font-size: var(--font-xs);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.rule-item {
+  background-color: var(--background-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.rule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+/* Method badges */
+.method-badge {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  min-width: 50px;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.method-get {
+  background-color: var(--method-get-bg);
+  color: var(--method-get-text);
+  border-color: var(--method-get-text);
+}
+
+.method-post {
+  background-color: var(--method-post-bg);
+  color: var(--method-post-text);
+  border-color: var(--method-post-text);
+}
+
+.method-put {
+  background-color: var(--method-put-bg);
+  color: var(--method-put-text);
+  border-color: var(--method-put-text);
+}
+
+.method-delete {
+  background-color: var(--method-delete-bg);
+  color: var(--method-delete-text);
+  border-color: var(--method-delete-text);
+}
+
+.rule-summary {
+  flex: 1;
+  margin: 0 10px;
+  overflow: hidden;
+}
+
+.rule-url {
+  font-size: var(--font-sm);
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rule-methods {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.rule-switch {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  position: relative;
+}
+
+.switch-input {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  appearance: none;
+  background-color: var(--background-foreground-muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 8px;
+  outline: none;
+  transition: background-color 0.3s;
+}
+
+.switch-input::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--text-light);
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+.switch-input:checked {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.switch-input:checked::before {
+  transform: translateX(16px);
+}
+
+.switch-status {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.expand-icon {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+  margin-left: 8px;
+}
+
+.rule-item.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.rule-details {
+  display: none;
+  padding: 10px 12px;
+  background-color: var(--background-foreground-muted);
+  border-top: 1px solid var(--border);
+}
+
+.rule-item.expanded .rule-details {
+  display: block;
+}
+
+.detail-group {
+  margin-bottom: 8px;
+}
+
+.detail-label {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: var(--font-sm);
+  color: var(--text-light);
+  word-break: break-all;
+}
+
+.redirect-url {
+  color: var(--accent);
+}
+
+.loading,
+.no-rules,
+.error {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+
+.error {
+  color: var(--error);
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
+.new-rule-btn {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  width: 100%;
+}
+
+.new-rule-btn:hover {
+  background-color: var(--accent-muted);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}

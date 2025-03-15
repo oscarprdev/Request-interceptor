@@ -3,6 +3,7 @@ import { Rule, ServerRule } from '../models/Rule';
 export class RuleService {
   public async updateRules(): Promise<void> {
     const rules = await this.fetchRules();
+    console.log('background', { rules });
     await this.updateDynamicRules(rules);
   }
 
