@@ -3,7 +3,6 @@ import { Rule, ServerRule } from '../models/Rule';
 export class RuleService {
   public async updateRules(): Promise<void> {
     const rules = await this.fetchRules();
-    console.log('background', { rules });
     await this.updateDynamicRules(rules);
   }
 
@@ -12,9 +11,9 @@ export class RuleService {
       const rulesResponse = await fetch('http://localhost:8080/api/v1/rules');
       const rules = await rulesResponse.json();
 
-      return rules.data
-        .filter((rule: ServerRule) => rule.isEnabled)
-        .map(this.mapServerRuleToExtensionRule);
+      return rules.data.map((rule: ServerRule, index: number) =>
+        this.mapServerRuleToExtensionRule(rule, index)
+      );
     } catch (error) {
       console.error('Error fetching rules from server:', error);
       return [];
@@ -34,6 +33,10 @@ export class RuleService {
   }
 
   private mapServerRuleToExtensionRule(rule: ServerRule, index: number): Rule {
+    const actionType = rule.isEnabled
+      ? chrome.declarativeNetRequest.RuleActionType.REDIRECT
+      : chrome.declarativeNetRequest.RuleActionType.ALLOW;
+
     return {
       id: index + 1,
       priority: rule.priority,
@@ -45,7 +48,7 @@ export class RuleService {
         ) as chrome.declarativeNetRequest.RequestMethod[],
       },
       action: {
-        type: 'redirect' as chrome.declarativeNetRequest.RuleActionType,
+        type: actionType,
         redirect: {
           url: rule.redirectUrl ?? undefined,
         },

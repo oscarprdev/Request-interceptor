@@ -57,6 +57,9 @@ importers:
       '@tsconfig/node22':
         specifier: ^22.0.0
         version: 22.0.0
+      '@types/chrome':
+        specifier: ^0.0.260
+        version: 0.0.260
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7

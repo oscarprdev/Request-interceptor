@@ -1,3 +1,4 @@
+import { updateExtensionRules } from '@/utils/update-extension-rules';
 import { API_URL } from '../common';
 import type { CreateRuleInput, DeleteRuleInput, UpdateRuleInput } from './rules-mutations.types';
 
@@ -10,6 +11,9 @@ export const rulesMutations = {
       },
       body: JSON.stringify(rule),
     });
+
+    await updateExtensionRules();
+
     return await response.json();
   },
   updateRule: async ({ rule }: UpdateRuleInput) => {
@@ -20,12 +24,18 @@ export const rulesMutations = {
       },
       body: JSON.stringify(rule),
     });
+
+    await updateExtensionRules();
+
     return await response.json();
   },
   deleteRule: async ({ ruleId }: DeleteRuleInput) => {
     const response = await fetch(`${API_URL}/rules/${ruleId}`, {
       method: 'DELETE',
     });
+
+    await updateExtensionRules();
+
     return await response.json();
   },
 };
