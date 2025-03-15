@@ -91,9 +91,11 @@ async function loadRules() {
     document.querySelectorAll('.rule-switch input').forEach(switchInput => {
       switchInput.addEventListener('change', async event => {
         event.stopPropagation();
-        console.log(event.target);
         const ruleId = event.target.id.replace('switch-', '');
         const isEnabled = event.target.checked;
+
+        // Get the rule item element to update its class
+        const ruleItem = document.getElementById(ruleId);
 
         try {
           await updateRuleEnabledState(ruleId, isEnabled);
@@ -108,6 +110,21 @@ async function loadRules() {
           // Update the UI
           const switchLabel = switchInput.nextElementSibling;
           switchLabel.textContent = isEnabled ? 'Enabled' : 'Disabled';
+
+          // Update the rule item class to show the enabled/disabled state visually
+          if (isEnabled) {
+            ruleItem.classList.remove('rule-item--disabled');
+            ruleItem.classList.add('rule-item--enabled');
+
+            // Add a subtle animation effect
+            ruleItem.style.transition = 'border-left-color 0.3s ease, opacity 0.3s ease';
+          } else {
+            ruleItem.classList.remove('rule-item--enabled');
+            ruleItem.classList.add('rule-item--disabled');
+
+            // Add a subtle animation effect
+            ruleItem.style.transition = 'border-left-color 0.3s ease, opacity 0.3s ease';
+          }
 
           // Update rules counter
           updateRulesCounter();
