@@ -9,7 +9,6 @@ import { mapRuleToApplication } from '@/utils/mappers';
 import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
-import { Plus } from 'lucide-vue-next';
 
 const props = defineProps<{
   collectionId: string | string[];
@@ -68,9 +67,7 @@ watch(
   <div class="rules-list">
     <div class="rules-header">
       <h3 class="title">Rules: {{ rules?.data.length }}</h3>
-      <Button variant="ghost" class="add-rule-button" @click="onAddRule"
-        ><Plus class="add-rule-button__icon"
-      /></Button>
+      <Button variant="primary" class="add-rule-button" @click="onAddRule">New rule</Button>
     </div>
     <div class="loading" v-if="isLoading">Loading...</div>
     <div class="error" v-else-if="error">Error: {{ error }}</div>
@@ -124,6 +121,7 @@ watch(
     .add-rule-button {
       width: fit-content;
       border-left: 1px solid var(--border);
+      font-weight: 600;
       margin: 0;
       border-radius: 0;
 

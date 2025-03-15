@@ -87,7 +87,7 @@ onUnmounted(() => {
     padding: 6px 12px;
     height: inherit;
     text-align: left;
-    border: inherit;
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     background-color: var(--background);
     color: var(--text-muted);
