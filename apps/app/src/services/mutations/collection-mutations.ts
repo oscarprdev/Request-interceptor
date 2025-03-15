@@ -1,18 +1,24 @@
-import { API_URL } from '../common';
-import type { CreateCollectionInput } from './collection-mutations.types';
+import { API_URL } from '@/services/common';
+import type { CreateCollectionInput, DeleteCollectionInput } from './collection-mutations.types';
 
-export const collectionMutations = {
-  createCollection: async ({ name }: CreateCollectionInput) => {
+export const collectionsMutations = {
+  createCollection: async (input: CreateCollectionInput) => {
     const response = await fetch(`${API_URL}/collections`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: crypto.randomUUID(), name, isEnabled: false }),
+      body: JSON.stringify(input),
     });
 
-    const data = await response.json();
+    return await response.json();
+  },
 
-    return data.data;
+  deleteCollection: async ({ collectionId }: DeleteCollectionInput) => {
+    const response = await fetch(`${API_URL}/collections/${collectionId}`, {
+      method: 'DELETE',
+    });
+
+    return await response.json();
   },
 };

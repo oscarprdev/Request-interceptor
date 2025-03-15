@@ -49,7 +49,13 @@ onUnmounted(() => {
 
 <template>
   <div class="dropdown" ref="dropdownRef">
+    <!-- Use custom trigger slot if provided -->
+    <div v-if="$slots.trigger" @click="onToggleDropdown" class="dropdown__trigger">
+      <slot name="trigger"></slot>
+    </div>
+    <!-- Otherwise use the default button -->
     <Button
+      v-else
       class="dropdown__selector"
       variant="ghost"
       @click="onToggleDropdown"
@@ -78,6 +84,10 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: inherit;
+
+  &__trigger {
+    cursor: pointer;
+  }
 
   &__selector {
     display: flex;

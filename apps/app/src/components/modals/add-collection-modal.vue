@@ -11,8 +11,8 @@ import Modal from '@/components/ui/ui-modal.vue';
 import Input from '@/components/ui/ui-input.vue';
 import Button from '@/components/ui/ui-button.vue';
 import { useMutation } from '@tanstack/vue-query';
-import { collectionMutations } from '@/services/mutations/collection-mutations';
 import type { CreateCollectionInput } from '@/services/mutations/collection-mutations.types';
+import { collectionsMutations } from '@/services/mutations/collection-mutations';
 
 const props = defineProps<AddCollectionModalProps>();
 const emit = defineEmits<AddCollectionModalEmits>();
@@ -29,7 +29,7 @@ const formState = ref<FormState>({
 });
 const { mutate, isPending } = useMutation({
   mutationFn: async (input: CreateCollectionInput) =>
-    await collectionMutations.createCollection(input),
+    await collectionsMutations.createCollection(input),
   onSuccess: () => emit('close'),
 });
 

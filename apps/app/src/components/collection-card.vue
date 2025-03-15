@@ -1,76 +1,176 @@
-<script setup lang="ts">
-import type { Collection } from '@/models/Collection';
-import { formatPgDate } from '@/utils/dates';
-import { Library, Clock } from 'lucide-vue-next';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { MoreVertical } from 'lucide-vue-next';
+import Dropdown from '@/components/ui/ui-dropdown.vue';
+import RemoveCollectionModal from '@/components/modals/remove-collection-modal.vue';
+import { useQueryClient } from '@tanstack/vue-query';
 
-defineProps<{
-  collection: Collection;
+const props = defineProps<{
+  collection: {
+    id: string;
+    name: string;
+    description?: string;
+    createdAt: string;
+    rulesCount?: number;
+  };
 }>();
+
+const router = useRouter();
+const queryClient = useQueryClient();
+const isRemoveModalOpen = ref(false);
+
+const formattedDate = computed(() => {
+  if (!props.collection.createdAt) return '';
+  return new Date(props.collection.createdAt).toLocaleDateString();
+});
+
+const navigateToCollection = () => {
+  router.push(`/collections/${props.collection.id}`);
+};
+
+const dropdownOptions = [
+  {
+    id: 'update',
+    label: 'Update',
+    value: 'update',
+  },
+  {
+    id: 'remove',
+    label: 'Remove',
+    value: 'remove',
+  },
+];
+
+const onDropdownChange = (id: string) => {
+  if (id === 'remove') {
+    onOpenRemoveModal();
+  }
+  // Update functionality will be implemented later
+};
+
+const onOpenRemoveModal = () => {
+  isRemoveModalOpen.value = true;
+};
+
+const onCloseRemoveModal = () => {
+  isRemoveModalOpen.value = false;
+};
+
+const handleCollectionDeleted = () => {
+  queryClient.invalidateQueries({ queryKey: ['collections'] });
+};
 </script>
 
 <template>
-  <a :href="`/collections/${collection.id}`" class="collection">
-    <div class="collection__header">
-      <Library class="collection__header-icon" />
-      <h2>{{ collection.name }}</h2>
+  <div class="collection-card" @click="navigateToCollection">
+    <div class="collection-card__header">
+      <h3 class="title">{{ collection.name }}</h3>
+
+      <div class="dropdown-wrapper" @click.stop>
+        <Dropdown :options="dropdownOptions" @change="onDropdownChange">
+          <template #trigger>
+            <div class="dropdown-icon">
+              <MoreVertical :size="15" />
+            </div>
+          </template>
+        </Dropdown>
+      </div>
     </div>
-    <div class="collection__time">
-      <Clock class="collection__time-icon" />
-      {{ formatPgDate(collection.updatedAt) }}
-    </div>
-  </a>
+
+    <p v-if="collection.description" class="collection-card__description">
+      {{ collection.description }}
+    </p>
+
+    <footer class="collection-card__footer">
+      <div class="collection-card__metadata">
+        <p class="collection-card__date">{{ formattedDate }}</p>
+        <p class="collection-card__rules-count">{{ collection.rulesCount || 0 }} rules</p>
+      </div>
+    </footer>
+  </div>
+
+  <RemoveCollectionModal
+    :isOpen="isRemoveModalOpen"
+    :collectionId="collection.id"
+    @close="onCloseRemoveModal"
+    @success="handleCollectionDeleted" />
 </template>
 
-<style scoped lang="scss">
-.collection {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px;
-  height: 200px;
-  cursor: pointer;
+<style lang="scss" scoped>
+.collection-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  &:hover {
-    border-color: var(--border-hover);
-    background-color: var(--background-hover);
-  }
+  min-height: 150px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
 
   &__header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: var(--font-sm);
-    color: var(--accent);
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 8px;
 
-    &-icon {
-      width: 32px;
-      height: 32px;
-      padding: 5px;
-      border: 1px solid var(--border);
+    .title {
+      font-size: var(--font-md);
+      font-weight: 600;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .dropdown-icon {
+      margin-right: -5px;
     }
   }
 
-  &__description {
-    margin-top: 10px;
-    margin-bottom: auto;
-    font-size: var(--font-sm);
-    color: var(--text-muted);
+  &__footer {
+    margin-top: auto;
   }
 
-  &__time {
+  &__metadata {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    font-size: var(--font-sm);
-    color: var(--text-muted);
+    justify-content: space-between;
+    margin-top: 16px;
+  }
 
-    &-icon {
-      width: 16px;
-      height: 16px;
-    }
+  &__date,
+  &__rules-count {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  &:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--background-hover);
+    color: var(--text-light);
   }
 }
 </style>
