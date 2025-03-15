@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { MoreVertical } from 'lucide-vue-next';
 import Dropdown from '@/components/ui/ui-dropdown.vue';
 import RemoveCollectionModal from '@/components/modals/remove-collection-modal.vue';
-import { useQueryClient } from '@tanstack/vue-query';
 
 const props = defineProps<{
   collection: {
@@ -16,18 +14,12 @@ const props = defineProps<{
   };
 }>();
 
-const router = useRouter();
-const queryClient = useQueryClient();
 const isRemoveModalOpen = ref(false);
 
 const formattedDate = computed(() => {
   if (!props.collection.createdAt) return '';
   return new Date(props.collection.createdAt).toLocaleDateString();
 });
-
-const navigateToCollection = () => {
-  router.push(`/collections/${props.collection.id}`);
-};
 
 const dropdownOptions = [
   {
@@ -56,14 +48,10 @@ const onOpenRemoveModal = () => {
 const onCloseRemoveModal = () => {
   isRemoveModalOpen.value = false;
 };
-
-const handleCollectionDeleted = () => {
-  queryClient.invalidateQueries({ queryKey: ['collections'] });
-};
 </script>
 
 <template>
-  <div class="collection-card" @click="navigateToCollection">
+  <RouterLink :to="`/collections/${collection.id}`" class="collection-card">
     <div class="collection-card__header">
       <h3 class="title">{{ collection.name }}</h3>
 
@@ -88,7 +76,7 @@ const handleCollectionDeleted = () => {
         <p class="collection-card__rules-count">{{ collection.rulesCount || 0 }} rules</p>
       </div>
     </footer>
-  </div>
+  </RouterLink>
 
   <RemoveCollectionModal
     :isOpen="isRemoveModalOpen"
