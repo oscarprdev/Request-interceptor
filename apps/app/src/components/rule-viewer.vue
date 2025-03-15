@@ -7,7 +7,6 @@ import { useRulesStore } from '@/stores/rules';
 import { computed, ref } from 'vue';
 import RuleResponse from './rule-response.vue';
 import RemoveRuleModal from '@/components/modals/remove-rule-modal.vue';
-import { useQueryClient } from '@tanstack/vue-query';
 
 const ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -135,11 +134,12 @@ const onResponseChange = (value: string) => {
                 label="Enable" />
             </div>
             <Button
-              variant="ghost"
+              v-if="rulesStore.selectedRule"
+              variant="destructive"
               size="small"
               class="rule-opts__remove-btn"
               @click="onOpenRemoveModal">
-              Remove Rule
+              Remove
             </Button>
           </div>
         </div>
@@ -178,8 +178,9 @@ const onResponseChange = (value: string) => {
     </article>
 
     <RemoveRuleModal
+      v-if="rulesStore.selectedRule"
       :isOpen="isRemoveModalOpen"
-      :ruleId="rulesStore.selectedRule?.id"
+      :ruleId="rulesStore.selectedRule.id"
       @close="onCloseRemoveModal" />
   </section>
 </template>

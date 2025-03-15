@@ -16,6 +16,7 @@ const collectionId = route.params.id;
 
 <style scoped lang="scss">
 .collection-view {
+  background-color: var(--background);
   display: flex;
   width: 100%;
   height: 100%;
