@@ -11,6 +11,21 @@ export class RuleCollectionsService implements RuleCollectionsRepository {
     });
   }
 
+  async countRulesByCollection(collectionId: string): Promise<number> {
+    try {
+      const countQuery = `
+      SELECT COUNT(*) 
+      FROM collection_rules cr
+      WHERE cr."collectionId" = $1
+    `;
+      const result = await this.pool.query(countQuery, [collectionId]);
+      return parseInt(result.rows[0].count, 10);
+    } catch (error) {
+      console.error('Error counting rules by collection');
+      throw error;
+    }
+  }
+
   async assignRuleToCollection(ruleId: string, collectionId: string): Promise<boolean> {
     try {
       const query = `
