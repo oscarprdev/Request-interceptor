@@ -114,6 +114,11 @@ h2 {
   font-size: var(--font-xs);
   padding: 2px 8px;
   border-radius: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.rules-count--zero {
+  background-color: var(--text-muted);
 }
 
 .rules-list {
@@ -130,6 +135,17 @@ h2 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.rule-item--disabled {
+  opacity: 0.7;
+}
+
+.rule-item--enabled {
+  border-left: 3px solid var(--success);
 }
 
 .rule-header {
@@ -242,6 +258,7 @@ h2 {
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
+  min-width: 55px;
 }
 
 .expand-icon {

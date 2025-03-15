@@ -35,6 +35,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Store server rules globally so we can access them when updating
 let serverRulesCache = [];
 
+function updateRulesCounter() {
+  const rulesCount = document.getElementById('rulesCount');
+  // Count only enabled rules
+  const enabledRulesCount = serverRulesCache.filter(rule => rule.isEnabled).length;
+  rulesCount.textContent = enabledRulesCount;
+
+  // Update the counter class based on whether there are enabled rules
+  if (enabledRulesCount > 0) {
+    rulesCount.classList.remove('rules-count--zero');
+  } else {
+    rulesCount.classList.add('rules-count--zero');
+  }
+}
+
 async function loadRules() {
   const rulesList = document.getElementById('rulesList');
   const rulesCount = document.getElementById('rulesCount');
@@ -46,10 +60,12 @@ async function loadRules() {
     const serverRules = await fetchServerRules();
 
     serverRulesCache = [...serverRules];
-    rulesCount.textContent = rules.length;
 
-    if (rules.length === 0) {
-      rulesList.innerHTML = '<div class="no-rules">No active rules found</div>';
+    // Update rules counter to show only enabled rules
+    updateRulesCounter();
+
+    if (serverRulesCache.length === 0) {
+      rulesList.innerHTML = '<div class="no-rules">No rules found</div>';
       return;
     }
 
@@ -83,8 +99,18 @@ async function loadRules() {
           await updateRuleEnabledState(ruleId, isEnabled);
           await chrome.runtime.sendMessage({ type: 'UPDATE_RULES_FROM_POPUP' });
 
+          // Update the rule in our cache
+          const ruleIndex = serverRulesCache.findIndex(r => r.id === ruleId);
+          if (ruleIndex !== -1) {
+            serverRulesCache[ruleIndex].isEnabled = isEnabled;
+          }
+
+          // Update the UI
           const switchLabel = switchInput.nextElementSibling;
           switchLabel.textContent = isEnabled ? 'Enabled' : 'Disabled';
+
+          // Update rules counter
+          updateRulesCounter();
         } catch (error) {
           console.error('Error updating rule:', error);
           event.target.checked = !isEnabled;
@@ -161,8 +187,11 @@ function createRuleElement(rule) {
 
   const methodsDisplay = requestMethods.map(m => m.toUpperCase()).join(', ') || 'All';
 
+  // Add a class based on enabled state
+  const ruleClass = isEnabled ? 'rule-item rule-item--enabled' : 'rule-item rule-item--disabled';
+
   return `
-    <div class="rule-item" id="${rule.id}">
+    <div class="${ruleClass}" id="${rule.id}">
       <div class="rule-header">
         <div class="method-badge ${methodClass}">${badgeText}</div>
         <div class="rule-summary">
