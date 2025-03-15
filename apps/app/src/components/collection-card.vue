@@ -4,6 +4,7 @@ import { MoreVertical } from 'lucide-vue-next';
 import Dropdown from '@/components/ui/ui-dropdown.vue';
 import RemoveCollectionModal from '@/components/modals/remove-collection-modal.vue';
 import { useRouter } from 'vue-router';
+import CollectionRulesCounter from './collection-rules-counter.vue';
 
 type COLLECTION_ACTIONS_TYPES = 'UPDATE' | 'REMOVE';
 const COLLECTION_ACTIONS = {
@@ -79,7 +80,7 @@ const onClickCollectionCard = () => {
     <footer class="collection-card__footer">
       <div class="collection-card__metadata">
         <p class="collection-card__date">{{ formattedDate }}</p>
-        <p class="collection-card__rules-count">{{ collection.rulesCount || '-' }} rules</p>
+        <CollectionRulesCounter :collectionId="collection.id" />
       </div>
     </footer>
   </article>
@@ -133,8 +134,7 @@ const onClickCollectionCard = () => {
     margin-top: 16px;
   }
 
-  &__date,
-  &__rules-count {
+  &__date {
     font-size: var(--font-xs);
     color: var(--text-muted);
     margin: 0;

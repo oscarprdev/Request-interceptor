@@ -4,7 +4,7 @@ import { rulesCollectionsController } from '@/controllers';
 const router = Router();
 
 router.get(
-  '/count/:id',
+  '/count/:collectionId',
   rulesCollectionsController.countRulesByCollection.bind(rulesCollectionsController)
 );
 

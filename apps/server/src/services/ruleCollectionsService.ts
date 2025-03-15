@@ -14,9 +14,9 @@ export class RuleCollectionsService implements RuleCollectionsRepository {
   async countRulesByCollection(collectionId: string): Promise<number> {
     try {
       const countQuery = `
-      SELECT COUNT(*) 
-      FROM collection_rules cr
-      WHERE cr."collectionId" = $1
+      SELECT COUNT(*) AS count
+      FROM collection_rules
+      WHERE "collectionId" = $1
     `;
       const result = await this.pool.query(countQuery, [collectionId]);
       return parseInt(result.rows[0].count, 10);
