@@ -10,7 +10,7 @@ const userStore = useUserStore();
 const isExtensionModalOpened = ref(false);
 
 onMounted(() => {
-  const userToken = localStorage.getItem('requestick-user');
+  const userToken = localStorage.getItem('requestick');
   if (userToken) {
     userStore.setUserToken(userToken);
   } else {

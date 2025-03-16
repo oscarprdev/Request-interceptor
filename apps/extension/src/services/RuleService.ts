@@ -1,14 +1,20 @@
 import { Rule, ServerRule } from '../models/Rule';
 
+const API_URL = 'http://localhost:8080';
+
 export class RuleService {
-  public async updateRules(): Promise<void> {
-    const rules = await this.fetchRules();
+  public async updateRules(userToken: string): Promise<void> {
+    const rules = await this.fetchRules(userToken);
     await this.updateDynamicRules(rules);
   }
 
-  private async fetchRules(): Promise<Rule[]> {
+  private async fetchRules(userToken: string): Promise<Rule[]> {
     try {
-      const rulesResponse = await fetch('http://localhost:8080/api/v1/rules');
+      const rulesResponse = await fetch(`${API_URL}/api/v1/rules`, {
+        headers: {
+          Authorization: `${userToken}`,
+        },
+      });
       const rules = await rulesResponse.json();
 
       return rules.data.map((rule: ServerRule, index: number) =>

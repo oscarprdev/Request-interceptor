@@ -232,7 +232,13 @@ function updateRulesCounter() {
 
 async function fetchCollections() {
   try {
-    const response = await fetch(`${API_URL}/api/v1/collections`);
+    const userToken = localStorage.getItem('requestick');
+
+    const response = await fetch(`${API_URL}/api/v1/collections`, {
+      headers: {
+        Authorization: userToken,
+      },
+    });
     const data = await response.json();
     return data.data || [];
   } catch (error) {
@@ -243,7 +249,13 @@ async function fetchCollections() {
 
 async function fetchRulesByCollectionId(collectionId) {
   try {
-    const response = await fetch(`${API_URL}/api/v1/rules/collection/${collectionId}`);
+    const userToken = localStorage.getItem('requestick');
+
+    const response = await fetch(`${API_URL}/api/v1/rules/collection/${collectionId}`, {
+      headers: {
+        Authorization: userToken,
+      },
+    });
     const data = await response.json();
     return data.data || [];
   } catch (error) {
@@ -270,9 +282,12 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
       isEnabled: isEnabled,
     };
 
+    const userToken = localStorage.getItem('requestick');
+
     const response = await fetch(`${API_URL}/api/v1/rules`, {
       method: 'PUT',
       headers: {
+        Authorization: userToken,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(updatePayload),
@@ -286,6 +301,23 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
   } catch (error) {
     console.error('Error updating rule:', error);
     throw error;
+  }
+}
+
+async function fetchRuleCount(collectionId) {
+  try {
+    const userToken = localStorage.getItem('requestick');
+
+    const response = await fetch(`${API_URL}/api/v1/rules-collections/count/${collectionId}`, {
+      headers: {
+        Authorization: userToken,
+      },
+    });
+    const data = await response.json();
+    return data.success ? data.data : 0;
+  } catch (error) {
+    console.error(`Error fetching rule count for collection ${collectionId}:`, error);
+    return 0;
   }
 }
 
@@ -350,13 +382,3 @@ function truncateText(text, maxLength) {
 }
 
 // Add a function to fetch rule count for a collection
-async function fetchRuleCount(collectionId) {
-  try {
-    const response = await fetch(`${API_URL}/api/v1/rules-collections/count/${collectionId}`);
-    const data = await response.json();
-    return data.success ? data.data : 0;
-  } catch (error) {
-    console.error(`Error fetching rule count for collection ${collectionId}:`, error);
-    return 0;
-  }
-}
