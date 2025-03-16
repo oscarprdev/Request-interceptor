@@ -10,6 +10,7 @@ interface ModalProps {
   title: string;
   isOpen: boolean;
   size?: ModalSize;
+  canClose?: boolean;
 }
 
 interface ModalEmits {

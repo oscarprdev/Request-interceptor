@@ -2,7 +2,9 @@
 import { ref, watch, computed, onMounted } from 'vue';
 import { MODAL_SIZES, type ModalProps, type ModalEmits } from './ui-modal.types';
 
-const props = defineProps<ModalProps>();
+const props = withDefaults(defineProps<ModalProps>(), {
+  canClose: true,
+});
 const emit = defineEmits<ModalEmits>();
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
@@ -53,7 +55,7 @@ onMounted(() => {
         <h2 class="modal__title">
           {{ title.charAt(0).toUpperCase() + title.slice(1).toLowerCase() }}
         </h2>
-        <button class="modal__close" @click="handleClose">×</button>
+        <button v-if="canClose" class="modal__close" @click="handleClose">×</button>
       </div>
 
       <div class="modal__body">

@@ -28,7 +28,12 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-  <Modal v-if="isOpen" title="Delete Collection" size="small" :isOpen="isOpen" @close="handleClose">
+  <Modal
+    v-if="isOpen"
+    title="Delete Collection"
+    size="small"
+    :is-open="isOpen"
+    @close="handleClose">
     <div class="remove-collection-modal">
       <p class="remove-collection-modal__message">
         Are you sure you want to delete this collection? All rules in this collection will also be

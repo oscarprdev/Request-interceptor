@@ -27,7 +27,7 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-  <Modal v-if="isOpen" title="Delete Rule" size="small" :isOpen="isOpen" @close="onClose">
+  <Modal v-if="isOpen" title="Delete Rule" size="small" :is-open="isOpen" @close="onClose">
     <div class="remove-rule-modal">
       <p class="remove-rule-modal__message">
         Are you sure you want to delete this rule? This action cannot be undone.

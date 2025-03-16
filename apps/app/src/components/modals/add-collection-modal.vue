@@ -91,7 +91,7 @@ watch(
     v-if="isOpen"
     title="Add New Collection"
     size="small"
-    :isOpen="isOpen"
+    :is-open="isOpen"
     @close="handleClose">
     <form @submit="onSubmit" class="add-collection-form">
       <Input
