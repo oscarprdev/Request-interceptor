@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     <div id="collectionsView" class="view">
       <div class="view-header">
-        <h2>Collections <span id="collectionsCount" class="count-badge">0</span></h2>
+        <h2>Oscar <span id="collectionsCount" class="count-badge">0</span></h2>
       </div>
       <div id="collectionsList" class="list-container">
         <div class="loading">Loading collections...</div>
@@ -232,7 +232,7 @@ function updateRulesCounter() {
 
 async function fetchCollections() {
   try {
-    const userToken = chrome.storage.local.get('requestick');
+    const userToken = await getUserToken();
 
     const response = await fetch(`${API_URL}/api/v1/collections`, {
       headers: {
@@ -249,7 +249,7 @@ async function fetchCollections() {
 
 async function fetchRulesByCollectionId(collectionId) {
   try {
-    const userToken = chrome.storage.local.get('requestick');
+    const userToken = await getUserToken();
 
     const response = await fetch(`${API_URL}/api/v1/rules/collection/${collectionId}`, {
       headers: {
@@ -282,7 +282,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
       isEnabled: isEnabled,
     };
 
-    const userToken = chrome.storage.local.get('requestick');
+    const userToken = await getUserToken();
 
     const response = await fetch(`${API_URL}/api/v1/rules`, {
       method: 'PUT',
@@ -306,7 +306,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
 
 async function fetchRuleCount(collectionId) {
   try {
-    const userToken = chrome.storage.local.get('requestick');
+    const userToken = await getUserToken();
 
     const response = await fetch(`${API_URL}/api/v1/rules-collections/count/${collectionId}`, {
       headers: {
@@ -361,6 +361,15 @@ function createRuleElement(rule) {
   `;
 }
 
+// Helper function to get user token from chrome storage
+function getUserToken() {
+  return new Promise(resolve => {
+    chrome.storage.local.get(['requestick'], result => {
+      resolve(result.requestick || '');
+    });
+  });
+}
+
 function getMethodClass(method) {
   switch (method.toUpperCase()) {
     case 'GET':
@@ -380,5 +389,3 @@ function truncateText(text, maxLength) {
   if (text.length <= maxLength) return text;
   return text.substr(0, maxLength) + '...';
 }
-
-// Add a function to fetch rule count for a collection
