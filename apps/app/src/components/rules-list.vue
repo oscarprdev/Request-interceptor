@@ -2,7 +2,7 @@
 import { useCreateRule } from '@/composables/use-create-rule';
 import Button from '@/components/ui/ui-button.vue';
 import Badge from '@/components/ui/ui-badge.vue';
-import type { Rule } from '@/models/Rule';
+import { ActionType, type Rule } from '@/models/Rule';
 import { rulesQueries } from '@/services/queries/rules-queries';
 import { useRulesStore } from '@/stores/rules';
 import { mapRuleToApplication } from '@/utils/mappers';
@@ -54,11 +54,12 @@ const onAddRule = () =>
     requestMethods: ['GET'],
     priority: rulesStore.rules.length + 1,
     isEnabled: true,
+    actionType: ActionType.REDIRECT,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     response: {
-      type: 'block',
-      body: 'Blocked by default rule',
+      type: 'redirect',
+      body: 'Redirected by default rule',
     },
   });
 

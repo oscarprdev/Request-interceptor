@@ -1,6 +1,6 @@
 import type { Rule } from '@/models/Rule';
 
-export type RuleToServer = Omit<Rule, 'createdAt' | 'updatedAt' | 'resourceTypes' | 'actionType'>;
+export type RuleToServer = Omit<Rule, 'createdAt' | 'updatedAt' | 'resourceTypes'>;
 
 export type CreateRuleInput = { rule: RuleToServer; collectionId: string };
 

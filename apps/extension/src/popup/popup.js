@@ -280,6 +280,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
       requestMethods: rule.requestMethods,
       redirectUrl: rule.redirectUrl,
       isEnabled: isEnabled,
+      actionType: rule.actionType,
     };
 
     const userToken = await getUserToken();

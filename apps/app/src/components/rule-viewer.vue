@@ -7,6 +7,8 @@ import { useRulesStore } from '@/stores/rules';
 import { computed, ref } from 'vue';
 import RuleResponse from './rule-response.vue';
 import RemoveRuleModal from '@/components/modals/remove-rule-modal.vue';
+import { ACTION_TYPES, ActionType } from '@/models/Rule';
+import { capitalizeStr } from '@/utils/strings';
 
 const ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -14,6 +16,12 @@ const methodsDropdownOptions = ALLOWED_METHODS.map(method => ({
   id: method.toLowerCase(),
   value: method,
   label: method,
+}));
+
+const actionTypeOptions = ACTION_TYPES.map(actionType => ({
+  id: actionType.toLowerCase(),
+  value: actionType,
+  label: capitalizeStr(actionType),
 }));
 
 const isRemoveModalOpen = ref(false);
@@ -42,6 +50,11 @@ const selectedOption = computed(() => {
   return methodsDropdownOptions.find(
     method => method.id === rulesStore.selectedRule?.requestMethods[0].toLowerCase()
   );
+});
+
+const selectedActionType = computed(() => {
+  const actionType = rulesStore.selectedRule?.actionType || ActionType.REDIRECT;
+  return actionTypeOptions.find(option => option.id === actionType.toLowerCase());
 });
 
 const isRuleEnabled = computed(() => {
@@ -86,6 +99,16 @@ const onMethodDropdownChange = (id: string) => {
   }
 };
 
+const onActionTypeChange = (id: string) => {
+  const actionType = actionTypeOptions.find(option => option.id === id);
+  const selectedRule = rulesStore.selectedRule;
+
+  if (actionType && selectedRule) {
+    selectedRule.actionType = actionType.value as ActionType;
+    action(selectedRule);
+  }
+};
+
 const onUrlFilterChanges = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const urlFilter = target.value;
@@ -124,15 +147,6 @@ const onResponseChange = (value: string) => {
               :value="rulesStore.selectedRule?.title"
               @input="onTitleChange"
               class="rule-opts__input" />
-          </div>
-          <div class="rule-opts__actions">
-            <div class="rule-opts__switch">
-              <Switch
-                :model-value="isRuleEnabled"
-                @change="onEnableToggle"
-                size="medium"
-                label="Enable" />
-            </div>
             <Button
               v-if="rulesStore.selectedRule"
               variant="destructive"
@@ -141,6 +155,20 @@ const onResponseChange = (value: string) => {
               @click="onOpenRemoveModal">
               Remove
             </Button>
+          </div>
+          <div class="rule-opts__actions">
+            <div class="action-type">
+              <label>Action Type</label>
+              <Dropdown
+                @change="onActionTypeChange"
+                :default-selected="selectedActionType"
+                :options="actionTypeOptions" />
+            </div>
+
+            <div class="switch">
+              <label>Request status</label>
+              <Switch :model-value="isRuleEnabled" @change="onEnableToggle" size="medium" />
+            </div>
           </div>
         </div>
       </div>
@@ -214,16 +242,33 @@ const onResponseChange = (value: string) => {
 
       &__container {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: space-between;
         box-sizing: border-box;
         min-height: 40px;
         width: 100%;
+        gap: 10px;
       }
 
       &__title {
-        flex: 1;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      &__action-type {
+        width: 120px;
         margin-right: 16px;
+
+        label {
+          font-size: var(--font-sm);
+          color: var(--text-muted);
+          margin-bottom: 5px;
+          margin-left: 5px;
+        }
       }
 
       &__input {
@@ -246,12 +291,19 @@ const onResponseChange = (value: string) => {
         display: flex;
         align-items: center;
         gap: 12px;
-      }
+        width: 100%;
 
-      &__switch {
-        display: flex;
-        align-items: center;
-        min-width: 100px;
+        label {
+          font-size: var(--font-sm);
+          color: var(--text-muted);
+          margin-bottom: 5px;
+        }
+
+        .switch {
+          display: flex;
+          flex-direction: column;
+          min-width: 100px;
+        }
       }
 
       &__remove-btn {

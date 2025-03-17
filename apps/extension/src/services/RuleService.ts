@@ -40,7 +40,7 @@ export class RuleService {
 
   private mapServerRuleToExtensionRule(rule: ServerRule, index: number): Rule {
     const actionType = rule.isEnabled
-      ? chrome.declarativeNetRequest.RuleActionType.REDIRECT
+      ? (rule.actionType as chrome.declarativeNetRequest.RuleActionType)
       : chrome.declarativeNetRequest.RuleActionType.ALLOW;
 
     return {

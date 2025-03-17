@@ -71,9 +71,9 @@ export class RuleController {
         });
       }
 
-      const { id, title, urlFilter, requestMethods, redirectUrl, isEnabled, priority } = req.body;
+      const { id, title, urlFilter, requestMethods, redirectUrl, isEnabled, priority, actionType } =
+        req.body;
       const defaultResourcesTypes = ['xmlhttprequest'];
-      const defaultActionType = 'block';
 
       const newRule = new Rule(
         id,
@@ -82,7 +82,7 @@ export class RuleController {
         urlFilter,
         defaultResourcesTypes,
         requestMethods,
-        defaultActionType,
+        actionType,
         redirectUrl,
         isEnabled
       );
@@ -106,7 +106,8 @@ export class RuleController {
    */
   async update(req: Request, res: Response, next?: NextFunction) {
     try {
-      const { id, title, priority, urlFilter, requestMethods, redirectUrl, isEnabled } = req.body;
+      const { id, title, priority, urlFilter, requestMethods, redirectUrl, isEnabled, actionType } =
+        req.body;
       const currentRule = await this.ruleRepository.describe(id);
       if (!currentRule) {
         return res.status(404).json({
@@ -122,7 +123,7 @@ export class RuleController {
         urlFilter,
         currentRule.resourceTypes,
         requestMethods,
-        currentRule.actionType,
+        actionType,
         redirectUrl,
         isEnabled
       );

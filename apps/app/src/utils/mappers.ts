@@ -1,4 +1,4 @@
-import type { Rule, RuleApplication } from '@/models/Rule';
+import { ActionType, type Rule, type RuleApplication } from '@/models/Rule';
 import { formatPgDate } from './dates';
 import type { RuleToServer } from '@/services/mutations/rules-mutations.types';
 
@@ -9,6 +9,7 @@ export const mapRuleToApplication = (rule: Rule): RuleApplication => ({
   urlFilter: rule.urlFilter,
   requestMethods: rule.requestMethods,
   isEnabled: rule.isEnabled,
+  actionType: rule.actionType ?? ActionType.REDIRECT,
   response: JSON.parse(atob(rule.redirectUrl?.split(',')[1] || '{}')),
   createdAt: formatPgDate(rule.createdAt),
   updatedAt: formatPgDate(rule.updatedAt),
@@ -22,4 +23,5 @@ export const mapRuleToServer = (rule: RuleApplication): RuleToServer => ({
   urlFilter: rule.urlFilter,
   isEnabled: rule.isEnabled ?? false,
   priority: rule.priority ?? 1,
+  actionType: rule.actionType ?? ActionType.REDIRECT,
 });
