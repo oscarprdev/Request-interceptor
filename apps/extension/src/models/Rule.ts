@@ -44,6 +44,7 @@ export type MessageType = 'UPDATE_RULES';
 
 export const MESSAGE_TYPES = {
   UPDATE_RULES: 'UPDATE_RULES',
+  GET_USER: 'GET_USER',
 } as const as Record<MessageType, MessageType>;
 
 export type RuleCreateDTO = Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>;

@@ -3,14 +3,18 @@ import { ruleService } from './services/RuleService';
 
 const createUserToken = () => crypto.randomUUID();
 
-chrome.runtime.onInstalled.addListener(async () => {
-  localStorage.setItem('requestick', createUserToken());
-
-  const userToken = localStorage.getItem('requestick');
+const getUserToken = () => {
+  let userToken = chrome.storage.local.get('requestick');
   if (!userToken) {
-    console.log('User token is mandatory');
-    return;
+    userToken = createUserToken();
+    chrome.storage.local.set({ requestick: userToken });
   }
+
+  return userToken;
+};
+
+chrome.runtime.onInstalled.addListener(async () => {
+  const userToken = getUserToken();
 
   await ruleService.updateRules(userToken);
   console.log('Extension initialization complete');
@@ -20,8 +24,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'UPDATE_RULES_FROM_POPUP') {
     console.log('Received update rules request from popup');
 
-    const userToken = localStorage.getItem('requestick');
-    if (!userToken) return;
+    const userToken = getUserToken();
 
     ruleService
       .updateRules(userToken)
@@ -46,6 +49,17 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
       await ruleService.updateRules(userToken);
       sendResponse({ success: true, message: 'Rules updated successfully' });
+      return true;
+    case MESSAGE_TYPES.GET_USER:
+      chrome.storage.local.get(['requestick'], result => {
+        let userId = result.requestick || '';
+        if (!userId) {
+          chrome.storage.local.set({ requestick: createUserToken() });
+          userId = createUserToken();
+        }
+
+        sendResponse({ success: true, userId });
+      });
       return true;
 
     default:

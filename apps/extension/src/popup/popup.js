@@ -232,7 +232,7 @@ function updateRulesCounter() {
 
 async function fetchCollections() {
   try {
-    const userToken = localStorage.getItem('requestick');
+    const userToken = chrome.storage.local.get('requestick');
 
     const response = await fetch(`${API_URL}/api/v1/collections`, {
       headers: {
@@ -249,7 +249,7 @@ async function fetchCollections() {
 
 async function fetchRulesByCollectionId(collectionId) {
   try {
-    const userToken = localStorage.getItem('requestick');
+    const userToken = chrome.storage.local.get('requestick');
 
     const response = await fetch(`${API_URL}/api/v1/rules/collection/${collectionId}`, {
       headers: {
@@ -282,7 +282,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
       isEnabled: isEnabled,
     };
 
-    const userToken = localStorage.getItem('requestick');
+    const userToken = chrome.storage.local.get('requestick');
 
     const response = await fetch(`${API_URL}/api/v1/rules`, {
       method: 'PUT',
@@ -306,7 +306,7 @@ async function updateRuleEnabledState(ruleId, isEnabled) {
 
 async function fetchRuleCount(collectionId) {
   try {
-    const userToken = localStorage.getItem('requestick');
+    const userToken = chrome.storage.local.get('requestick');
 
     const response = await fetch(`${API_URL}/api/v1/rules-collections/count/${collectionId}`, {
       headers: {
