@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Request Interceptor",
+  "name": "Requestick",
   "version": "1.0",
   "description": "Intercepts and modifies HTTP requests",
   "permissions": [
@@ -27,6 +27,6 @@
     "128": "icons/icon.svg"
   },
   "externally_connectable": {
-    "matches": ["http://localhost:5173/*"]
+    "matches": ["<all_urls>"]
   }
 }

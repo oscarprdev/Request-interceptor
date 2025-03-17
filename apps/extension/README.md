@@ -18,18 +18,12 @@ The extension now includes a popup interface that allows you to:
 
 ## Setup
 
-1. Generate the icon files:
+Load the extension in Chrome:
 
-   ```
-   npm install canvas svg2img
-   node generate-icons.js
-   ```
-
-2. Load the extension in Chrome:
-   - Go to `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the `apps/extension` directory
+- Go to `chrome://extensions/`
+- Enable "Developer mode"
+- Click "Load unpacked"
+- Select the `apps/extension` directory
 
 ## Usage
 
