@@ -130,6 +130,20 @@ export class CollectionService implements CollectionRepository {
         return false;
       }
 
+      const rulesQuery = `
+        SELECT "ruleId" FROM collection_rules 
+        WHERE "collectionId" = $1
+      `;
+      const rulesResult = await this.pool.query(rulesQuery, [id]);
+      const ruleIds = rulesResult.rows.map(row => row.ruleId);
+
+      await this.pool.query('DELETE FROM user_collections WHERE "collectionId" = $1', [id]);
+      await this.pool.query('DELETE FROM collection_rules WHERE "collectionId" = $1', [id]);
+
+      for (const ruleId of ruleIds) {
+        await this.pool.query('DELETE FROM rules WHERE id = $1', [ruleId]);
+      }
+
       const query = `
         DELETE FROM collections 
         WHERE id = $1

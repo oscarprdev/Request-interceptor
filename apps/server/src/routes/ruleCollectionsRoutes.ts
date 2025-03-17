@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { rulesCollectionsController } from '@/controllers';
-
+import { ruleCollectionsController } from '@/controllers';
 const router = Router();
 
 router.get(
   '/count/:collectionId',
-  rulesCollectionsController.countRulesByCollection.bind(rulesCollectionsController)
+  ruleCollectionsController.countRulesByCollection.bind(ruleCollectionsController)
 );
 
 export default router;

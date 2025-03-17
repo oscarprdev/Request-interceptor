@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { CollectionRepository } from '@/repositories/CollectionRepository';
 import Collection from '@/models/Collection';
+import { UserRepository } from '@/repositories/UserRepository';
 
 export class CollectionController {
-  constructor(private readonly collectionRepository: CollectionRepository) {}
+  constructor(
+    private readonly collectionRepository: CollectionRepository,
+    private readonly userRepository: UserRepository
+  ) {}
 
   /**
    * Get all collections
@@ -58,9 +62,19 @@ export class CollectionController {
    */
   async create(req: Request, res: Response, next?: NextFunction) {
     try {
+      const userId = req.headers.authorization;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'User ID is required',
+        });
+      }
+
       const { id, name, isEnabled } = req.body;
       const validCollection = new Collection(id, name, isEnabled);
       const collection = await this.collectionRepository.create(validCollection);
+
+      await this.userRepository.assignCollectionToUser(userId, collection.id);
 
       res.status(201).json({
         success: true,

@@ -13,6 +13,7 @@ import Button from '@/components/ui/ui-button.vue';
 import { useMutation } from '@tanstack/vue-query';
 import type { CreateCollectionInput } from '@/services/mutations/collection-mutations.types';
 import { collectionsMutations } from '@/services/mutations/collection-mutations';
+import { useUserStore } from '@/stores/user';
 
 const props = defineProps<AddCollectionModalProps>();
 const emit = defineEmits<AddCollectionModalEmits>();
@@ -20,6 +21,8 @@ const emit = defineEmits<AddCollectionModalEmits>();
 const handleClose = () => {
   emit('close');
 };
+
+const userStore = useUserStore();
 
 const formState = ref<FormState>({
   name: {
@@ -58,6 +61,7 @@ const onSubmit = async (e: Event) => {
     id: crypto.randomUUID(),
     isEnabled: true,
     name: validationResult.data.name,
+    userId: userStore.userToken,
   });
 };
 
