@@ -10,12 +10,16 @@ const userStore = useUserStore();
 const isExtensionModalOpened = ref(false);
 
 onMounted(() => {
-  const userToken = localStorage.getItem('requestick');
-  if (userToken) {
-    userStore.setUserToken(userToken);
-  } else {
-    isExtensionModalOpened.value = true;
-  }
+  // @ts-expect-error chrome runtime is not typed
+  chrome.runtime.sendMessage('dnofpfkhdmmanfhnangcoiamhbhojblg', { type: 'GET_USER' }, response => {
+    console.log(response);
+    const { userId } = response;
+    if (userId) {
+      userStore.setUserToken(userId);
+    } else {
+      isExtensionModalOpened.value = true;
+    }
+  });
 });
 </script>
 
