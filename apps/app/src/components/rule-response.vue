@@ -6,6 +6,7 @@ interface RuleResponseProps {
   language?: string;
   placeholder?: string;
   readonly?: boolean;
+  error?: string | null;
 }
 
 interface RuleResponseEmits {
@@ -104,6 +105,7 @@ watch(
         @keydown="handleKeyDown"></textarea>
     </div>
   </div>
+  <div v-if="error" class="rule-response__error">{{ error }}</div>
 </template>
 
 <style scoped lang="scss">
@@ -182,6 +184,12 @@ watch(
       opacity: 0.6;
       cursor: not-allowed;
     }
+  }
+
+  &__error {
+    padding: 12px;
+    font-size: var(--font-sm);
+    color: var(--destructive);
   }
 }
 </style>

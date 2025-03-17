@@ -24,6 +24,7 @@ const actionTypeOptions = ACTION_TYPES.map(actionType => ({
   label: capitalizeStr(actionType),
 }));
 
+const responseError = ref<string | null>(null);
 const isRemoveModalOpen = ref(false);
 
 const rulesStore = useRulesStore();
@@ -124,14 +125,19 @@ const onResponseChange = (value: string) => {
   const selectedRule = rulesStore.selectedRule;
   if (!selectedRule) return;
 
-  const jsonData = JSON.parse(value);
+  try {
+    responseError.value = null;
+    const jsonData = JSON.parse(value);
 
-  const base64Data = btoa(JSON.stringify(jsonData));
-  selectedRule.redirectUrl = `data:application/json;base64,${base64Data}`;
+    const base64Data = btoa(JSON.stringify(jsonData));
+    selectedRule.redirectUrl = `data:application/json;base64,${base64Data}`;
 
-  selectedRule.response = jsonData;
+    selectedRule.response = jsonData;
 
-  action(selectedRule);
+    action(selectedRule);
+  } catch (error) {
+    responseError.value = error instanceof Error ? error.message : 'Invalid JSON';
+  }
 };
 </script>
 
@@ -199,6 +205,7 @@ const onResponseChange = (value: string) => {
       <div class="response__editor">
         <RuleResponse
           v-model="responseContent"
+          :error="responseError"
           language="json"
           placeholder="Enter JSON response here..."
           @response-change="onResponseChange" />
