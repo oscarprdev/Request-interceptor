@@ -15,13 +15,29 @@ export class CollectionService implements CollectionRepository {
   /**
    * Get all collections
    */
-  async list(): Promise<Collection[]> {
+  async list(userId?: string): Promise<Collection[]> {
     try {
-      const query = `
-        SELECT * FROM collections 
-        ORDER BY "createdAt" DESC
-      `;
-      const result = await this.pool.query(query);
+      let query: string;
+      let params: any[] = [];
+
+      if (userId) {
+        // Get collections for a specific user
+        query = `
+          SELECT c.* FROM collections c
+          JOIN user_collections uc ON c.id = uc."collectionId"
+          WHERE uc."userId" = $1
+          ORDER BY c."createdAt" DESC
+        `;
+        params = [userId];
+      } else {
+        // Get all collections
+        query = `
+          SELECT * FROM collections 
+          ORDER BY "createdAt" DESC
+        `;
+      }
+
+      const result = await this.pool.query(query, params);
       return result.rows.map(row => this.mapToCollection(row));
     } catch (error) {
       console.error('Error in findAll:', error);

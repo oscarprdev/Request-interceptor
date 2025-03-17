@@ -9,6 +9,7 @@ import { mapRuleToApplication } from '@/utils/mappers';
 import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
+import { useUserStore } from '@/stores/user';
 
 const props = defineProps<{
   collectionId: string | string[];
@@ -21,12 +22,27 @@ const METHOD_BADGE_MAP = {
   DELETE: BADGE_VARIANTS.destructive,
 };
 
+const userStore = useUserStore();
 const rulesStore = useRulesStore();
 const { action } = useCreateRule({ collectionId: props.collectionId as string });
 const query = useQuery({
   queryKey: ['rules', props.collectionId],
-  queryFn: () =>
-    rulesQueries.getRulesByCollectionId({ collectionId: props.collectionId as string }),
+  queryFn: async () => {
+    if (!userStore.userToken) {
+      return {
+        data: [],
+        limit: 0,
+        page: 0,
+        total: 0,
+        totalPages: 0,
+      };
+    }
+
+    return await rulesQueries.getRulesByCollectionId({
+      userId: userStore.userToken,
+      collectionId: props.collectionId as string,
+    });
+  },
 });
 const { data: rules, isLoading, error } = query;
 

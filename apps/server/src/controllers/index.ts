@@ -3,7 +3,9 @@ import { CollectionController } from './collectionController';
 import { ruleService } from '@/services/ruleService';
 import { collectionService } from '@/services/collectionService';
 import { ruleCollectionsService } from '@/services/ruleCollectionsService';
+import { userService } from '@/services/userService';
 import { RuleCollectionsController } from './ruleCollectionsController';
+import { UserController } from './userController';
 
 export const ruleController = new RuleController(
   ruleService,
@@ -12,3 +14,4 @@ export const ruleController = new RuleController(
 );
 export const collectionController = new CollectionController(collectionService);
 export const rulesCollectionsController = new RuleCollectionsController(ruleCollectionsService);
+export const userController = new UserController(userService, collectionService);

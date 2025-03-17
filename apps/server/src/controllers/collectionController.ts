@@ -11,7 +11,11 @@ export class CollectionController {
    */
   async list(req: Request, res: Response, next?: NextFunction) {
     try {
-      const collections = await this.collectionRepository.list();
+      const userId = req.headers.authorization;
+
+      const collections = userId
+        ? await this.collectionRepository.list(userId)
+        : await this.collectionRepository.list();
 
       res.status(200).json({
         success: true,

@@ -5,15 +5,25 @@ import CollectionCard from '@/components/collection-card.vue';
 import { Plus } from 'lucide-vue-next';
 import AddCollectionModal from '@/components/modals/add-collection-modal.vue';
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+import { toast } from 'vue-sonner';
 
 const queryClient = useQueryClient();
+const userStore = useUserStore();
 const QUERY_KEY = 'collections';
 
 const isAddCollectionModalOpen = ref(false);
 
 const { data, isLoading, error } = useQuery({
   queryKey: [QUERY_KEY],
-  queryFn: collectionsQueries.getCollections,
+  queryFn: () => {
+    if (!userStore.userToken) {
+      toast.error('User token is not set');
+      return [];
+    }
+    return collectionsQueries.getCollections(userStore.userToken);
+  },
+  enabled: !!userStore.userToken,
 });
 
 const onAddCollection = () => {
