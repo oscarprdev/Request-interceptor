@@ -1,6 +1,6 @@
 import { Rule, ServerRule } from '../models/Rule';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://requestick.up.railway.app';
 
 export class RuleService {
   public async updateRules(userToken: string): Promise<void> {

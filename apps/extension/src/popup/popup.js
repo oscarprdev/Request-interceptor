@@ -1,5 +1,5 @@
 const APP_URL = 'http://localhost:5173';
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://requestick.up.railway.app';
 
 let serverRulesCache = [];
 let collectionsCache = [];
@@ -7,7 +7,6 @@ let currentCollectionId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.querySelector('.container');
-  const oldContent = container.innerHTML;
 
   container.innerHTML = `
     <header>
