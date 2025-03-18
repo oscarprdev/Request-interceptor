@@ -1,6 +1,5 @@
-import { API_URL } from '../common';
-
 import type { Rule } from '@/models/Rule';
+import { API_URL } from '@/constants';
 
 export type GetRulesInput = {
   collectionId: string;

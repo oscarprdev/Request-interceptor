@@ -7,6 +7,7 @@ import InstallExtensionModal from './components/modals/install-extension-modal.v
 import { userMutations } from './services/mutations/user-mutations';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { usersQueries } from './services/queries/users-queries';
+import { EXTENSION_ID } from '@/constants';
 
 const userStore = useUserStore();
 const queryClient = useQueryClient();
@@ -46,7 +47,7 @@ onBeforeMount(async () => {
       return new Promise(resolve => {
         // @ts-expect-error chrome runtime is not typed
         chrome.runtime.sendMessage(
-          'dnofpfkhdmmanfhnangcoiamhbhojblg',
+          EXTENSION_ID,
           { type: 'GET_USER' },
           (response: { userId: string }) => resolve(response?.userId || null)
         );

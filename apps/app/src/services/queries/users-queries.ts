@@ -1,5 +1,5 @@
 import type { User } from '@/models/User';
-import { API_URL } from '../common';
+import { API_URL } from '@/constants';
 
 export const usersQueries = {
   getUserById: async (id: string) => {

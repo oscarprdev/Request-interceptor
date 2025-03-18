@@ -1,5 +1,5 @@
 import { updateExtensionRules } from '@/utils/update-extension-rules';
-import { API_URL } from '../common';
+import { API_URL } from '@/constants';
 import type { CreateRuleInput, DeleteRuleInput, UpdateRuleInput } from './rules-mutations.types';
 
 export const rulesMutations = {

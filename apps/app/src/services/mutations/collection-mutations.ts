@@ -1,4 +1,4 @@
-import { API_URL } from '@/services/common';
+import { API_URL } from '@/constants';
 import type { CreateCollectionInput, DeleteCollectionInput } from './collection-mutations.types';
 
 export const collectionsMutations = {

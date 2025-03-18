@@ -1,4 +1,4 @@
-import { API_URL } from '../common';
+import { API_URL } from '@/constants';
 
 export const rulesCollectionsQueries = {
   countRulesByCollection: async (collectionId: string): Promise<number> => {

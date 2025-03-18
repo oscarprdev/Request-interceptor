@@ -1,5 +1,5 @@
 import type { Collection } from '@/models/Collection';
-import { API_URL } from '../common';
+import { API_URL } from '@/constants';
 
 export const collectionsQueries = {
   getCollections: async (userId: string): Promise<Collection[]> => {
