@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserRepository } from '@/repositories/UserRepository';
-import User from '@/models/User';
-import { CollectionRepository } from '@/repositories/CollectionRepository';
+import { UserRepository } from '../repositories/UserRepository';
+import User from '../models/User';
+import { CollectionRepository } from '../repositories/CollectionRepository';
 
 export class UserController {
   constructor(

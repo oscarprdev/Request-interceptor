@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
-import { RuleRepository, PaginationOptions, PaginatedResult } from '@/repositories/RuleRepository';
-import Rule from '@/models/Rule';
-import { config } from '@/config/environment';
+import { RuleRepository, PaginationOptions, PaginatedResult } from '../repositories/RuleRepository';
+import Rule from '../models/Rule';
+import { config } from '../config/environment';
 
 export class RuleService implements RuleRepository {
   private pool: Pool;

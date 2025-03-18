@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ruleCollectionsController } from '@/controllers';
+import { ruleCollectionsController } from '../controllers';
 const router = Router();
 
 router.get(

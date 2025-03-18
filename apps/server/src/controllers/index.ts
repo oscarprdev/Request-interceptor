@@ -1,7 +1,7 @@
-import { ruleService } from '@/services/ruleService';
-import { collectionService } from '@/services/collectionService';
-import { ruleCollectionsService } from '@/services/ruleCollectionsService';
-import { userService } from '@/services/userService';
+import { ruleService } from '../services/ruleService';
+import { collectionService } from '../services/collectionService';
+import { ruleCollectionsService } from '../services/ruleCollectionsService';
+import { userService } from '../services/userService';
 import { RuleController } from './ruleController';
 import { CollectionController } from './collectionController';
 import { RuleCollectionsController } from './ruleCollectionsController';

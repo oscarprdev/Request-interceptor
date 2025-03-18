@@ -1,4 +1,4 @@
-import { RuleCollectionsRepository } from '@/repositories/RuleCollectionsRepository';
+import { RuleCollectionsRepository } from '../repositories/RuleCollectionsRepository';
 import { NextFunction, Request, Response } from 'express';
 
 export class RuleCollectionsController {

@@ -1,4 +1,4 @@
-import Rule from '@/models/Rule';
+import Rule from '../models/Rule';
 
 export interface PaginationOptions {
   page: number;

@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
-import { UserRepository } from '@/repositories/UserRepository';
-import User from '@/models/User';
-import { config } from '@/config/environment';
+import { UserRepository } from '../repositories/UserRepository';
+import User from '../models/User';
+import { config } from '../config/environment';
 
 export class UserService implements UserRepository {
   private pool: Pool;

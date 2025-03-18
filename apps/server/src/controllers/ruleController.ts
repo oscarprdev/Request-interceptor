@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { RuleRepository } from '@/repositories/RuleRepository';
-import Rule from '@/models/Rule';
-import { RuleCollectionsRepository } from '@/repositories/RuleCollectionsRepository';
-import { CollectionRepository } from '@/repositories/CollectionRepository';
+import { RuleRepository } from '../repositories/RuleRepository';
+import Rule from '../models/Rule';
+import { RuleCollectionsRepository } from '../repositories/RuleCollectionsRepository';
+import { CollectionRepository } from '../repositories/CollectionRepository';
 
 export class RuleController {
   constructor(

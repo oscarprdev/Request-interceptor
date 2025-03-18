@@ -1,5 +1,5 @@
-import { RuleCollectionsRepository } from '@/repositories/RuleCollectionsRepository';
-import { config } from '@/config/environment';
+import { RuleCollectionsRepository } from '../repositories/RuleCollectionsRepository';
+import { config } from '../config/environment';
 import { Pool } from 'pg';
 
 export class RuleCollectionsService implements RuleCollectionsRepository {
