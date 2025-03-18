@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import Modal from '@/components/ui/ui-modal.vue';
 import Button from '@/components/ui/ui-button.vue';
+import { EXTENSION_ID } from '@/constants';
 
 defineProps<{ isOpen: boolean }>();
 defineEmits<{ (e: 'close'): void }>();
 
 const handleInstallClick = () => {
-  window.open('https://chrome.google.com/webstore/detail/requestick/your-extension-id', '_blank');
+  window.open(`https://chromewebstore.google.com/detail/${EXTENSION_ID}`, '_blank');
 };
 </script>
 
