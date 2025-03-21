@@ -3,12 +3,7 @@
   "name": "Requestick",
   "version": "1.0",
   "description": "Intercepts and modifies HTTP requests",
-  "permissions": [
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "webRequest",
-    "storage"
-  ],
+  "permissions": ["declarativeNetRequest", "declarativeNetRequestFeedback", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
