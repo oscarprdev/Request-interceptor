@@ -1,4 +1,4 @@
-const APP_URL = 'http://localhost:5173';
+const APP_URL = 'https://requestick.vercel.app';
 const API_URL = 'https://requestick.up.railway.app';
 
 let serverRulesCache = [];
