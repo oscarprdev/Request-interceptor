@@ -135,7 +135,7 @@ watch(
   &__editor-container {
     display: flex;
     min-height: 200px;
-    max-height: 500px;
+    max-height: 300px;
     overflow: auto;
   }
 
