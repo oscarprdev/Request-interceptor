@@ -1,4 +1,5 @@
-const EXTENSION_ID = 'dnofpfkhdmmanfhnangcoiamhbhojblg';
+import { EXTENSION_ID } from '@/constants';
+
 const EXTENTION_ACTION_TYPE = 'UPDATE_RULES';
 
 export const updateExtensionRules = async () =>
