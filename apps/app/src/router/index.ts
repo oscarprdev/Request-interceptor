@@ -15,6 +15,10 @@ const router = createRouter({
       name: 'collection',
       component: CollectionView,
     },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
+    },
   ],
 });
 

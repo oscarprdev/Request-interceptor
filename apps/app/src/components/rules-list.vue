@@ -10,6 +10,8 @@ import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
   collectionId: string | string[];
@@ -22,6 +24,7 @@ const METHOD_BADGE_MAP = {
   DELETE: BADGE_VARIANTS.destructive,
 };
 
+const router = useRouter();
 const userStore = useUserStore();
 const rulesStore = useRulesStore();
 const { action } = useCreateRule({ collectionId: props.collectionId as string });
@@ -37,11 +40,15 @@ const query = useQuery({
         totalPages: 0,
       };
     }
-
-    return await rulesQueries.getRulesByCollectionId({
-      userId: userStore.userToken,
-      collectionId: props.collectionId as string,
-    });
+    try {
+      return await rulesQueries.getRulesByCollectionId({
+        userId: userStore.userToken,
+        collectionId: props.collectionId as string,
+      });
+    } catch {
+      toast.error('Failed to fetch rules');
+      router.push('/');
+    }
   },
 });
 const { data: rules, isLoading, error } = query;
@@ -70,6 +77,7 @@ const onSelectRule = (ruleId: string) => {
 watch(
   () => rules.value?.data,
   (rules?: Rule[]) => {
+    console.log('rules', rules);
     if (rules && rules.length > 0) {
       rulesStore.setRules(rules.map(mapRuleToApplication));
       if (!rulesStore.selectedRule || rules.length === 1) {
@@ -83,7 +91,7 @@ watch(
 <template>
   <div class="rules-list">
     <div class="rules-header">
-      <h3 class="title">Rules: {{ rules?.data.length }}</h3>
+      <h3 class="title" v-if="rules?.data">Rules: {{ rules?.data.length }}</h3>
       <Button variant="primary" class="add-rule-button" @click="onAddRule">New rule</Button>
     </div>
     <div class="loading" v-if="isLoading">Loading...</div>

@@ -145,7 +145,7 @@ const onResponseChange = (value: string) => {
   <section class="rule-viewer">
     <div class="rule-viewer__veil" v-if="!rulesStore.selectedRule">
       <div class="rule-viewer__veil-content">
-        <h3>No rule selected</h3>
+        <h3>Create a new rule</h3>
       </div>
     </div>
     <article class="settings">
