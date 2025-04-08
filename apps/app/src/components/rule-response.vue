@@ -35,15 +35,6 @@ const handleInput = (event: Event) => {
   emit('response-change', codeContent.value);
 };
 
-watch(
-  () => props.modelValue,
-  newValue => {
-    if (newValue !== codeContent.value) {
-      codeContent.value = newValue;
-    }
-  }
-);
-
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Tab') {
     event.preventDefault();
@@ -78,6 +69,15 @@ watch(
     setTimeout(resizeTextarea, 0);
   },
   { immediate: true }
+);
+
+watch(
+  () => props.modelValue,
+  newValue => {
+    if (newValue !== codeContent.value) {
+      codeContent.value = newValue;
+    }
+  }
 );
 </script>
 
@@ -135,7 +135,7 @@ watch(
   &__editor-container {
     display: flex;
     min-height: 200px;
-    max-height: 300px;
+    height: 40vh;
     overflow: auto;
   }
 

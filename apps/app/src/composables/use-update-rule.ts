@@ -20,7 +20,10 @@ export const useUpdateRule = () => {
       await rulesMutations.updateRule({
         rule: mapRuleToServer(rule),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.success('Rule updated successfully');
+    },
     onError: () => {
       if (ruleToUpdate.value) {
         rulesStore.updateRule(ruleToUpdate.value);

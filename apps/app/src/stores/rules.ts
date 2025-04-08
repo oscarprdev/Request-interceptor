@@ -15,10 +15,14 @@ export const useRulesStore = defineStore('rules', {
     setRules(rules: RuleApplication[]) {
       this.rules = [...rules];
     },
-    setSelectedRule(ruleId: string) {
-      const rule = this.rules.find(rule => rule.id === ruleId);
-      if (rule) {
-        this.selectedRule = rule;
+    setSelectedRule(ruleId: string | null) {
+      if (ruleId) {
+        const rule = this.rules.find(rule => rule.id === ruleId);
+        if (rule) {
+          this.selectedRule = rule;
+        }
+      } else {
+        this.selectedRule = null;
       }
     },
     updateRule(updatedRule: RuleApplication) {

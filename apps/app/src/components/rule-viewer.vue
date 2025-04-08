@@ -143,6 +143,11 @@ const onResponseChange = (value: string) => {
 
 <template>
   <section class="rule-viewer">
+    <div class="rule-viewer__veil" v-if="!rulesStore.selectedRule">
+      <div class="rule-viewer__veil-content">
+        <h3>No rule selected</h3>
+      </div>
+    </div>
     <article class="settings">
       <div class="rule-opts">
         <h3 class="rule-opts__label">Rule Configuration</h3>
@@ -152,12 +157,14 @@ const onResponseChange = (value: string) => {
               placeholder="Enter rule title"
               :value="rulesStore.selectedRule?.title"
               @input="onTitleChange"
+              :disabled="!rulesStore.selectedRule"
               class="rule-opts__input" />
             <Button
               v-if="rulesStore.selectedRule"
               variant="destructive"
               size="small"
               class="rule-opts__remove-btn"
+              :disabled="!rulesStore.selectedRule"
               @click="onOpenRemoveModal">
               Remove
             </Button>
@@ -172,7 +179,7 @@ const onResponseChange = (value: string) => {
             </div>
 
             <div class="switch">
-              <label>Request status</label>
+              <label>Is request enabled?</label>
               <Switch :model-value="isRuleEnabled" @change="onEnableToggle" size="medium" />
             </div>
           </div>
@@ -192,6 +199,7 @@ const onResponseChange = (value: string) => {
             <input
               placeholder="Enter the URL intercepted"
               :value="rulesStore.selectedRule?.urlFilter"
+              :disabled="!rulesStore.selectedRule"
               @input="onUrlFilterChanges" />
           </div>
         </div>
@@ -222,10 +230,39 @@ const onResponseChange = (value: string) => {
 
 <style lang="scss">
 .rule-viewer {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - var(--header-height));
+
+  &__veil {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-foreground-muted);
+    opacity: 0.5;
+    z-index: 100;
+
+    &-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+
+      h3 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: var(--font-xl);
+        color: var(--text-light);
+      }
+    }
+  }
 
   .settings {
     display: flex;

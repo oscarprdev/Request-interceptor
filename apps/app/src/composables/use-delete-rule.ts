@@ -18,7 +18,11 @@ export const useDeleteRule = () => {
       queryClient.invalidateQueries({ queryKey: ['rules'] });
       if (rulesStore.rules.length > 0) {
         rulesStore.setSelectedRule(rulesStore.rules[0].id);
+      } else {
+        rulesStore.setSelectedRule(null);
       }
+
+      toast.success('Rule deleted successfully');
     },
     onError: () => {
       if (ruleToDelete.value) {

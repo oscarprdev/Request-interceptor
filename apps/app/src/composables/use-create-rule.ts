@@ -20,7 +20,10 @@ export const useCreateRule = ({ collectionId }: { collectionId: string }) => {
         collectionId,
         rule: mapRuleToServer(rule),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rules'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rules'] });
+      toast.success('Rule created successfully');
+    },
     onError: () => {
       if (ruleToCreate.value) {
         rulesStore.deleteRule(ruleToCreate.value.id);
