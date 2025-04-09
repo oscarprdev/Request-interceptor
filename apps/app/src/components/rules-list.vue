@@ -2,12 +2,11 @@
 import { useCreateRule } from '@/composables/use-create-rule';
 import Button from '@/components/ui/ui-button.vue';
 import Badge from '@/components/ui/ui-badge.vue';
-import { ActionType, type Rule } from '@/models/Rule';
+import { ActionType } from '@/models/Rule';
 import { rulesQueries } from '@/services/queries/rules-queries';
 import { useRulesStore } from '@/stores/rules';
 import { mapRuleToApplication } from '@/utils/mappers';
 import { useQuery } from '@tanstack/vue-query';
-import { watch } from 'vue';
 import { BADGE_VARIANTS } from './ui/ui-badge.types';
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
@@ -41,17 +40,31 @@ const query = useQuery({
       };
     }
     try {
-      return await rulesQueries.getRulesByCollectionId({
+      const rulesResponse = await rulesQueries.getRulesByCollectionId({
         userId: userStore.userToken,
         collectionId: props.collectionId as string,
       });
+
+      const { data } = rulesResponse;
+
+      if (data && data.length > 0) {
+        rulesStore.setRules(data.map(mapRuleToApplication));
+        if (!rulesStore.selectedRule || data.length === 1) {
+          rulesStore.setSelectedRule(data[0].id);
+        }
+      } else {
+        rulesStore.setRules([]);
+        rulesStore.setSelectedRule(null);
+      }
+
+      return rulesResponse;
     } catch {
       toast.error('Failed to fetch rules');
       router.push('/');
     }
   },
 });
-const { data: rules, isLoading, error } = query;
+const { isLoading, error } = query;
 
 const onAddRule = () =>
   action({
@@ -73,25 +86,12 @@ const onAddRule = () =>
 const onSelectRule = (ruleId: string) => {
   rulesStore.setSelectedRule(ruleId);
 };
-
-watch(
-  () => rules.value?.data,
-  (rules?: Rule[]) => {
-    console.log('rules', rules);
-    if (rules && rules.length > 0) {
-      rulesStore.setRules(rules.map(mapRuleToApplication));
-      if (!rulesStore.selectedRule || rules.length === 1) {
-        rulesStore.setSelectedRule(rules[0].id);
-      }
-    }
-  }
-);
 </script>
 
 <template>
   <div class="rules-list">
     <div class="rules-header">
-      <h3 class="title" v-if="rules?.data">Rules: {{ rules?.data.length }}</h3>
+      <h3 class="title" v-if="rulesStore.rules.length > 0">Rules: {{ rulesStore.rules.length }}</h3>
       <Button variant="primary" class="add-rule-button" @click="onAddRule">New rule</Button>
     </div>
     <div class="loading" v-if="isLoading">Loading...</div>
